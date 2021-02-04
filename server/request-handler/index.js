@@ -3,7 +3,6 @@
 import errors from '../lib/errors'
 import errorMap, { httpStatusCodes } from './error-handler'
 import middlewareCreator from './middlewares'
-import './worker'
 
 const requestHandler = ({ handler, method = 'GET', middleware }) => async (
   req,

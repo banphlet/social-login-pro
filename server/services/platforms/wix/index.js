@@ -1,5 +1,5 @@
 'use strict'
-import { pipe, pick } from 'lodash/fp'
+import { pipe, pick, prop } from 'lodash/fp'
 import { asyncPipe, validate } from '../../../lib/utils'
 import querystring from 'querystring'
 import joi from '../../../lib/joi'
@@ -12,13 +12,13 @@ const BASE_WIX_API = 'https://www.wixapis.com/apps/v1'
 const APP_ID = config.get('WIX_CLIENT_ID')
 const APP_SECRET = config.get('WIX_CLIENT_SECRET')
 
-const schema = {
+const schema = joi.object({
   token: joi.string().required(),
   redirectUrl: joi
     .string()
     .uri()
     .required()
-}
+})
 
 const getPermissionUrl = pipe(
   validate(schema),
@@ -29,11 +29,12 @@ const getPermissionUrl = pipe(
       redirectUrl: params.redirectUrl
     })}`
 )
+
 const getAccessTokenAndRefreshToken = post(`${BASE_OAUTH_URL}/oauth/access`)
 
 const getOauthAccessTokens = asyncPipe(
   pick(['code']),
-  validate({ code: joi.string().required() }),
+  validate(joi.object({ code: joi.string().required() })),
   ({ code }) => ({
     body: {
       code,
@@ -70,7 +71,7 @@ const getShopDetails = ({ accessToken }) =>
 
 const getSiteDetails = asyncPipe(
   pick(['accessToken']),
-  validate({ accessToken: joi.string().required() }),
+  validate(joi.object({ accessToken: joi.string().required() })),
   getShopDetails,
   ([siteDetails, moreDetails]) => ({
     externalId: siteDetails.instance.instanceId,
@@ -80,4 +81,36 @@ const getSiteDetails = asyncPipe(
   })
 )
 
-export { getPermissionUrl, getOauthAccessTokens, getSiteDetails }
+/**
+ *Verify Token from Wix
+ *@params {string} token from wix
+ *@throws {InvalidTokenError} When we cant verify token
+ *@returns {Promise} Resolves to the externalId in the payload
+ *
+ * **/
+const decode = pipe(
+  token => token.split('.')[1],
+  payload => Buffer.from(payload, 'base64').toString('ascii'),
+  JSON.parse
+)
+const logAndThrowInvalidToken = err => {
+  log.error(err)
+  throw new Error('token is not valid')
+}
+
+const tryCatch = (fn, errorThrower) => params => {
+  try {
+    return fn(params)
+  } catch (error) {
+    return errorThrower(error)
+  }
+}
+
+const verifyToken = asyncPipe(
+  validate(joi.object({ token: joi.string().required() })),
+  prop('token'),
+  tryCatch(decode, logAndThrowInvalidToken),
+  prop('instanceId')
+)
+
+export { getPermissionUrl, getOauthAccessTokens, getSiteDetails, verifyToken }

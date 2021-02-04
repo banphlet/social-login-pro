@@ -5,7 +5,6 @@ import jwt from 'jsonwebtoken'
 import util from 'util'
 import { serialize } from 'cookie'
 import crypto from 'crypto'
-import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import config from '../config'
 import errors from './errors'
 
@@ -107,15 +106,10 @@ export const getCookie = req => {
   return cookies
 }
 
-export const formatPhoneNumber = (phoneNumber = required('phoneNumber')) => {
-  const phone = parsePhoneNumberFromString(phoneNumber)
-  if (!phone) {
-    return {
-      isValid: false
-    }
+export function asyncPipe (...fns) {
+  return function innerAsyncPipe (params) {
+    return fns.reduce(async function (result, next) {
+      return next(await result)
+    }, params)
   }
-  return phone
 }
-
-export const asyncPipe = (...fns) => params =>
-  fns.reduce(async (result, next) => next(await result), params)

@@ -27,11 +27,11 @@ const config = convict({
     default: process.env.NO_REPLY_EMAIL || 'no-reply@digiduka.com',
     format: 'email'
   },
-  APP_URL: {
-    doc: 'APP_URL',
-    default: process.env.APP_URL,
+  NEXT_PUBLIC_APP_URL: {
+    doc: 'NEXT_PUBLIC_APP_URL',
+    default: process.env.NEXT_PUBLIC_APP_URL,
     format: '*',
-    env: 'APP_URL'
+    env: 'NEXT_PUBLIC_APP_URL'
   },
   WIX_CLIENT_ID: {
     doc: 'WIX_CLIENT_ID',
@@ -44,6 +44,18 @@ const config = convict({
     default: process.env.WIX_CLIENT_SECRET,
     format: '*',
     env: 'WIX_CLIENT_SECRET'
+  },
+  NEXT_PUBLIC_APP_FACEBOOK_ID: {
+    doc: 'NEXT_PUBLIC_APP_FACEBOOK_ID',
+    default: process.env.NEXT_PUBLIC_APP_FACEBOOK_ID,
+    format: '*',
+    env: 'NEXT_PUBLIC_APP_FACEBOOK_ID'
+  },
+  FACEBOOK_APP_SECRET: {
+    doc: 'FACEBOOK_APP_SECRET',
+    default: process.env.FACEBOOK_APP_SECRET,
+    format: '*',
+    env: 'FACEBOOK_APP_SECRET'
   }
 })
 

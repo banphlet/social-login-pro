@@ -1,11 +1,7 @@
 'use strict'
 
 import { curry } from 'lodash/fp'
-import request from 'got'
-
-const got = request.extend({
-  retry: 5
-})
+import got from 'got'
 
 const handleError = got =>
   got.catch(err => {
@@ -13,7 +9,7 @@ const handleError = got =>
     throw err.response
   })
 
-module.exports.put = curry(async (url, { body, headers }) => {
+export const put = curry(async (url, { body, headers }) => {
   return handleError(
     got
       .put(url, {

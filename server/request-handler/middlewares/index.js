@@ -14,8 +14,7 @@ const expressMiddlewares = [
   connect,
   userAgent.express,
   createPinoLogger,
-  attachLocation,
-  auth
+  attachLocation
 ]
 
 // simple function to allow using express middlewares

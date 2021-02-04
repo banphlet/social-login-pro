@@ -1,8 +1,6 @@
 'use strict'
 
 import mongoose from 'mongoose'
-import planSchema from './plan'
-import { ModeOfPayment } from '../../../models/orders/schema/enum'
 
 export const StoreStatusTypes = {
   ACTIVE: 'active',
@@ -12,6 +10,10 @@ export const StoreStatusTypes = {
 
 export const Platforms = {
   WIX: 'wix'
+}
+
+export const SocialPlatforms = {
+  FACEBOOK: 'facebook'
 }
 
 export default new mongoose.Schema(
@@ -43,23 +45,45 @@ export default new mongoose.Schema(
     },
     platform: {
       type: String,
-      enum: Object.values(Platforms)
+      enum: Object.values(Platforms),
+      required: true
     },
     external_access_token: {
       type: String,
       required: true
     },
     external_access_secret: {
-      type: String,
-      required: function () {
-        return this.platform === Platforms.WIX
-      }
+      type: String
     },
-    facebook_catalog_id: String,
-    facebook_user_access_token: String,
-    facebook_user_name: String,
-    facebook_handle: String,
-    last_facebook_sync_handle: String
+    social_accounts: {
+      type: [
+        {
+          catalog_id: {
+            type: String
+          },
+          access_token: {
+            type: String
+          },
+          external_id: {
+            type: String
+          },
+          name: {
+            type: String
+          },
+          handle: {
+            type: String
+          },
+          last_sync_handle: String,
+          sync_status: String,
+          platform: {
+            type: String,
+            enum: Object.values(SocialPlatforms),
+            required: true
+          }
+        }
+      ],
+      default: []
+    }
   },
   {
     timestamps: {

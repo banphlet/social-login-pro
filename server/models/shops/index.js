@@ -36,6 +36,13 @@ const getById = (id = required('id')) =>
     customErrorMessage
   })
 
+const getByExternalIdAndPlatform = ({ externalId, platform }) =>
+  ShopModel.ensureExists({
+    query: {
+      external_id: externalId,
+      platform
+    }
+  })
 
 const updateById = (id, update) =>
   ShopModel.updateOne({
@@ -45,10 +52,30 @@ const updateById = (id, update) =>
     update
   })
 
+const upsertByDomainOrExternalId = (
+  { externalId, domain },
+  update = required('update')
+) =>
+  ShopModel.upsert({
+    query: {
+      $or: [
+        {
+          external_id: externalId
+        },
+        {
+          domain
+        }
+      ]
+    },
+    update
+  })
+
 export default () => ({
   ...ShopModel,
   create,
   getByEmail,
   getById,
-  updateById
+  updateById,
+  upsertByDomainOrExternalId,
+  getByExternalIdAndPlatform
 })
