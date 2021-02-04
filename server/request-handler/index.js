@@ -1,0 +1,46 @@
+'use strict'
+
+import errors from '../lib/errors'
+import errorMap, { httpStatusCodes } from './error-handler'
+import middlewareCreator from './middlewares'
+import './worker'
+
+const requestHandler = ({ handler, method = 'GET', middleware }) => async (
+  req,
+  res
+) => {
+  try {
+    if (method !== req.method) {
+      throw errors.throwError({
+        name: errors.RequestNotFound,
+        message: 'not found'
+      })
+    }
+    await middlewareCreator(middleware)(req, res)
+    await handler(req, res)
+  } catch (error) {
+    console.log(error)
+    error.status = errorMap[error.name]
+    const {
+      code,
+      details,
+      name,
+      message,
+      status: statusCode = httpStatusCodes.INTERNAL_SERVER_ERROR
+    } = error
+    return res.status(statusCode).json(
+      statusCode === 500
+        ? { error: { message: 'An error occurred', code: 500 } }
+        : {
+            error: {
+              code,
+              details,
+              message,
+              name
+            }
+          }
+    )
+  }
+}
+
+export default requestHandler
