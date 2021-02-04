@@ -1,10 +1,27 @@
 import React from 'react'
-import { EmptyState } from '@shopify/polaris'
+import { EmptyState, Toast } from '@shopify/polaris'
 import Settings from '../Components/Settings'
+import useMutation from '../Hooks/useMutation'
+import useQuery from '../Hooks/useQuery'
+import SkeletonLoader from '../Components/SkeletonLoader'
 
 export default function Home ({ shop }) {
+  const { makeRequest, loading } = useMutation({
+    path: 'shops/social_accounts',
+    method: 'post'
+  })
+  const {
+    data: { data: socialAccounts = [] } = {},
+    loading: fetching
+  } = useQuery({
+    path: 'shops/social_accounts',
+    initQuery: {
+      shop_id: shop.id
+    }
+  })
+
   React.useEffect(() => {
-    FB.init({
+    window.FB?.init({
       appId: process.env.NEXT_PUBLIC_APP_FACEBOOK_ID,
       autoLogAppEvents: true,
       xfbml: true,
@@ -14,7 +31,21 @@ export default function Home ({ shop }) {
   const fbLogin = () => {
     window.FB.login(
       function (response) {
-        console.log(response)
+        if (response.authResponse) {
+          window.FB.api('/me', data => {
+            console.log(data)
+            const payload = {
+              access_token: response?.authResponse.accessToken,
+              external_id: response.authResponse.userID,
+              platform: 'facebook',
+              shop_id: shop.id,
+              name: data.name
+            }
+            makeRequest(payload)
+          })
+        } else {
+          // user cancelled
+        }
       },
       {
         scope:
@@ -27,7 +58,11 @@ export default function Home ({ shop }) {
     <div>
       <EmptyState
         heading='Sync products with your facebook catalog'
-        action={{ content: 'Connect With Facebook', onAction: fbLogin }}
+        action={{
+          content: 'Connect With Facebook',
+          onAction: fbLogin,
+          loading
+        }}
         secondaryAction={{
           content: 'Learn more',
           url: 'https://help.shopify.com'
@@ -43,10 +78,12 @@ export default function Home ({ shop }) {
     </div>
   )
 
-  return !shop?.social_accounts?.length ? (
+  if (fetching) return <SkeletonLoader />
+
+  return !socialAccounts.length ? (
     FacebookNotConnected
   ) : (
-    <Settings shop={shop} />
+    <Settings shop={shop} socialAccounts={socialAccounts} />
   )
 }
 

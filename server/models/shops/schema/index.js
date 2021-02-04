@@ -58,17 +58,18 @@ export default new mongoose.Schema(
     social_accounts: {
       type: [
         {
-          catalog_id: {
-            type: String
-          },
+          catalog_id: String,
           access_token: {
-            type: String
+            type: String,
+            required: true
           },
           external_id: {
-            type: String
+            type: String,
+            required: true
           },
           name: {
-            type: String
+            type: String,
+            required: true
           },
           handle: {
             type: String

@@ -2,21 +2,36 @@
 import joi, { objectId } from '../../../lib/joi'
 import { validate } from '../../../lib/utils'
 import { SocialPlatforms } from '../../../models/shops/schema'
+import socialPlatforms from '../../social-platforms'
+import { socialAccount } from '../../../models'
 
 const schema = joi.object({
-  catalog_id: joi.string().required(),
-  access_token: joi.string().required(),
+  access_token: joi.string(),
   external_id: joi.string().required(),
-  name: joi.string().required(),
-  handle: joi.string().required(),
+  name: joi.string(),
+  handle: joi.string(),
   shop_id: objectId().required(),
   platform: joi
     .string()
     .valid(...Object.values(SocialPlatforms))
-    .required()
+    .required(),
+  catalog_id: joi.string()
 })
 
-export async function addSocialAccount (payload) {
+export async function addOrUpdateSocialAccount (payload) {
   const validated = validate(schema, payload)
-  console.log(validated)
+  const { shop_id: shopId, ...transformedPayload } = await socialPlatforms(
+    validated.platform
+  ).transformConnectPayload(validated)
+  return socialAccount().upsertByExternalIdPlatformAndShopId(
+    {
+      externalId: transformedPayload.external_id,
+      shopId: shopId,
+      platform: transformedPayload.platform
+    },
+    {
+      shop: shopId,
+      ...transformedPayload
+    }
+  )
 }

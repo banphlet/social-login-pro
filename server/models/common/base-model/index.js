@@ -57,7 +57,7 @@ const upsert = Model => async ({ query, update, populate }) => {
   return create(Model)({ data: update, populate })
 }
 
-const fetch = Model => ({ query = required('query'), populate }) => {
+const fetch = Model => async ({ query = required('query'), populate }) => {
   const doc = Model.find(query)
 
   return doc

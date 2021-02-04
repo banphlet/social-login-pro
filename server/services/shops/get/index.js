@@ -1,7 +1,7 @@
 'use strict'
 
 import { required } from '../../../lib/utils'
-import { shops as shopModel } from '../../../models'
+import { shops as shopModel, socialAccount } from '../../../models'
 import platforms from '../../platforms'
 
 export async function getByExternalId (
@@ -22,4 +22,9 @@ export async function getByExternalId (
     platform
   })
   return shop
+}
+
+export const getSocialPlatforms = async (shopId = required('shopId')) => {
+  await shopModel().getById(shopId)
+  return socialAccount().fetchByShopId(shopId)
 }
