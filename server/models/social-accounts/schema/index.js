@@ -23,8 +23,17 @@ export default new mongoose.Schema(
       enum: Object.values(SocialAccountStatus),
       d: SocialAccountStatus.ACTIVE
     },
-    catalog_ids: {
-      type: [String],
+    catalogs: {
+      type: [
+        {
+          id: {
+            type: String,
+            index: true
+          },
+          last_sync_handle: String,
+          sync_status: String
+        }
+      ],
       default: []
     },
     access_token: {
@@ -42,8 +51,6 @@ export default new mongoose.Schema(
     handle: {
       type: String
     },
-    last_sync_handle: String,
-    sync_status: String,
     platform: {
       type: String,
       enum: Object.values(SocialPlatforms),

@@ -10,10 +10,10 @@ export default function useMutation ({ path, method = 'post' }) {
   const [data, setData] = React.useState()
   const [error, setError] = React.useState()
 
-  const makeRequest = (body = {}) => {
+  const makeRequest = (body = {}, makePath = path) => {
     setLoading(true)
     setError(null)
-    return request[method](path, body)
+    return request[method](makePath, body)
       .then(response => {
         setLoading(false)
         setData(response)

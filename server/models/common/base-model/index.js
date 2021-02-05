@@ -57,8 +57,12 @@ const upsert = Model => async ({ query, update, populate }) => {
   return create(Model)({ data: update, populate })
 }
 
-const fetch = Model => async ({ query = required('query'), populate }) => {
-  const doc = Model.find(query)
+const fetch = Model => async ({
+  query = required('query'),
+  populate,
+  select
+}) => {
+  const doc = Model.find(query, select)
 
   return doc
     .batchSize(200)

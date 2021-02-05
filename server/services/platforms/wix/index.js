@@ -4,6 +4,7 @@ import { asyncPipe, validate } from '../../../lib/utils'
 import querystring from 'querystring'
 import joi from '../../../lib/joi'
 import { post, get } from '../../../lib/request'
+import got from '../../../lib/request'
 import config from '../../../config'
 
 const BASE_OAUTH_URL = 'https://www.wix.com'

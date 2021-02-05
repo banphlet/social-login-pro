@@ -70,7 +70,20 @@ const fetchByShopId = shopId =>
   ShopModel.fetch({
     query: {
       shop: shopId
-    }
+    },
+    select: '-access_token'
+  })
+
+const getByIdAndCatalogs = ({
+  id = required('id'),
+  catalogs = required('catalogs')
+}) =>
+  ShopModel.get({
+    query: {
+      _id: id,
+      'catalogs.id': { $in: catalogs }
+    },
+    populate: ['shop']
   })
 
 export default () => ({
@@ -81,5 +94,6 @@ export default () => ({
   updateById,
   upsertByExternalIdPlatformAndShopId,
   getByExternalIdAndPlatform,
-  fetchByShopId
+  fetchByShopId,
+  getByIdAndCatalogs
 })

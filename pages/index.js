@@ -12,7 +12,9 @@ export default function Home ({ shop }) {
   })
   const {
     data: { data: socialAccounts = [] } = {},
-    loading: fetching
+    loading: fetching,
+    refetch,
+    updateData
   } = useQuery({
     path: 'shops/social_accounts',
     initQuery: {
@@ -25,15 +27,14 @@ export default function Home ({ shop }) {
       appId: process.env.NEXT_PUBLIC_APP_FACEBOOK_ID,
       autoLogAppEvents: true,
       xfbml: true,
-      version: 'v9.0'
+      version: 'v8.0'
     })
   }, [])
   const fbLogin = () => {
     window.FB.login(
       function (response) {
         if (response.authResponse) {
-          window.FB.api('/me', data => {
-            console.log(data)
+          window.FB.api('/me', async data => {
             const payload = {
               access_token: response?.authResponse.accessToken,
               external_id: response.authResponse.userID,
@@ -41,7 +42,8 @@ export default function Home ({ shop }) {
               shop_id: shop.id,
               name: data.name
             }
-            makeRequest(payload)
+            await makeRequest(payload)
+            refetch({ useInitialQuery: true })
           })
         } else {
           // user cancelled
@@ -80,10 +82,26 @@ export default function Home ({ shop }) {
 
   if (fetching) return <SkeletonLoader />
 
+  const updateSocialAccount = async payload => {
+    const { data } = await makeRequest(payload)
+    const accountIndex = [...socialAccounts].findIndex(
+      acc => acc.id === data.id
+    )
+    socialAccounts[accountIndex] = data
+    updateData({
+      data: [...socialAccounts]
+    })
+  }
+
   return !socialAccounts.length ? (
     FacebookNotConnected
   ) : (
-    <Settings shop={shop} socialAccounts={socialAccounts} />
+    <Settings
+      updateSocialAccount={updateSocialAccount}
+      shop={shop}
+      socialAccounts={socialAccounts}
+      loading={loading}
+    />
   )
 }
 

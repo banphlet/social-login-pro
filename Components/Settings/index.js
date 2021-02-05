@@ -4,29 +4,37 @@ import {
   Card,
   Layout,
   TextField,
-  Page,
+  Heading,
   SettingToggle,
   TextStyle,
   EmptyState
 } from '@shopify/polaris'
 import startCase from 'lodash/startCase'
 import CatalogModal from './CatalogModal'
+import useMutation from '../../Hooks/useMutation'
 
-export default function Settings ({ shop, socialAccounts = [] }) {
+export default function Settings ({
+  shop,
+  socialAccounts = [],
+  updateSocialAccount,
+  loading
+}) {
+  const { data, loading: syncing, makeRequest } = useMutation({
+    path: ''
+  })
   const [active, setActive] = React.useState(false)
   const [openModal, setOpenModal] = React.useState(false)
 
   const mergeCatalogIds = socialAccounts.reduce((acc, account) => {
-    const mapped = account.catalog_ids.map(catalog => ({
-      id: catalog,
+    const mapped = account.catalogs.map(catalog => ({
+      catalog,
       user_external_id: account.external_id,
-      user_platform: account.platform
+      user_platform: account.platform,
+      account_id: account.id
     }))
     acc.push(...mapped)
     return acc
   }, [])
-
-  console.log(mergeCatalogIds)
 
   const handleToggle = React.useCallback(() => setActive(active => !active), [])
 
@@ -58,6 +66,26 @@ export default function Settings ({ shop, socialAccounts = [] }) {
       </p>
     </EmptyState>
   )
+
+  const onUpdateSocialAccount = (payload = {}) => {
+    updateSocialAccount({
+      shop_id: shop.id,
+      ...payload
+    })
+  }
+
+  const onSyncAllProducts = async account => {
+    const payload = {
+      catalogs: [account?.catalog.id],
+      id: account.account_id
+    }
+    const data = await makeRequest(
+      payload,
+      `shops/social_accounts/${account?.catalog.account_id}/sync`
+    )
+
+    console.log(data)
+  }
 
   return (
     <div style={{ padding: 50 }}>
@@ -98,20 +126,48 @@ export default function Settings ({ shop, socialAccounts = [] }) {
         ))}
       </Layout>
 
-      <Layout>
-        {addFirstCatalog}
-        {/* {Array.from({ length: 3 }).map(() => (
-          <Layout.Section oneHalf>
-            <Card title='Florida'>
-              <Card.Section>
-                <TextStyle variation='subdued'>455 units available</TextStyle>
-              </Card.Section>
-              <Card.Section title='Items'>form here</Card.Section>
-            </Card>
-          </Layout.Section>
-        ))} */}
-      </Layout>
-      <CatalogModal openModal={openModal} toggleModal={toggleModal} />
+      <div style={{ marginTop: 20 }}>
+        <Heading>Manage Catalogs</Heading>
+        <div style={{ marginTop: 30 }} />
+        <Layout>
+          {mergeCatalogIds.length
+            ? mergeCatalogIds.map(account => (
+                <Layout.Section oneHalf key={account?.catalog.id}>
+                  <Card
+                    title='Facebook Catalog'
+                    actions={[
+                      { content: 'Remove' },
+                      {
+                        content: 'View',
+                        external: true,
+                        url: `https://www.facebook.com/products/catalogs/${account?.catalog.id}/home`
+                      }
+                    ]}
+                    primaryFooterAction={{
+                      content: 'Sync Products',
+                      destructive: true,
+                      onAction: () => onSyncAllProducts(account),
+                      disabled: !!account.catalog.sync_status
+                    }}
+                  >
+                    <Card.Section>
+                      <TextStyle variation='subdued'>
+                        Catalog Id: {account?.catalog.id}
+                      </TextStyle>
+                    </Card.Section>
+                  </Card>
+                </Layout.Section>
+              ))
+            : addFirstCatalog}
+        </Layout>
+      </div>
+      <CatalogModal
+        openModal={openModal}
+        toggleModal={toggleModal}
+        onUpdateSocialAccount={onUpdateSocialAccount}
+        socialAccounts={socialAccounts}
+        loading={loading}
+      />
     </div>
   )
 }

@@ -15,7 +15,11 @@ const schema = joi.object({
     .string()
     .valid(...Object.values(SocialPlatforms))
     .required(),
-  catalog_id: joi.string()
+  catalogs: joi.array().items(
+    joi.object({
+      id: joi.string().required()
+    })
+  )
 })
 
 export async function addOrUpdateSocialAccount (payload) {

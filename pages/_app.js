@@ -1,11 +1,13 @@
 import '@shopify/polaris/dist/styles.css'
 import enTranslations from '@shopify/polaris/locales/en.json'
-import { AppProvider } from '@shopify/polaris'
+import { AppProvider, Frame } from '@shopify/polaris'
 
 function MyApp ({ Component, pageProps }) {
   return (
     <AppProvider i18n={enTranslations}>
-      <Component {...pageProps} />
+      <Frame>
+        <Component {...pageProps} />
+      </Frame>
     </AppProvider>
   )
 }
