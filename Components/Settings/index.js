@@ -141,7 +141,7 @@ export default function Settings ({
 
       <div style={{ marginTop: 20 }}>
         <Heading>
-          Manage Catalogs <Button>Add Catalog</Button>
+          Manage Catalogs <Button onClick={toggleModal}>Add Catalog</Button>
         </Heading>
         <div style={{ marginTop: 30 }} />
         <Layout>
