@@ -1,10 +1,10 @@
 'use strict'
 import { pipe, pick, prop } from 'lodash/fp'
-import { asyncPipe, validate } from '../../../lib/utils'
+import { asyncPipe, required, validate } from '../../../lib/utils'
 import querystring from 'querystring'
 import joi from '../../../lib/joi'
 import { post, get } from '../../../lib/request'
-import got from '../../../lib/request'
+import got from './wix-retryer'
 import config from '../../../config'
 
 const BASE_OAUTH_URL = 'https://www.wix.com'
@@ -114,4 +114,107 @@ const verifyToken = asyncPipe(
   prop('instanceId')
 )
 
-export { getPermissionUrl, getOauthAccessTokens, getSiteDetails, verifyToken }
+const fetchCollections = ({
+  accessToken,
+  refreshToken = required('refreshToken')
+}) =>
+  got
+    .post('collections/query', {
+      headers: {
+        Authorization: accessToken
+      },
+      context: { refreshToken },
+      json: {
+        query: {
+          paging: {
+            limit: 100
+          }
+        }
+      }
+    })
+    .then(response => response.body)
+
+const fetchProducts = ({
+  accessToken = required('accessToken'),
+  refreshToken = required('refreshToken'),
+  numericId
+}) =>
+  got
+    .post('products/query', {
+      headers: {
+        Authorization: accessToken
+      },
+      context: { refreshToken },
+      json: {
+        query: {
+          paging: {
+            limit: 100
+          },
+          sort: JSON.stringify([{ numericId: 'asc' }]),
+          ...(numericId
+            ? {
+                filter: JSON.stringify({
+                  numericId: {
+                    $gt: numericId
+                  }
+                })
+              }
+            : {})
+        },
+        includeVariants: true
+      }
+    })
+    .then(response => response.body)
+
+const fetchAllProducts = async ({ accessToken, refreshToken, brand }) => {
+  const firstItems = await fetchProducts({ accessToken, refreshToken })
+  const allProducts = firstItems.products
+
+  let numericId = allProducts.pop()?.numericId
+  while (numericId) {
+    const { products } = await fetchProducts({
+      accessToken,
+      refreshToken,
+      numericId
+    })
+    if (products.length) {
+      numericId = products.pop()?.numericId
+      return allProducts.concat(products)
+    }
+    numericId = undefined
+  }
+  return allProducts.map(transformProduct(brand))
+}
+
+const transformProduct = brand => product => ({
+  method: 'UPDATE',
+  retailer_id: product.numericId,
+  data: {
+    brand,
+    image_url: product?.media?.mainMedia?.image?.url,
+    availability: product?.stock?.inStock ? 'in stock' : 'out of stock',
+    condition: 'new', // should be changed to the true state of the item
+    currency: product.convertedPriceData?.currency,
+    description: product?.description,
+    name: product?.name,
+    price: product?.convertedPriceData?.price * 100,
+    sale_price: product?.convertedPriceData?.discountedPrice,
+    product_type: product?.productType,
+    url: `${product?.productPageUrl?.base}${product?.productPageUrl?.path}`,
+    ...(product?.media?.items?.length > 1
+      ? product?.media?.items
+          .slice(1)
+          .map(item => item?.image?.url)
+          .slice(0, 10)
+      : {})
+  }
+})
+
+export {
+  fetchAllProducts,
+  getPermissionUrl,
+  getOauthAccessTokens,
+  getSiteDetails,
+  verifyToken,
+  fetchCollections
+}

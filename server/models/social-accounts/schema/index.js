@@ -11,6 +11,13 @@ export const SocialPlatforms = {
   FACEBOOK: 'facebook'
 }
 
+export const SyncStatus = {
+  PUSHED: 'pushed',
+  COMPLETED: 'completed',
+  PENDING: 'pending',
+  ERRORS: 'errors'
+}
+
 export default new mongoose.Schema(
   {
     shop: {
@@ -31,7 +38,15 @@ export default new mongoose.Schema(
             index: true
           },
           last_sync_handle: String,
-          sync_status: String
+          sync_status: {
+            type: String,
+            enum: Object.values(SyncStatus),
+            default: SyncStatus.PENDING
+          },
+          error: String
+        },
+        {
+          _id: false
         }
       ],
       default: []

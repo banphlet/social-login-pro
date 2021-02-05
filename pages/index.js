@@ -101,6 +101,7 @@ export default function Home ({ shop }) {
       shop={shop}
       socialAccounts={socialAccounts}
       loading={loading}
+      fetchSocialAccounts={refetch}
     />
   )
 }

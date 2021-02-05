@@ -35,4 +35,35 @@ function generateLongUserAccessToken (accessToken) {
     .then(response => response.body.access_token)
 }
 
-export { generateLongUserAccessToken }
+const syncProducts = ({
+  products = required('products'),
+  catalogId = required('catalogId'),
+  accessToken = required('accessToken')
+}) =>
+  request
+    .post(`${catalogId}/batch`, {
+      json: {
+        allow_upsert: true,
+        requests: products,
+        appsecret_proof: generateAppProf(accessToken),
+        access_token: accessToken
+      }
+    })
+    .then(response => response.body)
+
+const verifyPush = ({
+  handle = required('products'),
+  catalogId = required('catalogId'),
+  accessToken = required('accessToken')
+}) =>
+  request
+    .get(`${catalogId}/check_batch_request_status`, {
+      searchParams: {
+        handle,
+        appsecret_proof: generateAppProf(accessToken),
+        access_token: accessToken
+      }
+    })
+    .then(response => response.body)
+
+export { generateLongUserAccessToken, syncProducts, verifyPush }

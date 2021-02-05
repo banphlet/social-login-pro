@@ -7,8 +7,8 @@ const got = request.extend({
   retry: 4
 })
 
-const handleError = got =>
-  got.catch(err => {
+const handleError = gotR =>
+  gotR.catch(err => {
     console.error(err)
     throw err.response
   })

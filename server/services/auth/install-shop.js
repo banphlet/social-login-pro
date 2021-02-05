@@ -25,7 +25,8 @@ const getTokens = ({ platform, ...rest }) =>
 export default async function installShop (payload) {
     const validated = validate(schema, payload)
     const tokens  = await getTokens(validated)
-    const shopDetails = await platforms(validated.platform).getSiteDetails({ ...tokens,  })
+    const shopDetails = await platforms(validated.platform).getSiteDetails(tokens)
+    console.log(shopDetails);
       await shopModel().upsertByDomainOrExternalId({ domain: shopDetails.domain, externalId: shopDetails.externalId }, { 
       domain: shopDetails.domain,
       external_id: shopDetails.externalId,

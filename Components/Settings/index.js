@@ -7,7 +7,11 @@ import {
   Heading,
   SettingToggle,
   TextStyle,
-  EmptyState
+  EmptyState,
+  Toast,
+  Loading,
+  Spinner,
+  Button
 } from '@shopify/polaris'
 import startCase from 'lodash/startCase'
 import CatalogModal from './CatalogModal'
@@ -17,13 +21,15 @@ export default function Settings ({
   shop,
   socialAccounts = [],
   updateSocialAccount,
-  loading
+  loading,
+  fetchSocialAccounts
 }) {
-  const { data, loading: syncing, makeRequest } = useMutation({
+  const { loading: syncing, makeRequest } = useMutation({
     path: ''
   })
   const [active, setActive] = React.useState(false)
   const [openModal, setOpenModal] = React.useState(false)
+  const [toastMessage, setShowToast] = React.useState('')
 
   const mergeCatalogIds = socialAccounts.reduce((acc, account) => {
     const mapped = account.catalogs.map(catalog => ({
@@ -79,16 +85,23 @@ export default function Settings ({
       catalogs: [account?.catalog.id],
       id: account.account_id
     }
-    const data = await makeRequest(
+    const {
+      data: { message }
+    } = await makeRequest(
       payload,
       `shops/social_accounts/${account?.catalog.account_id}/sync`
     )
-
-    console.log(data)
+    setShowToast(message)
+    setTimeout(() => {
+      fetchSocialAccounts({ useInitialQuery: true })
+    }, 10000)
   }
 
   return (
     <div style={{ padding: 50 }}>
+      {toastMessage ? (
+        <Toast content={toastMessage} onDismiss={() => setShowToast('')} />
+      ) : null}
       <Layout>
         <Layout.AnnotatedSection
           title='General Settings'
@@ -127,7 +140,9 @@ export default function Settings ({
       </Layout>
 
       <div style={{ marginTop: 20 }}>
-        <Heading>Manage Catalogs</Heading>
+        <Heading>
+          Manage Catalogs <Button>Add Catalog</Button>
+        </Heading>
         <div style={{ marginTop: 30 }} />
         <Layout>
           {mergeCatalogIds.length
@@ -144,10 +159,13 @@ export default function Settings ({
                       }
                     ]}
                     primaryFooterAction={{
-                      content: 'Sync Products',
+                      content:
+                        account.catalog.sync_status === 'pending'
+                          ? 'Sync Products'
+                          : 'Products Synced',
                       destructive: true,
                       onAction: () => onSyncAllProducts(account),
-                      disabled: !!account.catalog.sync_status
+                      disabled: account.catalog.sync_status !== 'pending'
                     }}
                   >
                     <Card.Section>
@@ -160,6 +178,11 @@ export default function Settings ({
               ))
             : addFirstCatalog}
         </Layout>
+        {syncing && (
+          <div style={{ marginLeft: '40vw', marginTop: 20 }}>
+            <Spinner accessibilityLabel='Spinner example' size='small' />
+          </div>
+        )}
       </div>
       <CatalogModal
         openModal={openModal}
@@ -168,6 +191,7 @@ export default function Settings ({
         socialAccounts={socialAccounts}
         loading={loading}
       />
+      {syncing && <Loading />}
     </div>
   )
 }
