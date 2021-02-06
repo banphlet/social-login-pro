@@ -50,7 +50,7 @@ export default function Settings ({
 
   const addFirstCatalog = (
     <EmptyState
-      heading='Add your first facebook catalog where products will be synced to'
+      heading='Add your first facebook catalog'
       action={{
         content: 'Add your first Catalog',
         onAction: toggleModal
