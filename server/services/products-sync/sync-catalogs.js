@@ -5,6 +5,9 @@ import { validate } from '../../lib/utils'
 import { socialAccount } from '../../models'
 import platforms from '../platforms'
 import sync from './sync'
+import pino from 'pino'
+
+const logger = pino()
 
 const schema = joi.object({
   catalog_id: joi.string().required(),
@@ -14,11 +17,14 @@ const schema = joi.object({
 
 const syncProducts = async account => {
   try {
+    logger.info('Starting sync')
     const products = await platforms(account?.shop?.platform).fetchAllProducts({
       accessToken: account?.shop?.external_access_token,
       refreshToken: account?.shop?.external_access_secret,
       brand: account?.shop.name
     })
+
+    logger.info('Got products', products.length)
 
     await sync({
       catalogs: account?.catalogs,
@@ -27,6 +33,7 @@ const syncProducts = async account => {
       trackQueue: true,
       accountId: account.id
     })
+    logger.info('Done  syncing products')
   } catch (error) {
     console.log(error)
   }
