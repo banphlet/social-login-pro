@@ -10,11 +10,15 @@ const getShop = instanceId =>
     })
     .then(response => response.data)
     .catch(err => {
-      throw err
+      console.log(err)
     })
 
 export async function getServerSideProps (context) {
   const shop = await getShop(context.query?.instance)
+  if (!shop)
+    return {
+      notFound: true
+    }
   return {
     props: {
       shop
