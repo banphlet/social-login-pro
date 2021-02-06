@@ -64,10 +64,6 @@ export default function Home ({ shop }) {
           onAction: fbLogin,
           loading
         }}
-        secondaryAction={{
-          content: 'Learn more',
-          url: 'https://help.shopify.com'
-        }}
         image='https://cdn.shopify.com/s/files/1/0757/9955/files/empty-state.svg'
         fullWidth
       >
