@@ -13,19 +13,23 @@ const schema = joi.object({
 })
 
 const syncProducts = async account => {
-  const products = await platforms(account?.shop?.platform).fetchAllProducts({
-    accessToken: account?.shop?.external_access_token,
-    refreshToken: account?.shop?.external_access_secret,
-    brand: account?.shop.name
-  })
+  try {
+    const products = await platforms(account?.shop?.platform).fetchAllProducts({
+      accessToken: account?.shop?.external_access_token,
+      refreshToken: account?.shop?.external_access_secret,
+      brand: account?.shop.name
+    })
 
-  return sync({
-    catalogs: account?.catalogs,
-    accessToken: account?.access_token,
-    products,
-    trackQueue: true,
-    accountId: account.id
-  })
+    await sync({
+      catalogs: account?.catalogs,
+      accessToken: account?.access_token,
+      products,
+      trackQueue: true,
+      accountId: account.id
+    })
+  } catch (error) {
+    console.log(error)
+  }
 }
 
 export default async function syncCatalogs (payload) {
