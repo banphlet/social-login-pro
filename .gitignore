@@ -34,7 +34,3 @@ yarn-error.log*
 .vercel
 .env
 
-
-# mongodb+srv://wix-facebook-channel:wix-facebook-channel@@@@cluster0.gwidf.mongodb.net/facebook-channel?retryWrites=true&w=majority
-
-

@@ -1,6 +1,10 @@
 'use strict'
 
 import mongoose from 'mongoose'
+import Cryptr from 'cryptr'
+import config from '../../../config'
+
+const cryptr = new Cryptr(config.get('APP_KEY'))
 
 export const SocialAccountStatus = {
   ACTIVE: 'A',
@@ -55,7 +59,9 @@ export default new mongoose.Schema(
     },
     access_token: {
       type: String,
-      required: true
+      required: true,
+      set: cryptr.encrypt,
+      get: cryptr.decrypt
     },
     external_id: {
       type: String,
@@ -80,10 +86,12 @@ export default new mongoose.Schema(
       updatedAt: 'updated_at'
     },
     toJSON: {
-      virtuals: true
+      virtuals: true,
+      getters: true
     },
     toObject: {
-      virtuals: true
+      virtuals: true,
+      getters: true
     }
   }
 )
