@@ -106,6 +106,8 @@ export default function Settings ({
     fetchSocialAccounts({ useInitialQuery: true })
   }
 
+  console.log(socialAccounts)
+
   return (
     <div style={{ padding: 50 }}>
       {toastMessage ? (
@@ -122,10 +124,12 @@ export default function Settings ({
               <FormLayout>
                 <TextField
                   type='text'
-                  label='Account Name'
+                  label={`Account ${startCase(
+                    account.name || account.external_id
+                  )}`}
                   onChange={() => {}}
                   disabled
-                  value={account.name}
+                  value={account?.name || account?.external_id}
                 />
               </FormLayout>
             </Card>
