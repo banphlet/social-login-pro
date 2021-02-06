@@ -46,7 +46,7 @@ export default async function syncCatalogs (payload) {
     catalogId: validated.catalog_id,
     id: validated.id
   })
-  syncProducts(account)
+  await syncProducts(account)
   return {
     message: 'We are syncing your products. Check back later'
   }
