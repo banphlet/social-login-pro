@@ -50,8 +50,7 @@ export default function Home ({ shop }) {
         }
       },
       {
-        scope:
-          'catalog_management,business_management,ads_management,ads_read,pages_read_engagement,pages_show_list'
+        scope: 'catalog_management'
       }
     )
   }
