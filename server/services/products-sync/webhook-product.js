@@ -46,5 +46,6 @@ export default async function webhookProduct (payload) {
       })
     })
   )
+
   logger.info('done syncing product update', productInfo)
 }
