@@ -3,8 +3,8 @@
 import mongoose from 'mongoose'
 
 export const SocialAccountStatus = {
-  ACTIVE: 'active',
-  DEACTIVATED: 'deactivated'
+  ACTIVE: 'A',
+  DEACTIVATED: 'D'
 }
 
 export const SocialPlatforms = {
@@ -30,7 +30,12 @@ const catalogSchema = new mongoose.Schema(
       enum: Object.values(SyncStatus),
       default: SyncStatus.PENDING
     },
-    error: String
+    error: String,
+    status: {
+      type: String,
+      enum: Object.values(SocialAccountStatus),
+      default: SocialAccountStatus.ACTIVE
+    }
   },
   {
     _id: false
@@ -43,11 +48,6 @@ export default new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Shop',
       required: true
-    },
-    status: {
-      type: String,
-      enum: Object.values(SocialAccountStatus),
-      d: SocialAccountStatus.ACTIVE
     },
     catalogs: {
       type: [catalogSchema],

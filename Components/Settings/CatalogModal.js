@@ -22,7 +22,7 @@ export default function CatalogModal ({
   const toggleToast = () => setShowToast(!showToast)
 
   return (
-    <div style={{ height: '500px' }}>
+    <>
       {showToast ? (
         <Toast
           content='Catalog Id is about 15 characters'
@@ -83,6 +83,6 @@ export default function CatalogModal ({
           </Stack>
         </Modal.Section>
       </Modal>
-    </div>
+    </>
   )
 }

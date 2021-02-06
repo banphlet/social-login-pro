@@ -4,9 +4,7 @@ import joi, { objectId } from '../../lib/joi'
 import { validate } from '../../lib/utils'
 import { socialAccount } from '../../models'
 import platforms from '../platforms'
-import * as fbLib from '../../lib/facebook'
-import { SyncStatus } from '../../models/social-accounts/schema'
-import addNewJob from './scheduler'
+import sync from './sync'
 
 const schema = joi.object({
   catalog_id: joi.string().required(),
@@ -21,48 +19,13 @@ const syncProducts = async account => {
     brand: account?.shop.name
   })
 
-  await Promise.all(
-    account.catalogs.map(async catalog => {
-      const response = await fbLib
-        .syncProducts({
-          products,
-          accessToken: account?.access_token,
-          catalogId: catalog.id
-        })
-        .catch(err => {
-          const isCatalogInValidError = /does not exist/.test(
-            err.response?.body?.error?.message
-          )
-          if (isCatalogInValidError) {
-            return {
-              error: 'This Catalog does not exist'
-            }
-          }
-          throw err
-        })
-      await socialAccount().updateByCatalogIdAndSocialAccount({
-        id: account.id,
-        catalogId: catalog.id,
-        update: {
-          ...(response?.handles && {
-            'catalogs.$.last_sync_handle': response.handles[0],
-            'catalogs.$.sync_status': SyncStatus.PUSHED
-          }),
-          ...(response.error && {
-            'catalogs.$.error': response.error,
-            'catalogs.$.sync_status': SyncStatus.ERROR
-          })
-        }
-      })
-      response.handles &&
-        addNewJob({
-          handle: response.handles[0],
-          catalogId: catalog.id,
-          id: account.id,
-          accessToken: account?.access_token
-        })
-    })
-  )
+  return sync({
+    catalogs: account?.catalogs,
+    accessToken: account?.access_token,
+    products,
+    trackQueue: true,
+    accountId: account.id
+  })
 }
 
 export default async function syncCatalogs (payload) {

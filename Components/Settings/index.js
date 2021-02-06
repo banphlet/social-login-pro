@@ -12,7 +12,6 @@ import {
   Loading,
   Spinner,
   Button,
-  Link,
   Banner,
   TextContainer
 } from '@shopify/polaris'
@@ -30,8 +29,6 @@ export default function Settings ({
   const { loading: syncing, makeRequest } = useMutation({
     path: ''
   })
-
-  const [active, setActive] = React.useState(false)
   const [openModal, setOpenModal] = React.useState(false)
   const [toastMessage, setShowToast] = React.useState('')
 
@@ -46,15 +43,10 @@ export default function Settings ({
     return acc
   }, [])
 
-  const handleToggle = React.useCallback(() => setActive(active => !active), [])
-
   const toggleModal = React.useCallback(
-    () => setOpenModal(active => !active),
+    () => setOpenModal(openModal => !openModal),
     []
   )
-
-  const contentStatus = active ? 'Disable' : 'Enable'
-  const textStatus = active ? 'enabled' : 'disabled'
 
   const addFirstCatalog = (
     <EmptyState
@@ -97,9 +89,9 @@ export default function Settings ({
       `shops/social_accounts/${account?.account_id}/sync`
     )
     setShowToast(message)
-    // setTimeout(() => {
-    //   fetchSocialAccounts({ useInitialQuery: true })
-    // }, 10000)
+    setTimeout(() => {
+      fetchSocialAccounts({ useInitialQuery: true })
+    }, 5000)
   }
 
   const removeCatalog = async account => {
@@ -120,21 +112,6 @@ export default function Settings ({
         <Toast content={toastMessage} onDismiss={() => setShowToast('')} />
       ) : null}
       <Layout>
-        <Layout.AnnotatedSection
-          title='General Settings'
-          description='Enable or disable product syncing'
-        >
-          <SettingToggle
-            action={{
-              content: contentStatus,
-              onAction: handleToggle
-            }}
-            enabled={active}
-          >
-            This setting is{' '}
-            <TextStyle variation='strong'>{textStatus}</TextStyle>.
-          </SettingToggle>
-        </Layout.AnnotatedSection>
         {socialAccounts.map(account => (
           <Layout.AnnotatedSection
             title={`${startCase(account.platform)} Details`}
@@ -171,6 +148,7 @@ export default function Settings ({
             ? mergeCatalogIds.map(account => {
                 const isPending = account.catalog.sync_status === 'pending'
                 const isError = account.catalog.sync_status === 'error'
+                const isActive = account.catalog?.status === 'A'
                 return (
                   <Layout.Section oneHalf key={account?.catalog.id}>
                     <Card
@@ -185,6 +163,28 @@ export default function Settings ({
                           content: 'View',
                           external: true,
                           url: `https://www.facebook.com/products/catalogs/${account?.catalog.id}/home`
+                        },
+                        {
+                          content:
+                            account?.catalog.status === 'A'
+                              ? 'Disable'
+                              : 'Enable',
+                          onAction: () => {
+                            const catalogIndex = socialAccounts[0].catalogs.findIndex(
+                              item => item.id === account.catalog.id
+                            )
+                            const newCatalogs = [...socialAccounts[0].catalogs]
+                            newCatalogs[catalogIndex] = {
+                              ...account.catalog,
+                              status:
+                                account?.catalog.status === 'A' ? 'D' : 'A'
+                            }
+                            onUpdateSocialAccount({
+                              catalogs: newCatalogs,
+                              platform: socialAccounts[0]?.platform,
+                              external_id: socialAccounts[0].external_id
+                            })
+                          }
                         }
                       ]}
                       primaryFooterAction={{
@@ -193,7 +193,7 @@ export default function Settings ({
                           : 'Products Synced',
                         destructive: true,
                         onAction: () => onSyncAllProducts(account),
-                        disabled: !isPending
+                        disabled: !isPending || !isActive
                       }}
                       sectioned
                     >
@@ -209,13 +209,19 @@ export default function Settings ({
                               ? 'info'
                               : isError
                               ? 'critical'
+                              : !isActive
+                              ? 'critical'
                               : 'success'
                           }
                         >
                           {isPending
-                            ? ' Click the Sync Product button to start syncing for this catalog '
+                            ? !isActive
+                              ? 'Product sync is disabled. Product wont be synced to facebook'
+                              : ' Click the Sync Product button to start syncing for this catalog '
                             : isError
                             ? account.catalog.error
+                            : !isActive
+                            ? 'Product sync is disabled. Product wont be synced to facebook'
                             : 'AutoSync in on. Latest products will be synced no action needed.'}
                         </Banner>
                       </TextContainer>

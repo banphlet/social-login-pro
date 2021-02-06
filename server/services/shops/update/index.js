@@ -4,7 +4,10 @@ import { validate } from '../../../lib/utils'
 import { SocialPlatforms } from '../../../models/shops/schema'
 import socialPlatforms from '../../social-platforms'
 import { socialAccount } from '../../../models'
-import { SyncStatus } from '../../../models/social-accounts/schema'
+import {
+  SyncStatus,
+  SocialAccountStatus
+} from '../../../models/social-accounts/schema'
 
 const schema = joi.object({
   access_token: joi.string(),
@@ -21,7 +24,8 @@ const schema = joi.object({
       id: joi.string().required(),
       last_sync_handle: joi.string(),
       sync_status: joi.string().valid(...Object.values(SyncStatus)),
-      error: joi.string()
+      error: joi.string(),
+      status: joi.string().valid(...Object.values(SocialAccountStatus))
     })
   )
 })

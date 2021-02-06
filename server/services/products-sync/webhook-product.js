@@ -7,6 +7,7 @@ import { shops } from '../../models'
 import { Platforms } from '../../models/shops/schema'
 import platforms from '../platforms'
 import pino from 'pino'
+import sync from './sync'
 
 const logger = pino()
 
@@ -36,16 +37,13 @@ export default async function webhookProduct (payload) {
   })
   await Promise.all(
     shop?.social_accounts.map(account => {
-      return Promise.all(
-        account.catalogs.map(async catalog => {
-          const handle = await syncProducts({
-            products: Array.isArray(product) ? product : [product],
-            catalogId: catalog.id,
-            accessToken: account.access_token
-          })
-          logger.info(handle)
-        })
-      )
+      return sync({
+        catalogs: account.catalogs,
+        accessToken: account.access_token,
+        accountId: account.id,
+        products: Array.isArray(product) ? product : [product],
+        trackQueue: false
+      })
     })
   )
   logger.info('done syncing product update', productInfo)
