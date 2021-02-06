@@ -9,7 +9,7 @@ class MyDocument extends Document {
           async
           defer
           crossOrigin='anonymous'
-          src='https://connect.facebook.net/en_US/sdk.js'
+          src='https://connect.facebook.net/en_US/all.js'
         ></script>
         <body>
           <Main />
