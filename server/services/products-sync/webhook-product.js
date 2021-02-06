@@ -42,7 +42,7 @@ export default async function webhookProduct (payload) {
         accessToken: account.access_token,
         accountId: account.id,
         products: Array.isArray(product) ? product : [product],
-        trackQueue: false
+        trackQueue: true
       })
     })
   )
