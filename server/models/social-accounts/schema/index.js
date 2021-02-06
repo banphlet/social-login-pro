@@ -67,10 +67,7 @@ export default new mongoose.Schema(
       type: String,
       required: true
     },
-    name: {
-      type: String,
-      required: true
-    },
+    name: String,
     handle: {
       type: String
     },
