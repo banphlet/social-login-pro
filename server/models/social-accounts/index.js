@@ -76,14 +76,20 @@ const fetchByShopId = shopId =>
 
 const getByIdAndCatalogs = ({
   id = required('id'),
-  catalogs = required('catalogs')
+  catalogId = required('catalogs'),
+  shopId = required('shopId')
 }) =>
-  SocialAccountModal.get({
+  SocialAccountModal.ensureExists({
     query: {
       _id: id,
-      'catalogs.id': { $in: catalogs }
+      shop: shopId
     },
-    populate: ['shop']
+    populate: ['shop'],
+    select: {
+      catalogs: { $elemMatch: { id: catalogId } },
+      access_token: 1,
+      platform: 1
+    }
   })
 
 const updateByCatalogIdAndSocialAccount = ({
@@ -99,8 +105,21 @@ const updateByCatalogIdAndSocialAccount = ({
     update
   })
 
+const removeCatalogById = ({ socialAccountId, catalogId, shopId }) =>
+  SocialAccountModal.updateOne({
+    query: {
+      _id: socialAccountId,
+      shop: shopId,
+      'catalogs.id': catalogId
+    },
+    update: {
+      $pull: { catalogs: { id: catalogId } }
+    }
+  })
+
 export default () => ({
   ...SocialAccountModal,
+  removeCatalogById,
   create,
   getByEmail,
   getById,

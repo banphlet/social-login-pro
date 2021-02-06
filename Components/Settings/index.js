@@ -11,7 +11,10 @@ import {
   Toast,
   Loading,
   Spinner,
-  Button
+  Button,
+  Link,
+  Banner,
+  TextContainer
 } from '@shopify/polaris'
 import startCase from 'lodash/startCase'
 import CatalogModal from './CatalogModal'
@@ -27,6 +30,7 @@ export default function Settings ({
   const { loading: syncing, makeRequest } = useMutation({
     path: ''
   })
+
   const [active, setActive] = React.useState(false)
   const [openModal, setOpenModal] = React.useState(false)
   const [toastMessage, setShowToast] = React.useState('')
@@ -82,19 +86,32 @@ export default function Settings ({
 
   const onSyncAllProducts = async account => {
     const payload = {
-      catalogs: [account?.catalog.id],
-      id: account.account_id
+      catalog_id: account?.catalog.id,
+      id: account.account_id,
+      shop_id: shop.id
     }
     const {
       data: { message }
     } = await makeRequest(
       payload,
-      `shops/social_accounts/${account?.catalog.account_id}/sync`
+      `shops/social_accounts/${account?.account_id}/sync`
     )
     setShowToast(message)
-    setTimeout(() => {
-      fetchSocialAccounts({ useInitialQuery: true })
-    }, 10000)
+    // setTimeout(() => {
+    //   fetchSocialAccounts({ useInitialQuery: true })
+    // }, 10000)
+  }
+
+  const removeCatalog = async account => {
+    await makeRequest(
+      {
+        shop_id: shop.id,
+        catalog_id: account.catalog.id,
+        social_account_id: account.account_id
+      },
+      `shops/social_accounts/${account?.account_id}`
+    )
+    fetchSocialAccounts({ useInitialQuery: true })
   }
 
   return (
@@ -141,41 +158,71 @@ export default function Settings ({
 
       <div style={{ marginTop: 20 }}>
         <Heading>
-          Manage Catalogs <Button onClick={toggleModal}>Add Catalog</Button>
+          Manage Catalogs
+          {mergeCatalogIds.length ? (
+            <span style={{ marginLeft: 30 }}>
+              <Button onClick={toggleModal}>Add Catalog</Button>
+            </span>
+          ) : null}
         </Heading>
         <div style={{ marginTop: 30 }} />
         <Layout>
           {mergeCatalogIds.length
-            ? mergeCatalogIds.map(account => (
-                <Layout.Section oneHalf key={account?.catalog.id}>
-                  <Card
-                    title='Facebook Catalog'
-                    actions={[
-                      { content: 'Remove' },
-                      {
-                        content: 'View',
-                        external: true,
-                        url: `https://www.facebook.com/products/catalogs/${account?.catalog.id}/home`
-                      }
-                    ]}
-                    primaryFooterAction={{
-                      content:
-                        account.catalog.sync_status === 'pending'
+            ? mergeCatalogIds.map(account => {
+                const isPending = account.catalog.sync_status === 'pending'
+                const isError = account.catalog.sync_status === 'error'
+                return (
+                  <Layout.Section oneHalf key={account?.catalog.id}>
+                    <Card
+                      title='Facebook Catalog'
+                      actions={[
+                        {
+                          content: 'Remove',
+                          onAction: () => removeCatalog(account),
+                          destructive: true
+                        },
+                        {
+                          content: 'View',
+                          external: true,
+                          url: `https://www.facebook.com/products/catalogs/${account?.catalog.id}/home`
+                        }
+                      ]}
+                      primaryFooterAction={{
+                        content: isPending
                           ? 'Sync Products'
                           : 'Products Synced',
-                      destructive: true,
-                      onAction: () => onSyncAllProducts(account),
-                      disabled: account.catalog.sync_status !== 'pending'
-                    }}
-                  >
-                    <Card.Section>
-                      <TextStyle variation='subdued'>
-                        Catalog Id: {account?.catalog.id}
-                      </TextStyle>
-                    </Card.Section>
-                  </Card>
-                </Layout.Section>
-              ))
+                        destructive: true,
+                        onAction: () => onSyncAllProducts(account),
+                        disabled: !isPending
+                      }}
+                      sectioned
+                    >
+                      <Card.Section>
+                        <TextStyle variation='subdued'>
+                          Catalog Id: {account?.catalog.id}
+                        </TextStyle>
+                      </Card.Section>
+                      <TextContainer>
+                        <Banner
+                          status={
+                            isPending
+                              ? 'info'
+                              : isError
+                              ? 'critical'
+                              : 'success'
+                          }
+                        >
+                          {isPending
+                            ? ' Click the Sync Product button to start syncing for this catalog '
+                            : isError
+                            ? account.catalog.error
+                            : 'AutoSync in on. Latest products will be synced no action needed.'}
+                        </Banner>
+                      </TextContainer>
+                    </Card>
+                  </Layout.Section>
+                )
+              })
             : addFirstCatalog}
         </Layout>
         {syncing && (

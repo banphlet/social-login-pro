@@ -33,7 +33,8 @@ const getById = (id = required('id')) =>
     query: {
       _id: id
     },
-    customErrorMessage
+    customErrorMessage,
+    populate: ['social_accounts']
   })
 
 const getByExternalIdAndPlatform = ({ externalId, platform }) =>

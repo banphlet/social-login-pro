@@ -4,6 +4,7 @@ import { validate } from '../../../lib/utils'
 import { SocialPlatforms } from '../../../models/shops/schema'
 import socialPlatforms from '../../social-platforms'
 import { socialAccount } from '../../../models'
+import { SyncStatus } from '../../../models/social-accounts/schema'
 
 const schema = joi.object({
   access_token: joi.string(),
@@ -17,7 +18,10 @@ const schema = joi.object({
     .required(),
   catalogs: joi.array().items(
     joi.object({
-      id: joi.string().required()
+      id: joi.string().required(),
+      last_sync_handle: joi.string(),
+      sync_status: joi.string().valid(...Object.values(SyncStatus)),
+      error: joi.string()
     })
   )
 })

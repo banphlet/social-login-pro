@@ -27,8 +27,12 @@ const create = Model => async ({ data = required('data'), populate }) => {
   }
 }
 
-const findOne = Model => async ({ query = required('query'), populate }) => {
-  const doc = Model.findOne(query)
+const findOne = Model => async ({
+  query = required('query'),
+  populate,
+  select
+}) => {
+  const doc = Model.findOne(query, select)
   if (populate) {
     doc.populate(populate)
   }
@@ -126,9 +130,10 @@ const BaseModel = Model => {
     ensureExists: async ({
       query = required('query'),
       populate,
-      customErrorMessage
+      customErrorMessage,
+      select
     }) => {
-      const doc = await findOne(Model)({ query, populate })
+      const doc = await findOne(Model)({ query, populate, select })
       if (!doc) {
         throw errors.throwError({
           name: errors.ResourceDoesNotExistsError,

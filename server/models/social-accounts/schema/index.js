@@ -15,8 +15,27 @@ export const SyncStatus = {
   PUSHED: 'pushed',
   COMPLETED: 'completed',
   PENDING: 'pending',
-  ERRORS: 'errors'
+  ERROR: 'error'
 }
+
+const catalogSchema = new mongoose.Schema(
+  {
+    id: {
+      type: String,
+      index: true
+    },
+    last_sync_handle: String,
+    sync_status: {
+      type: String,
+      enum: Object.values(SyncStatus),
+      default: SyncStatus.PENDING
+    },
+    error: String
+  },
+  {
+    _id: false
+  }
+)
 
 export default new mongoose.Schema(
   {
@@ -31,24 +50,7 @@ export default new mongoose.Schema(
       d: SocialAccountStatus.ACTIVE
     },
     catalogs: {
-      type: [
-        {
-          id: {
-            type: String,
-            index: true
-          },
-          last_sync_handle: String,
-          sync_status: {
-            type: String,
-            enum: Object.values(SyncStatus),
-            default: SyncStatus.PENDING
-          },
-          error: String
-        },
-        {
-          _id: false
-        }
-      ],
+      type: [catalogSchema],
       default: []
     },
     access_token: {
