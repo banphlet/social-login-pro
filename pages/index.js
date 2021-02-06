@@ -25,11 +25,11 @@ export default function Home ({ shop }) {
   React.useEffect(() => {
     window.FB?.init({
       appId: process.env.NEXT_PUBLIC_APP_FACEBOOK_ID,
-      autoLogAppEvents: true,
-      xfbml: true,
-      version: 'v8.0'
+      autoLogAppEvents: false,
+      xfbml: false,
+      version: 'v9.0'
     })
-  }, [])
+  })
   const fbLogin = () => {
     window.FB.login(
       function (response) {
