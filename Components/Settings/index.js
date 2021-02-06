@@ -125,7 +125,7 @@ export default function Settings ({
                 <TextField
                   type='text'
                   label={`Account ${startCase(
-                    account.name || account.external_id
+                    account.name ? 'Name' : 'User Id'
                   )}`}
                   onChange={() => {}}
                   disabled
