@@ -41,7 +41,8 @@ const getByExternalIdAndPlatform = ({ externalId, platform }) =>
     query: {
       external_id: externalId,
       platform
-    }
+    },
+    populate: ['social_accounts']
   })
 
 const updateById = (id, update) =>

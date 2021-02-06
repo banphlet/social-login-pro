@@ -23,11 +23,12 @@ const getTokens = ({ platform, ...rest }) =>
   platforms(platform).getOauthAccessTokens(rest)
 
 export default async function installShop (payload) {
-    const validated = validate(schema, payload)
-    const tokens  = await getTokens(validated)
-    const shopDetails = await platforms(validated.platform).getSiteDetails(tokens)
-    console.log(shopDetails);
-      await shopModel().upsertByDomainOrExternalId({ domain: shopDetails.domain, externalId: shopDetails.externalId }, { 
+  const validated = validate(schema, payload)
+  const tokens = await getTokens(validated)
+  const shopDetails = await platforms(validated.platform).getSiteDetails(tokens)
+  await shopModel().upsertByDomainOrExternalId(
+    { domain: shopDetails.domain, externalId: shopDetails.externalId },
+    {
       domain: shopDetails.domain,
       external_id: shopDetails.externalId,
       name: shopDetails.name,
@@ -35,9 +36,10 @@ export default async function installShop (payload) {
       external_access_token: tokens.accessToken,
       external_access_secret: tokens.refreshToken,
       platform: validated.platform
-    })
-
-    return {
-      url: shopDetails.domain
     }
+  )
+
+  return {
+    url: shopDetails.domain
+  }
 }

@@ -1,3 +1,3 @@
 import syncCatalogs from './sync-catalogs'
-
-export default syncCatalogs
+import webhookProduct from './webhook-product'
+export default { syncCatalogs, webhookProduct }

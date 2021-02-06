@@ -16,7 +16,7 @@ export const SocialPlatforms = {
   FACEBOOK: 'facebook'
 }
 
-export default new mongoose.Schema(
+const schema = new mongoose.Schema(
   {
     name: {
       type: String,
@@ -54,36 +54,6 @@ export default new mongoose.Schema(
     },
     external_access_secret: {
       type: String
-    },
-    social_accounts: {
-      type: [
-        {
-          catalog_id: String,
-          access_token: {
-            type: String,
-            required: true
-          },
-          external_id: {
-            type: String,
-            required: true
-          },
-          name: {
-            type: String,
-            required: true
-          },
-          handle: {
-            type: String
-          },
-          last_sync_handle: String,
-          sync_status: String,
-          platform: {
-            type: String,
-            enum: Object.values(SocialPlatforms),
-            required: true
-          }
-        }
-      ],
-      default: []
     }
   },
   {
@@ -99,3 +69,12 @@ export default new mongoose.Schema(
     }
   }
 )
+
+schema.virtual('social_accounts', {
+  ref: 'SocialAccount',
+  localField: '_id',
+  foreignField: 'shop',
+  justOne: false
+})
+
+export default schema

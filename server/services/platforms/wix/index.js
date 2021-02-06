@@ -1,11 +1,12 @@
 'use strict'
-import { pipe, pick, prop } from 'lodash/fp'
+import { pipe, pick, prop, defaultsDeep, flatten } from 'lodash/fp'
 import { asyncPipe, required, validate } from '../../../lib/utils'
 import querystring from 'querystring'
 import joi from '../../../lib/joi'
 import { post, get } from '../../../lib/request'
 import got from './wix-retryer'
 import config from '../../../config'
+import striptags from 'striptags'
 
 const BASE_OAUTH_URL = 'https://www.wix.com'
 const BASE_WIX_API = 'https://www.wixapis.com/apps/v1'
@@ -89,7 +90,7 @@ const getSiteDetails = asyncPipe(
  *@returns {Promise} Resolves to the externalId in the payload
  *
  * **/
-const decode = pipe(
+const decodeToken = pipe(
   token => token.split('.')[1],
   payload => Buffer.from(payload, 'base64').toString('ascii'),
   JSON.parse
@@ -110,7 +111,7 @@ const tryCatch = (fn, errorThrower) => params => {
 const verifyToken = asyncPipe(
   validate(joi.object({ token: joi.string().required() })),
   prop('token'),
-  tryCatch(decode, logAndThrowInvalidToken),
+  tryCatch(decodeToken, logAndThrowInvalidToken),
   prop('instanceId')
 )
 
@@ -183,10 +184,40 @@ const fetchAllProducts = async ({ accessToken, refreshToken, brand }) => {
     }
     numericId = undefined
   }
-  return allProducts.map(transformProduct(brand))
+  return flatten(allProducts.map(transformProduct(brand)))
 }
 
-const transformProduct = brand => product => ({
+const transformProduct = brand => product => {
+  return product.variants?.length > 1
+    ? transformWithVariants({ product, brand })
+    : transformWithOutVariants({ brand, product })
+}
+
+const supportedVariantsKeys = ['color', 'size']
+
+const transformWithVariants = ({ brand, product }) => {
+  return product.variants.map(variant => {
+    const choices = Object.keys(variant.choices).reduce((acc, key) => {
+      const keyToLowerCase = key.toLowerCase()
+      if (supportedVariantsKeys.includes(keyToLowerCase)) {
+        acc[keyToLowerCase] = variant.choices[key]
+      }
+      return acc
+    }, {})
+
+    return defaultsDeep(transformWithOutVariants({ brand, product }), {
+      retailer_id: variant.id,
+      data: {
+        price: variant?.variant?.convertedPriceData.price * 100,
+        sale_price: variant?.variant?.convertedPriceData.discountedPrice * 100,
+        retailer_product_group_id: product.numericId,
+        ...choices
+      }
+    })
+  })
+}
+
+const transformWithOutVariants = ({ brand, product }) => ({
   method: 'UPDATE',
   retailer_id: product.numericId,
   data: {
@@ -195,26 +226,46 @@ const transformProduct = brand => product => ({
     availability: product?.stock?.inStock ? 'in stock' : 'out of stock',
     condition: 'new', // should be changed to the true state of the item
     currency: product.convertedPriceData?.currency,
-    description: product?.description,
+    description: striptags(product?.description),
     name: product?.name,
     price: product?.convertedPriceData?.price * 100,
     sale_price: product?.convertedPriceData?.discountedPrice,
     product_type: product?.productType,
     url: `${product?.productPageUrl?.base}${product?.productPageUrl?.path}`,
     ...(product?.media?.items?.length > 1
-      ? product?.media?.items
-          .slice(1)
-          .map(item => item?.image?.url)
-          .slice(0, 10)
+      ? {
+          additional_image_urls: product?.media?.items
+            .slice(1)
+            .map(item => item?.image?.url)
+            .slice(0, 10)
+        }
       : {})
   }
 })
 
+const getSingleProduct = ({
+  accessToken = required('accessToken'),
+  refreshToken = required('refreshToken'),
+  productId = required('productId'),
+  brand = required('brand')
+}) =>
+  got
+    .get(`products/${productId}`, {
+      headers: {
+        Authorization: accessToken
+      },
+      context: { refreshToken }
+    })
+    .then(response => response.body?.product)
+    .then(transformProduct(brand))
+
 export {
+  getSingleProduct,
   fetchAllProducts,
   getPermissionUrl,
   getOauthAccessTokens,
   getSiteDetails,
   verifyToken,
-  fetchCollections
+  fetchCollections,
+  decodeToken
 }
