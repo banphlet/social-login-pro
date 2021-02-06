@@ -168,9 +168,11 @@ const fetchProducts = ({
     .then(response => response.body)
 
 const fetchAllProducts = async ({ accessToken, refreshToken, brand }) => {
+  console.log('fetching products accessToken', accessToken)
+  console.log('fetching products refreshToken', refreshToken)
+
   const firstItems = await fetchProducts({ accessToken, refreshToken })
   const allProducts = firstItems.products
-  console.log('fetching products', allProducts)
   let numericId = allProducts.pop()?.numericId
   while (numericId) {
     const { products } = await fetchProducts({
