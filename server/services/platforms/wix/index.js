@@ -170,7 +170,7 @@ const fetchProducts = ({
 const fetchAllProducts = async ({ accessToken, refreshToken, brand }) => {
   const firstItems = await fetchProducts({ accessToken, refreshToken })
   const allProducts = firstItems.products
-
+  console.log('fetching products', allProducts)
   let numericId = allProducts.pop()?.numericId
   while (numericId) {
     const { products } = await fetchProducts({
