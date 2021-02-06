@@ -168,8 +168,8 @@ const fetchProducts = ({
     .then(response => response.body)
 
 const fetchAllProducts = async ({ accessToken, refreshToken, brand }) => {
-  console.log('fetching products accessToken', accessToken)
-  console.log('fetching products refreshToken', refreshToken)
+  console.log('fetching products accessToken========>', accessToken)
+  console.log('fetching products refreshToken========>', refreshToken)
 
   const firstItems = await fetchProducts({ accessToken, refreshToken })
   const allProducts = firstItems.products
