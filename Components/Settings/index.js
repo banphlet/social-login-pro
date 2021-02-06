@@ -188,9 +188,7 @@ export default function Settings ({
                         }
                       ]}
                       primaryFooterAction={{
-                        content: isPending
-                          ? 'Sync Products'
-                          : 'Products Synced',
+                        content: isPending ? 'Start sync' : 'Products Synced',
                         destructive: true,
                         onAction: () => onSyncAllProducts(account),
                         disabled: !isPending || !isActive
@@ -217,7 +215,7 @@ export default function Settings ({
                           {isPending
                             ? !isActive
                               ? 'Product sync is disabled. Product wont be synced to facebook'
-                              : ' Click the Sync Product button to start syncing for this catalog '
+                              : ' Click the Start Sync button to start syncing for this catalog '
                             : isError
                             ? account.catalog.error
                             : !isActive
