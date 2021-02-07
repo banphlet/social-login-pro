@@ -35,11 +35,12 @@ export default async function installShop (payload) {
       email: shopDetails.email,
       external_access_token: tokens.accessToken,
       external_access_secret: tokens.refreshToken,
-      platform: validated.platform
+      platform: validated.platform,
+      locale: shopDetails.locale
     }
   )
 
   return {
-    url: shopDetails.domain
+    url: 'https://manage.wix.com'
   }
 }

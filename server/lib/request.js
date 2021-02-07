@@ -9,7 +9,7 @@ const got = request.extend({
 
 const handleError = gotR =>
   gotR.catch(err => {
-    console.error(err?.response)
+    console.error(err)
     throw err.response
   })
 

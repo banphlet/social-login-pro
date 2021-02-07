@@ -1,6 +1,5 @@
 import React from 'react'
 import {
-  Button,
   Modal,
   Stack,
   TextContainer,
@@ -15,7 +14,8 @@ export default function CatalogModal ({
   openModal,
   onUpdateSocialAccount,
   socialAccounts,
-  loading
+  loading,
+  translate
 }) {
   const [catalogId, setCatalogId] = React.useState('')
   const [showToast, setShowToast] = React.useState(false)
@@ -25,7 +25,7 @@ export default function CatalogModal ({
     <>
       {showToast ? (
         <Toast
-          content='Catalog Id is about 15 characters'
+          content={translate('catalog_id_error_message')}
           onDismiss={toggleToast}
         />
       ) : null}
@@ -33,9 +33,9 @@ export default function CatalogModal ({
       <Modal
         open={openModal}
         onClose={toggleModal}
-        title='Add a new Catalog Id'
+        title={translate('add_new_catalog_id_title')}
         primaryAction={{
-          content: 'Add',
+          content: translate('add'),
           onAction: async _ => {
             if (catalogId.length < 15) return toggleToast()
             await onUpdateSocialAccount({
@@ -53,7 +53,7 @@ export default function CatalogModal ({
         }}
         secondaryActions={[
           {
-            content: 'Close',
+            content: translate('close'),
             onAction: toggleModal
           }
         ]}
@@ -63,9 +63,9 @@ export default function CatalogModal ({
             <Stack.Item>
               <TextContainer>
                 <p>
-                  Add a catalog id from facebook{' '}
+                  {translate('add_catalog_id_content')}{' '}
                   <Link url='https://www.facebook.com/products/' external>
-                    View Catalogs
+                    {translate('view_catalogs')}
                   </Link>
                 </p>
               </TextContainer>
@@ -73,8 +73,8 @@ export default function CatalogModal ({
             <Stack.Item fill>
               <TextField
                 value={catalogId}
-                label='Catalog Id'
-                placeholder='Enter facebook catalog id'
+                label={translate('add_catalog_id_input_label')}
+                placeholder={translate('add_catalog_id_input_placeholder')}
                 onChange={setCatalogId}
                 type='number'
                 minLength={12}

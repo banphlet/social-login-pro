@@ -1,11 +1,13 @@
 import React from 'react'
-import { EmptyState, Toast } from '@shopify/polaris'
+import { EmptyState } from '@shopify/polaris'
 import Settings from '../Components/Settings'
 import useMutation from '../Hooks/useMutation'
 import useQuery from '../Hooks/useQuery'
 import SkeletonLoader from '../Components/SkeletonLoader'
+import nextI18n from '../i18n'
 
 export default function Home ({ shop }) {
+  const { t: translate } = nextI18n.useTranslation()
   const { makeRequest, loading } = useMutation({
     path: 'shops/social_accounts',
     method: 'post'
@@ -30,6 +32,7 @@ export default function Home ({ shop }) {
       version: 'v9.0'
     })
   })
+
   const fbLogin = () => {
     window.FB.login(
       function (response) {
@@ -58,19 +61,16 @@ export default function Home ({ shop }) {
   const FacebookNotConnected = (
     <div>
       <EmptyState
-        heading='Sync products with your facebook catalog'
+        heading={translate('empty_account_heading')}
         action={{
-          content: 'Connect With Facebook',
+          content: translate('empty_account_button_text'),
           onAction: fbLogin,
           loading
         }}
         image='https://cdn.shopify.com/s/files/1/0757/9955/files/empty-state.svg'
         fullWidth
       >
-        <p>
-          Sync your products to facebook catalog. Create a shop to sell on
-          facebook and instagram
-        </p>
+        <p>{translate('empty_account_context_text')}</p>
       </EmptyState>
     </div>
   )

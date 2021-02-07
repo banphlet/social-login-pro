@@ -63,6 +63,10 @@ const schema = new mongoose.Schema(
       required: true,
       set: cryptr.encrypt,
       get: cryptr.decrypt
+    },
+    locale: {
+      type: String,
+      default: 'en'
     }
   },
   {

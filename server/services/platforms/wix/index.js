@@ -54,8 +54,9 @@ const getOauthAccessTokens = asyncPipe(
 )
 
 const getDetails = get(`${BASE_WIX_API}/instance`)
-const getShopEmail = get(
-  'https://www.wixapis.com/site-properties/v4/properties?fields.paths=email'
+const getBusinessDetails = get(
+  'https://www.wixapis.com/site-properties/v4/properties?fields.paths' +
+    querystring.stringify(['email', 'multilingual', 'locale', 'language'])
 )
 const getShopDetails = ({ accessToken }) =>
   Promise.all([
@@ -64,7 +65,7 @@ const getShopDetails = ({ accessToken }) =>
         Authorization: accessToken
       }
     }),
-    getShopEmail({
+    getBusinessDetails({
       headers: {
         Authorization: accessToken
       }
@@ -79,7 +80,8 @@ const getSiteDetails = asyncPipe(
     externalId: siteDetails.instance.instanceId,
     domain: siteDetails.site.url,
     name: siteDetails.site.siteDisplayName,
-    email: moreDetails.properties.email
+    email: moreDetails.properties.email,
+    locale: moreDetails?.properties?.language
   })
 )
 

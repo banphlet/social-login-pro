@@ -5,7 +5,6 @@ import {
   Layout,
   TextField,
   Heading,
-  SettingToggle,
   TextStyle,
   EmptyState,
   Toast,
@@ -18,6 +17,7 @@ import {
 import startCase from 'lodash/startCase'
 import CatalogModal from './CatalogModal'
 import useMutation from '../../Hooks/useMutation'
+import nextI18n from '../../i18n'
 
 export default function Settings ({
   shop,
@@ -26,6 +26,8 @@ export default function Settings ({
   loading,
   fetchSocialAccounts
 }) {
+  const { t: translate } = nextI18n.useTranslation()
+
   const { loading: syncing, makeRequest } = useMutation({
     path: ''
   })
@@ -50,18 +52,15 @@ export default function Settings ({
 
   const addFirstCatalog = (
     <EmptyState
-      heading='Add your first facebook catalog'
+      heading={translate('no_catalogs_empty_header_text')}
       action={{
-        content: 'Add your first Catalog',
+        content: translate('no_catalogs_empty_button_text'),
         onAction: toggleModal
       }}
       image='https://cdn.shopify.com/s/files/1/0757/9955/files/empty-state.svg'
       fullWidth
     >
-      <p>
-        Sync your products to facebook catalog. Create a shop to sell on
-        facebook and instagram
-      </p>
+      <p>{translate('no_catalogs_empty_content_text')}</p>
     </EmptyState>
   )
 
@@ -78,13 +77,11 @@ export default function Settings ({
       id: account.account_id,
       shop_id: shop.id
     }
-    const {
-      data: { message }
-    } = await makeRequest(
+    await makeRequest(
       payload,
       `shops/social_accounts/${account?.account_id}/sync`
     )
-    setShowToast(message)
+    setShowToast(translate('start_sync_loading'))
     setTimeout(() => {
       fetchSocialAccounts({ useInitialQuery: true })
     }, 5000)
@@ -102,8 +99,6 @@ export default function Settings ({
     fetchSocialAccounts({ useInitialQuery: true })
   }
 
-  console.log(socialAccounts)
-
   return (
     <div style={{ padding: 50 }}>
       {toastMessage ? (
@@ -112,17 +107,17 @@ export default function Settings ({
       <Layout>
         {socialAccounts.map(account => (
           <Layout.AnnotatedSection
-            title={`${startCase(account.platform)} Details`}
-            description='Information on Connected Facebook Account'
+            title={translate('account_section_detail', {
+              platform: startCase(account.platform)
+            })}
+            description={translate('account_section_detail_text')}
             key={account.id}
           >
             <Card sectioned>
               <FormLayout>
                 <TextField
                   type='text'
-                  label={`Account ${startCase(
-                    account.name ? 'Name' : 'User Id'
-                  )}`}
+                  label={translate('account_section_input_text')}
                   onChange={() => {}}
                   disabled
                   value={account?.name || account?.external_id}
@@ -135,10 +130,12 @@ export default function Settings ({
 
       <div style={{ marginTop: 20 }}>
         <Heading>
-          Manage Catalogs
+          {translate('manage_catalogs_text')}
           {mergeCatalogIds.length ? (
             <span style={{ marginLeft: 30 }}>
-              <Button onClick={toggleModal}>Add Catalog</Button>
+              <Button onClick={toggleModal}>
+                {translate('add_catalogs_text')}
+              </Button>
             </span>
           ) : null}
         </Heading>
@@ -152,23 +149,23 @@ export default function Settings ({
                 return (
                   <Layout.Section oneHalf key={account?.catalog.id}>
                     <Card
-                      title='Facebook Catalog'
+                      title={translate('catalog_card_title')}
                       actions={[
                         {
-                          content: 'Remove',
+                          content: translate('remove'),
                           onAction: () => removeCatalog(account),
                           destructive: true
                         },
                         {
-                          content: 'View',
+                          content: translate('view'),
                           external: true,
                           url: `https://www.facebook.com/products/catalogs/${account?.catalog.id}/home`
                         },
                         {
                           content:
                             account?.catalog.status === 'A'
-                              ? 'Disable'
-                              : 'Enable',
+                              ? translate('enable')
+                              : translate('disable'),
                           onAction: () => {
                             const catalogIndex = socialAccounts[0].catalogs.findIndex(
                               item => item.id === account.catalog.id
@@ -188,7 +185,9 @@ export default function Settings ({
                         }
                       ]}
                       primaryFooterAction={{
-                        content: isPending ? 'Start sync' : 'Products Synced',
+                        content: isPending
+                          ? translate('start_sync')
+                          : translate('products_synced'),
                         destructive: true,
                         onAction: () => onSyncAllProducts(account),
                         disabled: !isPending || !isActive
@@ -197,7 +196,7 @@ export default function Settings ({
                     >
                       <Card.Section>
                         <TextStyle variation='subdued'>
-                          Catalog Id: {account?.catalog.id}
+                          {translate('catalog_id')}: {account?.catalog.id}
                         </TextStyle>
                       </Card.Section>
                       <TextContainer>
@@ -214,13 +213,13 @@ export default function Settings ({
                         >
                           {isPending
                             ? !isActive
-                              ? 'Product sync is disabled. Product wont be synced to facebook'
-                              : ' Click the Start Sync button to start syncing for this catalog '
+                              ? translate('pending_sync_status_inactive')
+                              : translate('pending_sync_status_active')
                             : isError
                             ? account.catalog.error
                             : !isActive
-                            ? 'Product sync is disabled. Product wont be synced to facebook'
-                            : 'AutoSync in on. Latest products will be synced no action needed.'}
+                            ? translate('error_sync_status_inactive')
+                            : translate('pushed_sync_status_active')}
                         </Banner>
                       </TextContainer>
                     </Card>
@@ -231,7 +230,7 @@ export default function Settings ({
         </Layout>
         {syncing && (
           <div style={{ marginLeft: '40vw', marginTop: 20 }}>
-            <Spinner accessibilityLabel='Spinner example' size='small' />
+            <Spinner accessibilityLabel='loader' size='small' />
           </div>
         )}
       </div>
@@ -241,6 +240,7 @@ export default function Settings ({
         onUpdateSocialAccount={onUpdateSocialAccount}
         socialAccounts={socialAccounts}
         loading={loading}
+        translate={translate}
       />
       {syncing && <Loading />}
     </div>
