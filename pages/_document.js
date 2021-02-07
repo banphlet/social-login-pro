@@ -11,6 +11,7 @@ class MyDocument extends Document {
           crossOrigin='anonymous'
           src='https://connect.facebook.net/en_US/all.js'
         ></script>
+        <script src='//static.parastorage.com/services/js-sdk/1.537.0/js/wix.min.js'></script>
         <body>
           <Main />
           <NextScript />
