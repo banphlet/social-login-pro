@@ -12,11 +12,7 @@ const schema = joi.object({
     .string()
     .valid(...Object.values(Platforms))
     .required(),
-  instanceId: joi.string().when('platform', {
-    is: Platforms.WIX,
-    then: joi.required(),
-    otherwise: joi.optional()
-  })
+  shop: joi.string()
 })
 
 const getTokens = ({ platform, ...rest }) =>
@@ -24,23 +20,36 @@ const getTokens = ({ platform, ...rest }) =>
 
 export default async function installShop (payload) {
   const validated = validate(schema, payload)
+
   const tokens = await getTokens(validated)
-  const shopDetails = await platforms(validated.platform).getSiteDetails(tokens)
-  await shopModel().upsertByDomainOrExternalId(
-    { domain: shopDetails.domain, externalId: shopDetails.externalId },
+  const shopDetails = await platforms(validated.platform).getSiteDetails({
+    ...tokens,
+    ...validated
+  })
+  const shop = await shopModel().upsertByPlatformDomainOrExternalId(
+    {
+      platformDomain: shopDetails.platformDomain,
+      externalId: shopDetails.externalId
+    },
     {
       domain: shopDetails.domain,
       external_id: shopDetails.externalId,
       name: shopDetails.name,
       email: shopDetails.email,
       external_access_token: tokens.accessToken,
-      external_access_secret: tokens.refreshToken,
       platform: validated.platform,
-      locale: shopDetails.locale
+      locale: shopDetails.locale,
+      platform_domain: shopDetails.platformDomain
     }
   )
 
+  await platforms(validated.platform).injectScript({
+    accessToken: tokens.accessToken,
+    platformDomain: shopDetails.platformDomain
+  })
+
   return {
-    url: 'https://manage.wix.com'
+    url: '/',
+    shop
   }
 }

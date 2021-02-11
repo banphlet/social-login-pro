@@ -2,23 +2,24 @@ import '@shopify/polaris/dist/styles.css'
 import enTranslations from '@shopify/polaris/locales/en.json'
 import React from 'react'
 import { AppProvider, Frame } from '@shopify/polaris'
-import i18n, { supportedLanguages } from '../i18n'
+import { Provider } from '@shopify/app-bridge-react'
+
+import i18n from '../i18n'
 
 function MyApp ({ Component, pageProps }) {
-  React.useEffect(() => {
-    const Wix = window.Wix
-    const language = Wix.Utils.getLocale()
-    const isSupported = supportedLanguages.includes(language)
-    if (isSupported) {
-      i18n.i18n.changeLanguage(language)
-    }
-  }, [])
-
   return (
     <AppProvider i18n={enTranslations}>
-      <Frame>
-        <Component {...pageProps} />
-      </Frame>
+      <Provider
+        config={{
+          shopOrigin: pageProps?.shop?.platform_domain,
+          apiKey: process.env.NEXT_PUBLIC_SHOPIFY_CLIENT_ID,
+          forceRedirect: true
+        }}
+      >
+        <Frame>
+          <Component {...pageProps} />
+        </Frame>
+      </Provider>
     </AppProvider>
   )
 }

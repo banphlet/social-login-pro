@@ -54,8 +54,8 @@ const updateById = (id, update) =>
     update
   })
 
-const upsertByDomainOrExternalId = (
-  { externalId, domain },
+const upsertByPlatformDomainOrExternalId = (
+  { externalId, platformDomain },
   update = required('update')
 ) =>
   ShopModel.upsert({
@@ -65,7 +65,7 @@ const upsertByDomainOrExternalId = (
           external_id: externalId
         },
         {
-          domain
+          platform_domain: platformDomain
         }
       ]
     },
@@ -78,6 +78,6 @@ export default () => ({
   getByEmail,
   getById,
   updateById,
-  upsertByDomainOrExternalId,
+  upsertByPlatformDomainOrExternalId,
   getByExternalIdAndPlatform
 })

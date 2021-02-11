@@ -1,9 +1,9 @@
 'use strict'
 
-import * as wix from './wix'
+import * as shopify from './shopify'
 
 const platformApis = {
-  wix
+  shopify
 }
 
 const wrongPlatformError = _ => {

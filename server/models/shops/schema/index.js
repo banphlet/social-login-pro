@@ -13,11 +13,12 @@ export const StoreStatusTypes = {
 }
 
 export const Platforms = {
-  WIX: 'wix'
+  SHOPIFY: 'shopify'
 }
 
-export const SocialPlatforms = {
-  FACEBOOK: 'facebook'
+export const LimitBy = {
+  IP: 'ip',
+  EMAIL: 'email'
 }
 
 const schema = new mongoose.Schema(
@@ -34,6 +35,13 @@ const schema = new mongoose.Schema(
       sparse: true
     },
     external_id: {
+      type: String,
+      required: true,
+      unique: true,
+      index: true,
+      sparse: true
+    },
+    platform_domain: {
       type: String,
       required: true,
       unique: true,
@@ -58,15 +66,18 @@ const schema = new mongoose.Schema(
       set: cryptr.encrypt,
       get: cryptr.decrypt
     },
-    external_access_secret: {
-      type: String,
-      required: true,
-      set: cryptr.encrypt,
-      get: cryptr.decrypt
-    },
     locale: {
       type: String,
       default: 'en'
+    },
+    limit_by: {
+      type: String,
+      enum: Object.values(LimitBy),
+      default: LimitBy.IP
+    },
+    attempts: {
+      type: Number,
+      default: 3
     }
   },
   {
@@ -84,12 +95,5 @@ const schema = new mongoose.Schema(
     }
   }
 )
-
-schema.virtual('social_accounts', {
-  ref: 'SocialAccount',
-  localField: '_id',
-  foreignField: 'shop',
-  justOne: false
-})
 
 export default schema

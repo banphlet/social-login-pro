@@ -4,17 +4,16 @@ import schema from './schema'
 import BaseModel from '../common/base-model'
 import { required } from '../../lib/utils'
 
-const Model =
-  mongoose.models.SocialAccount || mongoose.model('SocialAccount', schema)
-const SocialAccountModal = BaseModel(Model)
+const Model = mongoose.models.Customer || mongoose.model('Customer', schema)
+const CustomerModal = BaseModel(Model)
 
-const customErrorMessage = 'social account does not exist'
+const customErrorMessage = 'customer does not exist'
 
 /**
  * Update or create by email
  */
 const create = (payload = required('payload')) =>
-  SocialAccountModal.create({
+  CustomerModal.create({
     data: payload
   })
 
@@ -22,7 +21,7 @@ const getByEmail = (
   email = required('email'),
   errMessage = customErrorMessage
 ) =>
-  SocialAccountModal.ensureExists({
+  CustomerModal.ensureExists({
     query: {
       email
     },
@@ -30,7 +29,7 @@ const getByEmail = (
   })
 
 const getById = (id = required('id')) =>
-  SocialAccountModal.ensureExists({
+  CustomerModal.ensureExists({
     query: {
       _id: id
     },
@@ -38,7 +37,7 @@ const getById = (id = required('id')) =>
   })
 
 const getByExternalIdAndPlatform = ({ externalId, platform }) =>
-  SocialAccountModal.ensureExists({
+  CustomerModal.ensureExists({
     query: {
       external_id: externalId,
       platform
@@ -46,7 +45,7 @@ const getByExternalIdAndPlatform = ({ externalId, platform }) =>
   })
 
 const updateById = (id, update) =>
-  SocialAccountModal.updateOne({
+  CustomerModal.updateOne({
     query: {
       _id: id
     },
@@ -57,7 +56,7 @@ const upsertByExternalIdPlatformAndShopId = (
   { externalId, platform, shopId },
   update = required('update')
 ) =>
-  SocialAccountModal.upsert({
+  CustomerModal.upsert({
     query: {
       external_id: externalId,
       platform,
@@ -67,7 +66,7 @@ const upsertByExternalIdPlatformAndShopId = (
   })
 
 const fetchByShopId = shopId =>
-  SocialAccountModal.fetch({
+  CustomerModal.fetch({
     query: {
       shop: shopId
     },
@@ -79,7 +78,7 @@ const getByIdAndCatalogs = ({
   catalogId = required('catalogs'),
   shopId = required('shopId')
 }) =>
-  SocialAccountModal.ensureExists({
+  CustomerModal.ensureExists({
     query: {
       _id: id,
       shop: shopId
@@ -92,12 +91,12 @@ const getByIdAndCatalogs = ({
     }
   })
 
-const updateByCatalogIdAndSocialAccount = ({
+const updateByCatalogIdAndCustomer = ({
   catalogId = required('catalogId'),
   id = required('id'),
   update = {}
 }) =>
-  SocialAccountModal.updateOne({
+  CustomerModal.updateOne({
     query: {
       'catalogs.id': catalogId,
       _id: id
@@ -105,10 +104,10 @@ const updateByCatalogIdAndSocialAccount = ({
     update
   })
 
-const removeCatalogById = ({ socialAccountId, catalogId, shopId }) =>
-  SocialAccountModal.updateOne({
+const removeCatalogById = ({ CustomerId, catalogId, shopId }) =>
+  CustomerModal.updateOne({
     query: {
-      _id: socialAccountId,
+      _id: CustomerId,
       shop: shopId,
       'catalogs.id': catalogId
     },
@@ -118,7 +117,7 @@ const removeCatalogById = ({ socialAccountId, catalogId, shopId }) =>
   })
 
 export default () => ({
-  ...SocialAccountModal,
+  ...CustomerModal,
   removeCatalogById,
   create,
   getByEmail,
@@ -128,5 +127,5 @@ export default () => ({
   getByExternalIdAndPlatform,
   fetchByShopId,
   getByIdAndCatalogs,
-  updateByCatalogIdAndSocialAccount
+  updateByCatalogIdAndCustomer
 })

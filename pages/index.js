@@ -1,103 +1,93 @@
 import React from 'react'
-import { EmptyState } from '@shopify/polaris'
-import Settings from '../Components/Settings'
+import {
+  Layout,
+  Card,
+  FormLayout,
+  TextField,
+  Select,
+  Stack,
+  Button,
+  EmptyState,
+  Loading,
+  Form
+} from '@shopify/polaris'
 import useMutation from '../Hooks/useMutation'
-import useQuery from '../Hooks/useQuery'
-import SkeletonLoader from '../Components/SkeletonLoader'
-import nextI18n from '../i18n'
+
+const options = [
+  { label: 'IP', value: 'ip' },
+  { label: 'EMAIL', value: 'email' }
+]
 
 export default function Home ({ shop }) {
-  const { t: translate } = nextI18n.useTranslation()
+  const [attempts, setAttempts] = React.useState(String(shop?.attempts))
+  const [limitBy, setLimitBy] = React.useState(shop?.limit_by)
+
   const { makeRequest, loading } = useMutation({
-    path: 'shops/social_accounts',
-    method: 'post'
-  })
-  const {
-    data: { data: socialAccounts = [] } = {},
-    loading: fetching,
-    refetch,
-    updateData
-  } = useQuery({
-    path: 'shops/social_accounts',
-    initQuery: {
-      shop_id: shop.id
-    }
+    path: 'shops/me',
+    method: 'put'
   })
 
-  React.useEffect(() => {
-    window.FB?.init({
-      appId: process.env.NEXT_PUBLIC_APP_FACEBOOK_ID,
-      autoLogAppEvents: false,
-      xfbml: false,
-      version: 'v9.0'
+  const onSave = () => {
+    makeRequest({
+      shop_id: shop.id,
+      attempts,
+      limit_by: limitBy
     })
-  })
-
-  const fbLogin = () => {
-    window.FB.login(
-      function (response) {
-        if (response.authResponse) {
-          window.FB.api('/me', async data => {
-            const payload = {
-              access_token: response?.authResponse.accessToken,
-              external_id: response.authResponse.userID,
-              platform: 'facebook',
-              shop_id: shop.id,
-              name: data.name
-            }
-            await makeRequest(payload)
-            refetch({ useInitialQuery: true })
-          })
-        } else {
-          // user cancelled
-        }
-      },
-      {
-        scope: 'catalog_management'
-      }
-    )
   }
 
-  const FacebookNotConnected = (
-    <div>
+  return (
+    <div style={{ padding: 50 }}>
+      {loading ? <Loading /> : null}
+
+      {/* <Stack distribution='trailing'>
+        <Button onClick={onSave} disabled={loading} primary>
+          Save
+        </Button>
+      </Stack> */}
+      <Layout>
+        <Layout.AnnotatedSection
+          title='Login Limit Settings'
+          description='Customize when account should be blocked'
+        >
+          <Card sectioned>
+            <Form onSubmit={onSave}>
+              <FormLayout>
+                <Select
+                  label='Limit By'
+                  onChange={setLimitBy}
+                  options={options}
+                  value={limitBy}
+                />
+                <TextField
+                  label='Attempts'
+                  helpText='Total login attempts before blocking a user'
+                  type='number'
+                  placeholder='Total login attempts'
+                  value={attempts}
+                  onChange={setAttempts}
+                  min={2}
+                />
+              </FormLayout>
+              <p style={{ marginBottom: 30 }} />
+              <Stack distribution='trailing'>
+                <Button submit disabled={loading} primary>
+                  Save
+                </Button>
+              </Stack>
+            </Form>
+          </Card>
+        </Layout.AnnotatedSection>
+      </Layout>
+      <p style={{ marginBottom: 30 }} />
+
       <EmptyState
-        heading={translate('empty_account_heading')}
-        action={{
-          content: translate('empty_account_button_text'),
-          onAction: fbLogin,
-          loading
-        }}
+        heading='No Blocked Users Yet'
         image='https://cdn.shopify.com/s/files/1/0757/9955/files/empty-state.svg'
         fullWidth
       >
-        <p>{translate('empty_account_context_text')}</p>
+        <p>Blocked users will show up here</p>
       </EmptyState>
     </div>
-  )
-
-  if (fetching) return <SkeletonLoader />
-
-  const updateSocialAccount = async payload => {
-    const { data } = await makeRequest(payload)
-    const accountIndex = [...socialAccounts].findIndex(
-      acc => acc.id === data.id
-    )
-    socialAccounts[accountIndex] = data
-    updateData({
-      data: [...socialAccounts]
-    })
-  }
-
-  return !socialAccounts.length ? (
-    FacebookNotConnected
-  ) : (
-    <Settings
-      updateSocialAccount={updateSocialAccount}
-      shop={shop}
-      socialAccounts={socialAccounts}
-      loading={loading}
-      fetchSocialAccounts={refetch}
-    />
   )
 }
 
