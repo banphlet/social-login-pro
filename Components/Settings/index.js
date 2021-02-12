@@ -1,248 +1,205 @@
 import React from 'react'
 import {
-  FormLayout,
-  Card,
   Layout,
+  Card,
+  FormLayout,
   TextField,
-  Heading,
-  TextStyle,
+  Select,
   EmptyState,
-  Toast,
   Loading,
-  Spinner,
-  Button,
-  Banner,
-  TextContainer
+  Form,
+  ContextualSaveBar,
+  SettingToggle,
+  TextStyle
 } from '@shopify/polaris'
-import startCase from 'lodash/startCase'
-import CatalogModal from './CatalogModal'
 import useMutation from '../../Hooks/useMutation'
-import nextI18n from '../../i18n'
+import isEqual from 'lodash/isEqual'
+import { SketchPicker } from 'react-color'
 
-export default function Settings ({
-  shop,
-  socialAccounts = [],
-  updateSocialAccount,
-  loading,
-  fetchSocialAccounts
-}) {
-  const { t: translate } = nextI18n.useTranslation()
+const options = [
+  { label: 'IP', value: 'ip' },
+  { label: 'EMAIL', value: 'email' }
+]
 
-  const { loading: syncing, makeRequest } = useMutation({
-    path: ''
+export default function Settings ({ shop }) {
+  const { makeRequest, loading, data: { data } = {} } = useMutation({
+    path: 'shops/me',
+    method: 'put'
   })
-  const [openModal, setOpenModal] = React.useState(false)
-  const [toastMessage, setShowToast] = React.useState('')
 
-  const mergeCatalogIds = socialAccounts.reduce((acc, account) => {
-    const mapped = account.catalogs.map(catalog => ({
-      catalog,
-      user_external_id: account.external_id,
-      user_platform: account.platform,
-      account_id: account.id
-    }))
-    acc.push(...mapped)
-    return acc
-  }, [])
+  const initialFormFields = {
+    limit_by: data?.limit_by || shop.limit_by,
+    attempts: String(data?.attempts || shop.attempts),
+    duration: String(data?.duration || shop.duration),
+    banner_message: data?.banner_message || shop.banner_message,
+    status: data?.status || shop?.status,
+    background_color: data?.background_color || shop?.background_color,
+    text_color: data?.text_color || shop?.text_color
+  }
+  const [formFields, setFormFields] = React.useState(initialFormFields)
+  const [showContextSave, setShowContextSave] = React.useState(false)
 
-  const toggleModal = React.useCallback(
-    () => setOpenModal(openModal => !openModal),
-    []
-  )
-
-  const addFirstCatalog = (
-    <EmptyState
-      heading={translate('no_catalogs_empty_header_text')}
-      action={{
-        content: translate('no_catalogs_empty_button_text'),
-        onAction: toggleModal
-      }}
-      image='https://cdn.shopify.com/s/files/1/0757/9955/files/empty-state.svg'
-      fullWidth
-    >
-      <p>{translate('no_catalogs_empty_content_text')}</p>
-    </EmptyState>
-  )
-
-  const onUpdateSocialAccount = (payload = {}) => {
-    updateSocialAccount({
+  const onSave = async () => {
+    await makeRequest({
       shop_id: shop.id,
-      ...payload
+      ...formFields
     })
+    setShowContextSave(false)
   }
 
-  const onSyncAllProducts = async account => {
-    const payload = {
-      catalog_id: account?.catalog.id,
-      id: account.account_id,
-      shop_id: shop.id
-    }
-    await makeRequest(
-      payload,
-      `shops/social_accounts/${account?.account_id}/sync`
-    )
-    setShowToast(translate('start_sync_loading'))
-    setTimeout(() => {
-      fetchSocialAccounts({ useInitialQuery: true })
-    }, 5000)
-  }
+  const updateField = (field, value) =>
+    setFormFields({ ...formFields, [field]: value })
 
-  const removeCatalog = async account => {
-    await makeRequest(
-      {
-        shop_id: shop.id,
-        catalog_id: account.catalog.id,
-        social_account_id: account.account_id
-      },
-      `shops/social_accounts/${account?.account_id}`
-    )
-    fetchSocialAccounts({ useInitialQuery: true })
-  }
+  React.useEffect(() => {
+    const hasChanges = !isEqual(initialFormFields, formFields)
+    setShowContextSave(hasChanges)
+  }, [formFields])
 
   return (
-    <div style={{ padding: 50 }}>
-      {toastMessage ? (
-        <Toast content={toastMessage} onDismiss={() => setShowToast('')} />
+    <div>
+      {loading ? <Loading /> : null}
+      {showContextSave ? (
+        <ContextualSaveBar
+          fullWidth
+          message='Unsaved changes'
+          saveAction={{
+            onAction: onSave,
+            loading,
+            disabled: loading || !formFields.attempts
+          }}
+          discardAction={{
+            onAction: () => setFormFields(initialFormFields)
+          }}
+        />
       ) : null}
+      <p style={{ marginBottom: 10 }} />
       <Layout>
-        {socialAccounts.map(account => (
-          <Layout.AnnotatedSection
-            title={translate('account_section_detail', {
-              platform: startCase(account.platform)
-            })}
-            description={translate('account_section_detail_text')}
-            key={account.id}
+        <Layout.AnnotatedSection
+          title='Login Limit Settings'
+          description='Customize when account should be blocked'
+        >
+          <SettingToggle
+            action={{
+              content: formFields.status === 'A' ? 'Disable' : 'Enable',
+              onAction: () =>
+                updateField('status', formFields?.status === 'A' ? 'D' : 'A')
+            }}
+            enabled={formFields.status === 'A'}
           >
-            <Card sectioned>
+            This setting is{' '}
+            <TextStyle variation='strong'>
+              {formFields.status === 'A' ? 'Enabled' : 'Disabled'}
+            </TextStyle>
+            .
+          </SettingToggle>
+          <Card sectioned>
+            <Form onSubmit={onSave}>
               <FormLayout>
+                <Select
+                  label='Block By'
+                  onChange={value => updateField('limit_by', value)}
+                  options={options}
+                  value={formFields.limit_by}
+                />
                 <TextField
+                  label='Attempts'
+                  helpText='Total login attempts before blocking a user'
+                  type='number'
+                  placeholder='Total login attempts'
+                  value={formFields.attempts}
+                  onChange={value => updateField('attempts', value)}
+                  min={1}
+                  error={!formFields.attempts && 'Enter attempts'}
+                />
+                <TextField
+                  label='Duration'
+                  helpText='How many minutes after which customer can login'
+                  type='number'
+                  placeholder='Amount of time in minutes customer has to wait'
+                  value={formFields.duration}
+                  onChange={value => updateField('duration', value)}
+                  min={1}
+                  error={!formFields.duration && 'Enter duration'}
+                  prefix='MINS'
+                />
+                <TextField
+                  label='Error Message'
+                  helpText='Error message customers will see'
                   type='text'
-                  label={translate('account_section_input_text')}
-                  onChange={() => {}}
-                  disabled
-                  value={account?.name || account?.external_id}
+                  value={formFields.banner_message}
+                  onChange={value => updateField('banner_message', value)}
+                  min={1}
+                  error={!formFields.banner_message && 'Enter error message '}
+                  multiline
                 />
               </FormLayout>
-            </Card>
-          </Layout.AnnotatedSection>
-        ))}
+              {/* <p style={{ marginBottom: 30 }} />
+              <Stack distribution='trailing'>
+                <Button submit disabled={loading} primary>
+                  Save
+                </Button>
+              </Stack> */}
+            </Form>
+          </Card>
+          <div style={{ marginTop: 20 }} />
+          <Layout>
+            <Layout.Section oneHalf>
+              <Card title='Order details' sectioned>
+                <div
+                  style={{ display: 'flex', justifyContent: 'space-between' }}
+                >
+                  <div>
+                    <TextStyle variation='strong'>
+                      Select Error Text Color
+                    </TextStyle>
+                    <div style={{ marginTop: 20 }} />
+                    <SketchPicker
+                      onChange={color => updateField('text_color', color.hex)}
+                      color={formFields.text_color}
+                    />
+                  </div>
+                  <div>
+                    <TextStyle variation='strong'>
+                      Select Error Background Color
+                    </TextStyle>
+                    <div style={{ marginTop: 20 }} />
+                    <SketchPicker
+                      onChange={color =>
+                        updateField('background_color', color.hex)
+                      }
+                      color={formFields.background_color}
+                    />
+                  </div>
+                </div>
+              </Card>
+            </Layout.Section>
+            <Layout.Section oneHalf>
+              <Card title='Error Banner Preview' sectioned>
+                <div
+                  style={{
+                    backgroundColor: formFields.background_color,
+                    color: formFields.text_color,
+                    padding: 20,
+                    borderRadius: 5,
+                    marginTop: 30
+                  }}
+                >
+                  {formFields.banner_message}
+                </div>
+              </Card>
+            </Layout.Section>
+          </Layout>
+        </Layout.AnnotatedSection>
       </Layout>
+      <p style={{ marginBottom: 30 }} />
 
-      <div style={{ marginTop: 20 }}>
-        <Heading>
-          {translate('manage_catalogs_text')}
-          {mergeCatalogIds.length ? (
-            <span style={{ marginLeft: 30 }}>
-              <Button onClick={toggleModal}>
-                {translate('add_catalogs_text')}
-              </Button>
-            </span>
-          ) : null}
-        </Heading>
-        <div style={{ marginTop: 30 }} />
-        <Layout>
-          {mergeCatalogIds.length
-            ? mergeCatalogIds.map(account => {
-                const isPending = account.catalog.sync_status === 'pending'
-                const isError = account.catalog.sync_status === 'error'
-                const isActive = account.catalog?.status === 'A'
-                return (
-                  <Layout.Section oneHalf key={account?.catalog.id}>
-                    <Card
-                      title={translate('catalog_card_title')}
-                      actions={[
-                        {
-                          content: translate('remove'),
-                          onAction: () => removeCatalog(account),
-                          destructive: true
-                        },
-                        {
-                          content: translate('view'),
-                          external: true,
-                          url: `https://www.facebook.com/products/catalogs/${account?.catalog.id}/home`
-                        },
-                        {
-                          content:
-                            account?.catalog.status === 'A'
-                              ? translate('enable')
-                              : translate('disable'),
-                          onAction: () => {
-                            const catalogIndex = socialAccounts[0].catalogs.findIndex(
-                              item => item.id === account.catalog.id
-                            )
-                            const newCatalogs = [...socialAccounts[0].catalogs]
-                            newCatalogs[catalogIndex] = {
-                              ...account.catalog,
-                              status:
-                                account?.catalog.status === 'A' ? 'D' : 'A'
-                            }
-                            onUpdateSocialAccount({
-                              catalogs: newCatalogs,
-                              platform: socialAccounts[0]?.platform,
-                              external_id: socialAccounts[0].external_id
-                            })
-                          }
-                        }
-                      ]}
-                      primaryFooterAction={{
-                        content: isPending
-                          ? translate('start_sync')
-                          : translate('products_synced'),
-                        destructive: true,
-                        onAction: () => onSyncAllProducts(account),
-                        disabled: !isPending || !isActive
-                      }}
-                      sectioned
-                    >
-                      <Card.Section>
-                        <TextStyle variation='subdued'>
-                          {translate('catalog_id')}: {account?.catalog.id}
-                        </TextStyle>
-                      </Card.Section>
-                      <TextContainer>
-                        <Banner
-                          status={
-                            isPending
-                              ? 'info'
-                              : isError
-                              ? 'critical'
-                              : !isActive
-                              ? 'critical'
-                              : 'success'
-                          }
-                        >
-                          {isPending
-                            ? !isActive
-                              ? translate('pending_sync_status_inactive')
-                              : translate('pending_sync_status_active')
-                            : isError
-                            ? account.catalog.error
-                            : !isActive
-                            ? translate('error_sync_status_inactive')
-                            : translate('pushed_sync_status_active')}
-                        </Banner>
-                      </TextContainer>
-                    </Card>
-                  </Layout.Section>
-                )
-              })
-            : addFirstCatalog}
-        </Layout>
-        {syncing && (
-          <div style={{ marginLeft: '40vw', marginTop: 20 }}>
-            <Spinner accessibilityLabel='loader' size='small' />
-          </div>
-        )}
-      </div>
-      <CatalogModal
-        openModal={openModal}
-        toggleModal={toggleModal}
-        onUpdateSocialAccount={onUpdateSocialAccount}
-        socialAccounts={socialAccounts}
-        loading={loading}
-        translate={translate}
-      />
-      {syncing && <Loading />}
+      <EmptyState
+        heading='No Blocked Users Yet'
+        image='https://cdn.shopify.com/s/files/1/0757/9955/files/empty-state.svg'
+        fullWidth
+      >
+        <p>Blocked users will show up here</p>
+      </EmptyState>
     </div>
   )
 }
