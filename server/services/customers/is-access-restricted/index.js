@@ -37,6 +37,13 @@ export default async function isAccessRestricted (payload) {
           .add(shop.duration, 'minutes')
           .toDate()
       }
+    } else {
+      const isDateExpired = moment().isAfter(customer.unblock_date)
+      if (isDateExpired) {
+        payloadToUpsert = {
+          attempts: 1
+        }
+      }
     }
   } else {
     payloadToUpsert = {

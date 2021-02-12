@@ -12,10 +12,14 @@ import {
   Form,
   ContextualSaveBar,
   SettingToggle,
-  TextStyle
+  TextStyle,
+  ColorPicker,
+  Heading,
+  Subheading
 } from '@shopify/polaris'
 import useMutation from '../Hooks/useMutation'
 import isEqual from 'lodash/isEqual'
+import { SketchPicker } from 'react-color'
 
 const options = [
   { label: 'IP', value: 'ip' },
@@ -33,7 +37,9 @@ export default function Home ({ shop }) {
     attempts: String(data?.attempts || shop.attempts),
     duration: String(data?.duration || shop.duration),
     banner_message: data?.banner_message || shop.banner_message,
-    status: data?.status || shop?.status
+    status: data?.status || shop?.status,
+    background_color: data?.background_color || shop?.background_color,
+    text_color: data?.text_color || shop?.text_color
   }
   const [formFields, setFormFields] = React.useState(initialFormFields)
   const [showContextSave, setShowContextSave] = React.useState(false)
@@ -140,6 +146,54 @@ export default function Home ({ shop }) {
               </Stack> */}
             </Form>
           </Card>
+          <div style={{ marginTop: 20 }} />
+          <Layout>
+            <Layout.Section oneHalf>
+              <Card title='Order details' sectioned>
+                <div
+                  style={{ display: 'flex', justifyContent: 'space-between' }}
+                >
+                  <div>
+                    <TextStyle variation='strong'>
+                      Select Error Text Color
+                    </TextStyle>
+                    <div style={{ marginTop: 20 }} />
+                    <SketchPicker
+                      onChange={color => updateField('text_color', color.hex)}
+                      color={formFields.text_color}
+                    />
+                  </div>
+                  <div>
+                    <TextStyle variation='strong'>
+                      Select Error Background Color
+                    </TextStyle>
+                    <div style={{ marginTop: 20 }} />
+                    <SketchPicker
+                      onChange={color =>
+                        updateField('background_color', color.hex)
+                      }
+                      color={formFields.background_color}
+                    />
+                  </div>
+                </div>
+              </Card>
+            </Layout.Section>
+            <Layout.Section oneHalf>
+              <Card title='Error Banner Preview' sectioned>
+                <div
+                  style={{
+                    backgroundColor: formFields.background_color,
+                    color: formFields.text_color,
+                    padding: 20,
+                    borderRadius: 5,
+                    marginTop: 30
+                  }}
+                >
+                  {formFields.banner_message}
+                </div>
+              </Card>
+            </Layout.Section>
+          </Layout>
         </Layout.AnnotatedSection>
       </Layout>
       <p style={{ marginBottom: 30 }} />
