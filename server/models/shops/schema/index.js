@@ -7,9 +7,8 @@ import config from '../../../config'
 const cryptr = new Cryptr(config.get('APP_KEY'))
 
 export const StoreStatusTypes = {
-  ACTIVE: 'active',
-  SUSPENDED: 'suspended',
-  DEACTIVATED: 'deactivated'
+  ACTIVE: 'A',
+  DEACTIVATED: 'D'
 }
 
 export const Platforms = {
@@ -23,6 +22,11 @@ export const LimitBy = {
 
 const schema = new mongoose.Schema(
   {
+    status: {
+      type: String,
+      enum: Object.values(StoreStatusTypes),
+      default: StoreStatusTypes.ACTIVE
+    },
     name: {
       type: String,
       required: true

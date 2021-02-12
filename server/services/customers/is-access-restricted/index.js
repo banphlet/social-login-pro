@@ -48,7 +48,8 @@ export default async function isAccessRestricted (payload) {
   customer = await customers().updateById(customer.id, payloadToUpsert)
 
   return {
-    is_restricted: moment().isBefore(customer.unblock_date),
+    is_restricted:
+      shop.status === 'A' && moment().isBefore(customer.unblock_date),
     attempts: customer.attempts,
     message: shop.banner_message,
     text_color: shop.text_color,

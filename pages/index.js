@@ -10,7 +10,9 @@ import {
   EmptyState,
   Loading,
   Form,
-  ContextualSaveBar
+  ContextualSaveBar,
+  SettingToggle,
+  TextStyle
 } from '@shopify/polaris'
 import useMutation from '../Hooks/useMutation'
 import isEqual from 'lodash/isEqual'
@@ -28,7 +30,10 @@ export default function Home ({ shop }) {
 
   const initialFormFields = {
     limit_by: data?.limit_by || shop.limit_by,
-    attempts: String(data?.attempts || shop.attempts)
+    attempts: String(data?.attempts || shop.attempts),
+    duration: String(data?.duration || shop.duration),
+    banner_message: data?.banner_message || shop.banner_message,
+    status: data?.status || shop?.status
   }
   const [formFields, setFormFields] = React.useState(initialFormFields)
   const [showContextSave, setShowContextSave] = React.useState(false)
@@ -52,28 +57,42 @@ export default function Home ({ shop }) {
   return (
     <div style={{ padding: 50 }}>
       {loading ? <Loading /> : null}
-      <p style={{ marginBottom: 30 }} />
+      {showContextSave ? (
+        <ContextualSaveBar
+          fullWidth
+          message='Unsaved changes'
+          saveAction={{
+            onAction: onSave,
+            loading,
+            disabled: loading || !formFields.attempts
+          }}
+          discardAction={{
+            onAction: () => setFormFields(initialFormFields)
+          }}
+        />
+      ) : null}
+      <p style={{ marginBottom: 10 }} />
       <Layout>
         <Layout.AnnotatedSection
           title='Login Limit Settings'
           description='Customize when account should be blocked'
         >
+          <SettingToggle
+            action={{
+              content: formFields.status === 'A' ? 'Disable' : 'Enable',
+              onAction: () =>
+                updateField('status', formFields?.status === 'A' ? 'D' : 'A')
+            }}
+            enabled={formFields.status === 'A'}
+          >
+            This setting is{' '}
+            <TextStyle variation='strong'>
+              {formFields.status === 'A' ? 'Enabled' : 'Disabled'}
+            </TextStyle>
+            .
+          </SettingToggle>
           <Card sectioned>
             <Form onSubmit={onSave}>
-              {showContextSave ? (
-                <ContextualSaveBar
-                  fullWidth
-                  message='Unsaved changes'
-                  saveAction={{
-                    onAction: onSave,
-                    loading,
-                    disabled: loading || !formFields.attempts
-                  }}
-                  discardAction={{
-                    onAction: () => setFormFields(initialFormFields)
-                  }}
-                />
-              ) : null}
               <FormLayout>
                 <Select
                   label='Block By'
@@ -90,6 +109,27 @@ export default function Home ({ shop }) {
                   onChange={value => updateField('attempts', value)}
                   min={1}
                   error={!formFields.attempts && 'Enter attempts'}
+                />
+                <TextField
+                  label='Duration'
+                  helpText='How many minutes after which customer can login'
+                  type='number'
+                  placeholder='Amount of time in minutes customer has to wait'
+                  value={formFields.duration}
+                  onChange={value => updateField('duration', value)}
+                  min={1}
+                  error={!formFields.duration && 'Enter duration'}
+                  prefix='MINS'
+                />
+                <TextField
+                  label='Error Message'
+                  helpText='Error message customers will see'
+                  type='text'
+                  value={formFields.banner_message}
+                  onChange={value => updateField('banner_message', value)}
+                  min={1}
+                  error={!formFields.banner_message && 'Enter error message '}
+                  multiline
                 />
               </FormLayout>
               {/* <p style={{ marginBottom: 30 }} />

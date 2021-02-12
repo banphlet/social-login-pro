@@ -2,7 +2,7 @@
 import joi, { objectId } from '../../../lib/joi'
 import { validate } from '../../../lib/utils'
 import { shops as shopModel } from '../../../models'
-import { LimitBy } from '../../../models/shops/schema'
+import { LimitBy, StoreStatusTypes } from '../../../models/shops/schema'
 
 const schema = joi.object({
   shop_id: objectId().required(),
@@ -11,7 +11,8 @@ const schema = joi.object({
   banner_message: joi.string(),
   duration: joi.number(),
   text_color: joi.string(),
-  background_color: joi.string()
+  background_color: joi.string(),
+  status: joi.string().valid(...Object.values(StoreStatusTypes))
 })
 
 export const updateShopById = async payload => {
