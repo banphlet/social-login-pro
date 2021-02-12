@@ -38,15 +38,6 @@ export default async function isAccessRestricted (payload) {
           .toDate()
       }
     }
-    const isAfterToday = moment().isBefore(customer.unblock_date)
-
-    if (!isAfterToday) {
-      payloadToUpsert = {
-        is_blocked: false,
-        unblock_date: null,
-        attempts: 1
-      }
-    }
   } else {
     payloadToUpsert = {
       is_blocked: false,
@@ -54,13 +45,13 @@ export default async function isAccessRestricted (payload) {
     }
   }
 
-  console.log(payloadToUpsert)
-
   customer = await customers().updateById(customer.id, payloadToUpsert)
 
   return {
     is_restricted: moment().isBefore(customer.unblock_date),
     attempts: customer.attempts,
-    message: shop.banner_message
+    message: shop.banner_message,
+    text_color: shop.text_color,
+    background_color: shop.background_color
   }
 }

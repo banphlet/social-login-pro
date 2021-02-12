@@ -87,6 +87,14 @@ const schema = new mongoose.Schema(
       type: String,
       default:
         'Too many login attempts. Login blocked temporary. Try again later'
+    },
+    text_color: {
+      type: String,
+      default: 'white'
+    },
+    background_color: {
+      type: String,
+      default: '#B74949'
     }
   },
   {

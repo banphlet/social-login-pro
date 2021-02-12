@@ -9,7 +9,9 @@ const schema = joi.object({
   limit_by: joi.string().valid(...Object.values(LimitBy)),
   attempts: joi.number(),
   banner_message: joi.string(),
-  duration: joi.number()
+  duration: joi.number(),
+  text_color: joi.string(),
+  background_color: joi.string()
 })
 
 export const updateShopById = async payload => {
