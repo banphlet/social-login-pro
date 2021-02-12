@@ -9,7 +9,7 @@ const requestHandler = ({ handler, method = 'GET', middleware }) => async (
   res
 ) => {
   try {
-    if (method !== req.method) {
+    if (method !== req.method && req.method !== 'OPTIONS') {
       throw errors.throwError({
         name: errors.RequestNotFound,
         message: 'not found'

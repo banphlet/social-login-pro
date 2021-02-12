@@ -45,7 +45,8 @@ export default async function installShop (payload) {
 
   await platforms(validated.platform).injectScript({
     accessToken: tokens.accessToken,
-    platformDomain: shopDetails.platformDomain
+    platformDomain: shopDetails.platformDomain,
+    shopId: shop.id
   })
 
   return {

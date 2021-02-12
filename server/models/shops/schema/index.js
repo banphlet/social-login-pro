@@ -78,6 +78,15 @@ const schema = new mongoose.Schema(
     attempts: {
       type: Number,
       default: 3
+    },
+    duration: {
+      type: Number,
+      default: 10
+    },
+    banner_message: {
+      type: String,
+      default:
+        'Too many login attempts. Login blocked temporary. Try again later'
     }
   },
   {

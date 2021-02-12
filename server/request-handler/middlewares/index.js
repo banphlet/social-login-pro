@@ -6,7 +6,6 @@ import userAgent from 'express-useragent'
 
 import { connect } from '../../lib/db'
 import attachLocation from './attach-location'
-import auth from './auth'
 
 const createPinoLogger = pino()
 

@@ -4,6 +4,7 @@ import customServerHandler from '../../../server/request-handler'
 import shopService from '../../../server/services/shops'
 import respond from '../../../server/request-handler/respond'
 import errors from '../../../server/lib/errors'
+import Cors from 'cors'
 
 const getShopHandler = (req, res) =>
   shopService()
@@ -16,7 +17,10 @@ const updateShopHandler = (req, res) =>
     .then(respond({ req, res }))
 
 export default cond([
-  [propEq('method', 'GET'), customServerHandler({ handler: getShopHandler })],
+  [
+    propEq('method', 'GET'),
+    customServerHandler({ handler: getShopHandler, middleware: Cors() })
+  ],
   [
     propEq('method', 'PUT'),
     customServerHandler({ handler: updateShopHandler, method: 'PUT' })

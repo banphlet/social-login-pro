@@ -9,9 +9,11 @@ import {
   Button,
   EmptyState,
   Loading,
-  Form
+  Form,
+  ContextualSaveBar
 } from '@shopify/polaris'
 import useMutation from '../Hooks/useMutation'
+import isEqual from 'lodash/isEqual'
 
 const options = [
   { label: 'IP', value: 'ip' },
@@ -19,31 +21,38 @@ const options = [
 ]
 
 export default function Home ({ shop }) {
-  const [attempts, setAttempts] = React.useState(String(shop?.attempts))
-  const [limitBy, setLimitBy] = React.useState(shop?.limit_by)
-
-  const { makeRequest, loading } = useMutation({
+  const { makeRequest, loading, data: { data } = {} } = useMutation({
     path: 'shops/me',
     method: 'put'
   })
 
-  const onSave = () => {
-    makeRequest({
-      shop_id: shop.id,
-      attempts,
-      limit_by: limitBy
-    })
+  const initialFormFields = {
+    limit_by: data?.limit_by || shop.limit_by,
+    attempts: String(data?.attempts || shop.attempts)
   }
+  const [formFields, setFormFields] = React.useState(initialFormFields)
+  const [showContextSave, setShowContextSave] = React.useState(false)
+
+  const onSave = async () => {
+    await makeRequest({
+      shop_id: shop.id,
+      ...formFields
+    })
+    setShowContextSave(false)
+  }
+
+  const updateField = (field, value) =>
+    setFormFields({ ...formFields, [field]: value })
+
+  React.useEffect(() => {
+    const hasChanges = !isEqual(initialFormFields, formFields)
+    setShowContextSave(hasChanges)
+  }, [formFields])
 
   return (
     <div style={{ padding: 50 }}>
       {loading ? <Loading /> : null}
-
-      {/* <Stack distribution='trailing'>
-        <Button onClick={onSave} disabled={loading} primary>
-          Save
-        </Button>
-      </Stack> */}
+      <p style={{ marginBottom: 30 }} />
       <Layout>
         <Layout.AnnotatedSection
           title='Login Limit Settings'
@@ -51,29 +60,44 @@ export default function Home ({ shop }) {
         >
           <Card sectioned>
             <Form onSubmit={onSave}>
+              {showContextSave ? (
+                <ContextualSaveBar
+                  fullWidth
+                  message='Unsaved changes'
+                  saveAction={{
+                    onAction: onSave,
+                    loading,
+                    disabled: loading || !formFields.attempts
+                  }}
+                  discardAction={{
+                    onAction: () => setFormFields(initialFormFields)
+                  }}
+                />
+              ) : null}
               <FormLayout>
                 <Select
-                  label='Limit By'
-                  onChange={setLimitBy}
+                  label='Block By'
+                  onChange={value => updateField('limit_by', value)}
                   options={options}
-                  value={limitBy}
+                  value={formFields.limit_by}
                 />
                 <TextField
                   label='Attempts'
                   helpText='Total login attempts before blocking a user'
                   type='number'
                   placeholder='Total login attempts'
-                  value={attempts}
-                  onChange={setAttempts}
-                  min={2}
+                  value={formFields.attempts}
+                  onChange={value => updateField('attempts', value)}
+                  min={1}
+                  error={!formFields.attempts && 'Enter attempts'}
                 />
               </FormLayout>
-              <p style={{ marginBottom: 30 }} />
+              {/* <p style={{ marginBottom: 30 }} />
               <Stack distribution='trailing'>
                 <Button submit disabled={loading} primary>
                   Save
                 </Button>
-              </Stack>
+              </Stack> */}
             </Form>
           </Card>
         </Layout.AnnotatedSection>

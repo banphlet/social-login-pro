@@ -65,11 +65,12 @@ const getSiteDetails = ({
 
 const injectScript = ({
   accessToken = required('accessToken'),
-  platformDomain = required('platformDomain')
+  platformDomain = required('platformDomain'),
+  shopId = required('shopId')
 }) =>
   shopifyClient({ shop: platformDomain, accessToken })
     .scriptTag.create({
-      src: `${config.get('NEXT_PUBLIC_APP_URL')}/scripts/login.js`,
+      src: `${config.get('NEXT_PUBLIC_APP_URL')}/js/lla.js?shop_id=${shopId}`,
       event: 'onload'
     })
     .catch(err => {

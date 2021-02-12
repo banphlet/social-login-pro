@@ -36,31 +36,10 @@ const getById = (id = required('id')) =>
     customErrorMessage
   })
 
-const getByExternalIdAndPlatform = ({ externalId, platform }) =>
-  CustomerModal.ensureExists({
-    query: {
-      external_id: externalId,
-      platform
-    }
-  })
-
 const updateById = (id, update) =>
   CustomerModal.updateOne({
     query: {
       _id: id
-    },
-    update
-  })
-
-const upsertByExternalIdPlatformAndShopId = (
-  { externalId, platform, shopId },
-  update = required('update')
-) =>
-  CustomerModal.upsert({
-    query: {
-      external_id: externalId,
-      platform,
-      shop: shopId
     },
     update
   })
@@ -73,59 +52,35 @@ const fetchByShopId = shopId =>
     select: '-access_token'
   })
 
-const getByIdAndCatalogs = ({
-  id = required('id'),
-  catalogId = required('catalogs'),
-  shopId = required('shopId')
-}) =>
-  CustomerModal.ensureExists({
+const getBasedOnCriteria = ({ shopId = required('shopId'), field, value }) =>
+  CustomerModal.get({
     query: {
-      _id: id,
-      shop: shopId
-    },
-    populate: ['shop'],
-    select: {
-      catalogs: { $elemMatch: { id: catalogId } },
-      access_token: 1,
-      platform: 1
+      shop: shopId,
+      [field]: value
     }
   })
 
-const updateByCatalogIdAndCustomer = ({
-  catalogId = required('catalogId'),
-  id = required('id'),
-  update = {}
-}) =>
-  CustomerModal.updateOne({
+const createOrUpdate = ({ shopId = required('shopId'), ip, email }) =>
+  CustomerModal.upsert({
     query: {
-      'catalogs.id': catalogId,
-      _id: id
-    },
-    update
-  })
-
-const removeCatalogById = ({ CustomerId, catalogId, shopId }) =>
-  CustomerModal.updateOne({
-    query: {
-      _id: CustomerId,
       shop: shopId,
-      'catalogs.id': catalogId
+      $or: [{ ip }, { email }]
     },
     update: {
-      $pull: { catalogs: { id: catalogId } }
+      ip,
+      shop: shopId,
+      email,
+      $inc: { attempts: 1 }
     }
   })
 
 export default () => ({
   ...CustomerModal,
-  removeCatalogById,
+  createOrUpdate,
   create,
   getByEmail,
   getById,
   updateById,
-  upsertByExternalIdPlatformAndShopId,
-  getByExternalIdAndPlatform,
   fetchByShopId,
-  getByIdAndCatalogs,
-  updateByCatalogIdAndCustomer
+  getBasedOnCriteria
 })

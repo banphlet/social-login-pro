@@ -7,7 +7,9 @@ import { LimitBy } from '../../../models/shops/schema'
 const schema = joi.object({
   shop_id: objectId().required(),
   limit_by: joi.string().valid(...Object.values(LimitBy)),
-  attempts: joi.number()
+  attempts: joi.number(),
+  banner_message: joi.string(),
+  duration: joi.number()
 })
 
 export const updateShopById = async payload => {

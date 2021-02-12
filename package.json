@@ -1,11 +1,12 @@
 {
-  "name": "wix-facebook-sync",
+  "name": "limit-login-attempts",
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 8000",
+    "dev": "npm run webpack && next dev -p 8000",
     "build": "next build ",
-    "start": "next start"
+    "start": "next start",
+    "webpack": "webpack build"
   },
   "dependencies": {
     "@shopify/app-bridge-react": "1.29.0",
@@ -15,6 +16,7 @@
     "convict": "6.0.0",
     "convict-format-with-validator": "6.0.0",
     "cookie": "0.4.1",
+    "cors": "2.8.5",
     "cryptr": "6.0.2",
     "express-pino-logger": "6.0.0",
     "express-useragent": "1.0.15",
@@ -22,6 +24,7 @@
     "got": "11.8.1",
     "joi": "17.3.0",
     "jsonwebtoken": "8.5.1",
+    "moment": "2.29.1",
     "mongoose": "5.11.15",
     "next": "10.0.6",
     "next-i18next": "7.0.1",
@@ -32,5 +35,10 @@
     "shopify-api-node": "3.6.5",
     "shopify-token": "4.0.1",
     "striptags": "3.1.1"
+  },
+  "devDependencies": {
+    "dotenv": "8.2.0",
+    "webpack": "5.21.2",
+    "webpack-cli": "4.5.0"
   }
 }

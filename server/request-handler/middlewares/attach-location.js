@@ -6,7 +6,7 @@ const getIp = req => {
   if (ip.substr(0, 7) == '::ffff:') {
     ip = ip.substr(7)
   }
-  if (ip === '::1') {
+  if (ip === '::1' || ip === '127.0.0.1') {
     ip = '154.160.30.184'
   }
   return ip
@@ -17,5 +17,6 @@ export default function attachLocation (req, res) {
   const geoInfo = geopIp.lookup(ip)
   const mergedUserAgent = { ip, ...geoInfo, ...req.useragent }
   req.useragent = mergedUserAgent
+  geoInfo.ip = ip
   req.location = geoInfo
 }
