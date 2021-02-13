@@ -1,5 +1,6 @@
 import { Card, Tabs } from '@shopify/polaris'
 import React from 'react'
+import Analytics from '../Components/Analytics'
 import Settings from '../Components/Settings'
 
 const tabs = [
@@ -33,9 +34,10 @@ export default function Home ({ shop }) {
           onSelect={handleTabChange}
           disclosureText='More views'
         >
-          <Card.Section>
-            {selected === 1 && <Settings shop={shop} />}
-          </Card.Section>
+          {/* <Card.Section> */}
+          {selected === 0 && <Analytics shop={shop} />}
+          {selected === 1 && <Settings shop={shop} />}
+          {/* </Card.Section> */}
         </Tabs>
       </Card>
     </div>

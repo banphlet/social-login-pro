@@ -60,7 +60,12 @@ const getBasedOnCriteria = ({ shopId = required('shopId'), field, value }) =>
     }
   })
 
-const createOrUpdate = ({ shopId = required('shopId'), ip, email }) =>
+const createOrUpdate = ({
+  shopId = required('shopId'),
+  ip,
+  email,
+  geo_location
+}) =>
   CustomerModal.upsert({
     query: {
       shop: shopId,
@@ -70,9 +75,36 @@ const createOrUpdate = ({ shopId = required('shopId'), ip, email }) =>
       ip,
       shop: shopId,
       email,
-      $inc: { attempts: 1 }
+      $inc: { attempts: 1 },
+      geo_location
     }
   })
+
+const paginateByShopId = ({ shopId, page, limit = 20, sort }) => {
+  const aggregate = Model.aggregate([
+    {
+      $match: {
+        shop: new mongoose.Types.ObjectId(shopId)
+      }
+    }
+  ])
+  const options = {
+    limit,
+    sort: sort ?? { _id: -1 },
+    page
+  }
+  return Model.aggregatePaginate(aggregate, options).then(
+    ({ docs, ...rest }) => {
+      return {
+        docs: docs.map(doc => {
+          doc.id = doc._id
+          return doc
+        }),
+        ...rest
+      }
+    }
+  )
+}
 
 export default () => ({
   ...CustomerModal,
@@ -82,5 +114,6 @@ export default () => ({
   getById,
   updateById,
   fetchByShopId,
-  getBasedOnCriteria
+  getBasedOnCriteria,
+  paginateByShopId
 })

@@ -11,7 +11,8 @@ const schema = joi
     email: joi
       .string()
       .email()
-      .allow(null)
+      .allow(null),
+    geo_location: joi.object().required()
   })
   .or('ip', 'email')
 

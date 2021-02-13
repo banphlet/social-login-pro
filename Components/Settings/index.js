@@ -56,7 +56,7 @@ export default function Settings ({ shop }) {
   }, [formFields])
 
   return (
-    <div>
+    <Card.Section>
       {loading ? <Loading /> : null}
       {showContextSave ? (
         <ContextualSaveBar
@@ -191,15 +191,6 @@ export default function Settings ({ shop }) {
           </Layout>
         </Layout.AnnotatedSection>
       </Layout>
-      <p style={{ marginBottom: 30 }} />
-
-      <EmptyState
-        heading='No Blocked Users Yet'
-        image='https://cdn.shopify.com/s/files/1/0757/9955/files/empty-state.svg'
-        fullWidth
-      >
-        <p>Blocked users will show up here</p>
-      </EmptyState>
-    </div>
+    </Card.Section>
   )
 }

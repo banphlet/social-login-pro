@@ -1,8 +1,9 @@
 'use strict'
 
 import mongoose from 'mongoose'
+import aggregatePaginate from 'mongoose-aggregate-paginate-v2'
 
-export default new mongoose.Schema(
+const schema = new mongoose.Schema(
   {
     shop: {
       type: mongoose.Schema.Types.ObjectId,
@@ -19,6 +20,10 @@ export default new mongoose.Schema(
     attempts: {
       type: Number,
       default: 1
+    },
+    geo_location: {
+      type: mongoose.Schema.Types.Mixed,
+      required: true
     }
   },
   {
@@ -36,3 +41,7 @@ export default new mongoose.Schema(
     }
   }
 )
+
+schema.plugin(aggregatePaginate)
+
+export default schema
