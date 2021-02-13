@@ -1,8 +1,9 @@
 import {
   Badge,
   Card,
-  DataTable,
+  ChoiceList,
   EmptyState,
+  Filters,
   Pagination,
   ResourceItem,
   ResourceList,
@@ -12,36 +13,81 @@ import React from 'react'
 import useQuery from '../../Hooks/useQuery'
 
 export default function Analytics ({ shop }) {
+  const [statusFilter, setStatusFilter] = React.useState([''])
   const {
-    data: { data = { docs: [], nextPage: 1, prevPage: 0, totalDocs: 1 } } = {},
+    data: {
+      data = {
+        docs: [],
+        nextPage: 1,
+        prevPage: 0,
+        totalDocs: 1,
+        page: 1
+      }
+    } = {},
     loading,
     refetch
   } = useQuery({
     path: 'shops/customers',
     initQuery: {
       shop_id: shop.id,
-      limit: 10
+      limit: 10,
+      ...(statusFilter[0] && {
+        is_blocked: statusFilter[0]
+      })
     }
   })
 
   const paginate = page => {
     refetch({
+      useInitialQuery: false,
+      onlyQuery: false,
       query: {
-        page,
-        shop_id: shop.id,
-        limit: 10
+        page
       }
     })
   }
 
+  React.useEffect(() => {
+    paginate(1)
+  }, [statusFilter])
+
   return (
-    <Card.Section title='All User Logins'>
+    <Card.Section title='All Failed User Logins'>
       <ResourceList
+        filterControl={
+          <Filters
+            hideQueryField
+            filters={[
+              {
+                key: 'status',
+                label: 'Block Status',
+                filter: (
+                  <ChoiceList
+                    title='Account status'
+                    titleHidden
+                    choices={[
+                      { label: 'All', value: '' },
+                      { label: 'Blocked', value: true },
+                      { label: 'Not Blocked', value: false }
+                    ]}
+                    selected={statusFilter}
+                    onChange={setStatusFilter}
+                    allowMultiple={false}
+                  />
+                ),
+                shortcut: true,
+                hideClearButton: true
+              }
+            ]}
+          />
+        }
         emptyState={
           <EmptyState
-            heading='No Blocked Users Yet'
-            image='https://cdn.shopify.com/s/files/1/0757/9955/files/empty-state.svg'
+            heading='No content found'
+            image='/empty.svg'
+            largeImage='/empty.svg'
             fullWidth
+            // fullWidth
           >
             <p>Blocked users will show up here</p>
           </EmptyState>
@@ -53,20 +99,20 @@ export default function Analytics ({ shop }) {
         renderItem={(item, id, index) => {
           return (
             <ResourceItem id={item?.item} verticalAlignment='center'>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <div>
+              <div style={{ display: 'flex' }}>
+                <div style={{ flexGrow: 10, flexBasis: '25%' }}>
                   {!index ? (
                     <TextStyle variation='strong'>IP Address</TextStyle>
                   ) : null}
                   <div style={{ marginTop: 20 }}>{item?.ip}</div>
                 </div>
-                <div>
+                <div style={{ flexGrow: 10, flexBasis: '25%' }}>
                   {index ? null : (
                     <TextStyle variation='strong'>Email</TextStyle>
                   )}{' '}
                   <div style={{ marginTop: 20 }}>{item?.email}</div>
                 </div>
-                <div>
+                <div style={{ flexGrow: 10, flexBasis: '25%' }}>
                   {index ? null : (
                     <TextStyle variation='strong'>Status</TextStyle>
                   )}{' '}
@@ -76,7 +122,13 @@ export default function Analytics ({ shop }) {
                     </Badge>
                   </div>
                 </div>
-                <div>
+                <div style={{ flexGrow: 10, flexBasis: '25%' }}>
+                  {index ? null : (
+                    <TextStyle variation='strong'>Attempts</TextStyle>
+                  )}{' '}
+                  <div style={{ marginTop: 20 }}>{item?.attempts}</div>
+                </div>
+                <div style={{ flexGrow: 10, flexBasis: '25%' }}>
                   {index ? null : (
                     <TextStyle variation='strong'>Location</TextStyle>
                   )}{' '}
@@ -84,7 +136,7 @@ export default function Analytics ({ shop }) {
                     {item?.geo_location?.city}, {item?.geo_location?.country}
                   </div>
                 </div>
-                <div>
+                <div style={{ flexGrow: 10, flexBasis: '25%' }}>
                   {index ? null : (
                     <TextStyle variation='strong'>Region</TextStyle>
                   )}{' '}

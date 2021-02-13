@@ -80,11 +80,14 @@ const createOrUpdate = ({
     }
   })
 
-const paginateByShopId = ({ shopId, page, limit = 20, sort }) => {
+const paginateByShopId = ({ shopId, page, limit = 20, sort, isBlocked }) => {
   const aggregate = Model.aggregate([
     {
       $match: {
-        shop: new mongoose.Types.ObjectId(shopId)
+        shop: new mongoose.Types.ObjectId(shopId),
+        ...(isBlocked && {
+          is_blocked: isBlocked
+        })
       }
     }
   ])
