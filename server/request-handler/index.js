@@ -16,9 +16,10 @@ const requestHandler = ({ handler, method = 'GET', middleware }) => async (
       })
     }
     await middlewareCreator(middleware)(req, res)
+    if (req.method === 'OPTIONS') return
     await handler(req, res)
   } catch (error) {
-    console.log(error)
+    console.log(error, req.method)
     error.status = errorMap[error.name]
     const {
       code,
