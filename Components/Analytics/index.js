@@ -11,6 +11,7 @@ import {
 } from '@shopify/polaris'
 import React from 'react'
 import useQuery from '../../Hooks/useQuery'
+import MapSection from './Map'
 
 export default function Analytics ({ shop }) {
   const [statusFilter, setStatusFilter] = React.useState([''])
@@ -169,6 +170,10 @@ export default function Analytics ({ shop }) {
           onNext={() => paginate(data?.nextPage)}
         />
       </div>
+
+      <Card.Section>
+        <MapSection data={data?.docs} />
+      </Card.Section>
     </Card.Section>
   )
 }

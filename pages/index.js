@@ -34,10 +34,8 @@ export default function Home ({ shop }) {
           onSelect={handleTabChange}
           disclosureText='More views'
         >
-          {/* <Card.Section> */}
           {selected === 0 && <Analytics shop={shop} />}
           {selected === 1 && <Settings shop={shop} />}
-          {/* </Card.Section> */}
         </Tabs>
       </Card>
     </div>
