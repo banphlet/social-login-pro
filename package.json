@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "npm run webpack && next dev -p 8000",
-    "build": "next build ",
+    "build": "npm run webpack && next build ",
     "start": "next start",
     "webpack": "webpack build"
   },
