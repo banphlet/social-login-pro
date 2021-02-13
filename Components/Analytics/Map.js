@@ -50,7 +50,7 @@ export default function MapSection ({ data = [] }) {
         ? `${blockedCount ? `Blocked: ${blockedCount}` : ''}`.concat(
             unBlockedCount ? `\n Not blocked: ${unBlockedCount}` : ''
           )
-        : 'No data here'
+        : 'No data to show'
     })
   }
 
