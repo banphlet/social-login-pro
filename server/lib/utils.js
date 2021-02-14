@@ -23,11 +23,16 @@ export const required = data => {
   })
 }
 
-export const createHmac = ({ secret, data, algorithm = 'sha256' }) =>
+export const createHmac = ({
+  secret,
+  data,
+  algorithm = 'sha256',
+  digest = 'hex'
+}) =>
   crypto
     .createHmac(algorithm, secret)
     .update(Buffer.from(data), 'utf8')
-    .digest('hex')
+    .digest(digest)
 
 export const validate = curry((schema, data) => {
   const { error, value } = schema.validate(data, { stripUnknown: true })

@@ -4,6 +4,7 @@ import joi, { objectId } from '../../../lib/joi'
 import { validate } from '../../../lib/utils'
 import { customers, shops } from '../../../models'
 import moment from 'moment'
+import { StoreStatusTypes } from '../../../models/shops/schema'
 
 const schema = joi
   .object({
@@ -22,7 +23,7 @@ export default async function isAccessRestricted (payload) {
     value: validated[shop.limit_by]
   })
 
-  if (!customer)
+  if (!customer || shop.status === StoreStatusTypes.DEACTIVATED)
     return {
       is_restricted: false
     }

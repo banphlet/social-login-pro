@@ -16,6 +16,7 @@ export const httpStatusCodes = {
 }
 
 export default {
+  [errors.InvalidHmacError]: httpStatusCodes.FORBIDDEN,
   [errors.LimitNotANumber]: httpStatusCodes.INTERNAL_SERVER_ERROR,
   [errors.MissingFunctionParamError]: httpStatusCodes.BAD_REQUEST,
   [errors.ResourceDoesNotExistsError]: httpStatusCodes.BAD_REQUEST,

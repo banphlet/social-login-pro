@@ -124,4 +124,29 @@ const injectScript = async ({
   })
 }
 
-export { getPermissionUrl, getOauthAccessTokens, getSiteDetails, injectScript }
+const installWebhooks = ({
+  accessToken = required('accessToken'),
+  platformDomain = required('platformDomain')
+}) => {
+  return shopifyClient({ shop: platformDomain, accessToken })
+    .webhook.create({
+      topic: 'app/uninstalled',
+      address: `${'https://71279c09c393.ngrok.io' ||
+        config.get('NEXT_PUBLIC_APP_URL')}/api/uninstall`,
+      format: 'json'
+    })
+    .catch(err => {
+      console.log(err.response.body)
+    })
+}
+
+const verifyHmac = shopifyToken.verifyHmac
+
+export {
+  getPermissionUrl,
+  getOauthAccessTokens,
+  getSiteDetails,
+  injectScript,
+  installWebhooks,
+  verifyHmac
+}

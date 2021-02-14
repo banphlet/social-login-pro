@@ -11,5 +11,6 @@ export default {
   UserAlreadyExistsError: 'UserAlreadyExistsError',
   InvalidUserOrPasswordError: 'InvalidUserOrPasswordError',
   InvalidTokenError: 'InvalidTokenError',
-  ResourceAlreadyExistsError: 'ResourceAlreadyExistsError'
+  ResourceAlreadyExistsError: 'ResourceAlreadyExistsError',
+  InvalidHmacError: 'InvalidHmacError'
 }

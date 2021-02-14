@@ -2,7 +2,7 @@
 
 import joi from '../../lib/joi'
 import { validate } from '../../lib/utils'
-import { Platforms } from '../../models/shops/schema'
+import { Platforms, StoreStatusTypes } from '../../models/shops/schema'
 import platforms from '../platforms'
 import { shops as shopModel } from '../../models'
 
@@ -39,11 +39,18 @@ export default async function installShop (payload) {
       external_access_token: tokens.accessToken,
       platform: validated.platform,
       locale: shopDetails.locale,
-      platform_domain: shopDetails.platformDomain
+      platform_domain: shopDetails.platformDomain,
+      status: StoreStatusTypes.ACTIVE
     }
   )
 
   await platforms(validated.platform).injectScript({
+    accessToken: tokens.accessToken,
+    platformDomain: shopDetails.platformDomain,
+    shopId: shop.id
+  })
+
+  await platforms(validated.platform).installWebhooks({
     accessToken: tokens.accessToken,
     platformDomain: shopDetails.platformDomain,
     shopId: shop.id
