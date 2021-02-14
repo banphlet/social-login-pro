@@ -89,7 +89,7 @@ const schema = new mongoose.Schema(
     banner_message: {
       type: String,
       default:
-        'Too many login attempts. Login blocked temporary. Try again later'
+        'Too many login attempts. Login blocked temporarily. Try again later'
     },
     text_color: {
       type: String,
