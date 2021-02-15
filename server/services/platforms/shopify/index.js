@@ -6,6 +6,7 @@ import { asyncPipe, required } from '../../../lib/utils'
 import { Platforms } from '../../../models/shops/schema'
 import fs from 'fs'
 import util from 'util'
+import request from '../../../lib/request'
 
 const readFilePromise = util.promisify(fs.readFile)
 
@@ -80,10 +81,13 @@ const insertSnippetIntoCurrentLiquid = (value = '') => {
   )
 }
 const loadScript = async shopId => {
-  const script = (
-    await readFilePromise(process.cwd() + '/script.liquid')
-  ).toString('utf-8')
-
+  const script = await request(
+    `${config.get('NEXT_PUBLIC_APP_URL')}/script.liquid`,
+    {
+      responseType: 'text',
+      rejectUnauthorized: false
+    }
+  ).then(response => response.body)
   return script
     .replace('SHOP_ID', shopId)
     .replace('NEXT_PUBLIC_APP_URL', config.get('NEXT_PUBLIC_APP_URL'))
