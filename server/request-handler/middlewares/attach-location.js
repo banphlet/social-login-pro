@@ -2,7 +2,10 @@
 import geopIp from 'geoip-lite'
 
 const getIp = req => {
-  var ip = req.headers['x-real-ip'] || req.connection.remoteAddress
+  var ip =
+    req.headers['x-forwarded-for'] ||
+    req.headers['x-real-ip'] ||
+    req.connection.remoteAddress
   if (ip.substr(0, 7) == '::ffff:') {
     ip = ip.substr(7)
   }
