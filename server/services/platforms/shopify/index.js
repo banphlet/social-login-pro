@@ -34,13 +34,7 @@ const shopifyToken = new ShopifyToken({
     'NEXT_PUBLIC_APP_URL'
   )}/api/permission-accepted/shopify`,
   apiKey: config.get('NEXT_PUBLIC_SHOPIFY_CLIENT_ID'),
-  scopes: [
-    'read_content',
-    'read_script_tags',
-    'write_script_tags',
-    'read_themes',
-    'write_themes'
-  ]
+  scopes: ['read_themes', 'write_themes']
 })
 
 const getPermissionUrl = ({ shop = required('shop') }) =>
