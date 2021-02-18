@@ -44,6 +44,10 @@ const requestUrl =  'NEXT_PUBLIC_APP_URL'
       return false
     }
   }
+
+  window.onload =function(){
+trackEmailField()
+}
 </script>
 
 {%- if form.errors -%}
