@@ -12,7 +12,8 @@ const schema = joi.object({
   duration: joi.number(),
   text_color: joi.string(),
   background_color: joi.string(),
-  status: joi.string().valid(...Object.values(StoreStatusTypes))
+  status: joi.string().valid(...Object.values(StoreStatusTypes)),
+  blacklisted_ips: joi.array().items(joi.string())
 })
 
 export const updateShopById = async payload => {

@@ -5,7 +5,6 @@ import {
   FormLayout,
   TextField,
   Select,
-  EmptyState,
   Loading,
   Form,
   ContextualSaveBar,
@@ -15,13 +14,14 @@ import {
 import useMutation from '../../Hooks/useMutation'
 import isEqual from 'lodash/isEqual'
 import { SketchPicker } from 'react-color'
+import ManualAddIps from './ManualAddIps'
 
 const options = [
   { label: 'IP', value: 'ip' },
   { label: 'EMAIL', value: 'email' }
 ]
 
-export default function Settings ({ shop }) {
+export default function Settings({ shop }) {
   const { makeRequest, loading, data: { data } = {} } = useMutation({
     path: 'shops/me',
     method: 'put'
@@ -34,7 +34,8 @@ export default function Settings ({ shop }) {
     banner_message: data?.banner_message || shop.banner_message,
     status: data?.status || shop?.status,
     background_color: data?.background_color || shop?.background_color,
-    text_color: data?.text_color || shop?.text_color
+    text_color: data?.text_color || shop?.text_color,
+    blacklisted_ips: (data?.blacklisted_ips || shop?.blacklisted_ips || []).join("\n")
   }
   const [formFields, setFormFields] = React.useState(initialFormFields)
   const [showContextSave, setShowContextSave] = React.useState(false)
@@ -42,7 +43,8 @@ export default function Settings ({ shop }) {
   const onSave = async () => {
     await makeRequest({
       shop_id: shop.id,
-      ...formFields
+      ...formFields,
+      blacklisted_ips: formFields.blacklisted_ips.split("\n")
     })
     setShowContextSave(false)
   }
@@ -144,7 +146,7 @@ export default function Settings ({ shop }) {
           <div style={{ marginTop: 20 }} />
           <Layout>
             <Layout.Section oneHalf>
-              <Card title='Order details' sectioned>
+              <Card title='Banner Design' sectioned>
                 <div
                   style={{ display: 'flex', justifyContent: 'space-between' }}
                 >
@@ -189,6 +191,7 @@ export default function Settings ({ shop }) {
               </Card>
             </Layout.Section>
           </Layout>
+          <ManualAddIps updateField={updateField} formFields={formFields} />
         </Layout.AnnotatedSection>
       </Layout>
     </Card.Section>

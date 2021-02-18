@@ -98,6 +98,10 @@ const schema = new mongoose.Schema(
     background_color: {
       type: String,
       default: '#B74949'
+    },
+    blacklisted_ips: {
+      type: [String],
+      default: []
     }
   },
   {

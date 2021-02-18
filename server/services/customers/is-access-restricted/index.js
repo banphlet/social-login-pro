@@ -1,5 +1,4 @@
 'use strict'
-
 import joi, { objectId } from '../../../lib/joi'
 import { validate } from '../../../lib/utils'
 import { customers, shops } from '../../../models'
@@ -14,7 +13,9 @@ const schema = joi
   })
   .or('ip', 'email')
 
-export default async function isAccessRestricted (payload) {
+const isRestrictedByShopBlacklist = ({ shop, ...rest }) => Object.values(rest).some(emailOrIp => shop.blacklisted_ips.includes(emailOrIp))
+
+export default async function isAccessRestricted(payload) {
   const validated = validate(schema, payload)
   const shop = await shops().getById(validated.shop_id)
   let customer = await customers().getBasedOnCriteria({
@@ -57,7 +58,7 @@ export default async function isAccessRestricted (payload) {
 
   return {
     is_restricted:
-      shop.status === 'A' && moment().isBefore(customer.unblock_date),
+      isRestrictedByShopBlacklist({ ...payload, shop }) || (shop.status === 'A' && moment().isBefore(customer.unblock_date)),
     attempts: customer.attempts,
     message: shop.banner_message,
     text_color: shop.text_color,
