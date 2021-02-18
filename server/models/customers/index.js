@@ -3,6 +3,7 @@ import mongoose from 'mongoose'
 import schema from './schema'
 import BaseModel from '../common/base-model'
 import { required } from '../../lib/utils'
+import { compact } from 'lodash';
 
 const Model = mongoose.models.Customer || mongoose.model('Customer', schema)
 const CustomerModal = BaseModel(Model)
@@ -69,7 +70,7 @@ const createOrUpdate = ({
   CustomerModal.upsert({
     query: {
       shop: shopId,
-      $or: [{ ip }, { email }]
+      $or: compact([ip && { ip }, email && { email }])
     },
     update: {
       ip,

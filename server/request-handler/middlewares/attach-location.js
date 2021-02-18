@@ -11,13 +11,13 @@ const getIp = req => {
     ip = ip.substr(7)
   }
   if (ip === '::1' || ip === '127.0.0.1') {
-    ip = '154.160.30.184'
+    ip = '154.160.30.186'
   }
   return ip
 }
 
-export default function attachLocation (req, res) {
-  const ip = requestIp.getClientIp(req)
+export default function attachLocation(req, res) {
+  const ip = getIp(req)
   const geoInfo = geopIp.lookup(ip)
   const mergedUserAgent = { ip, ...geoInfo, ...req.useragent }
   req.useragent = mergedUserAgent

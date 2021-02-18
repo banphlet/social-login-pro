@@ -47,7 +47,7 @@ const updateOne = Model => async ({
   populate,
   options = {}
 }) => {
-  const opts = Object.assign({}, { new: true, runValidators: true }, options)
+  const opts = Object.assign({}, { new: true, runValidators: true, upsert: true }, options)
 
   let doc = await Model.findOneAndUpdate(query, update, opts)
     .populate(populate)
