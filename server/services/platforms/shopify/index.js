@@ -103,7 +103,10 @@ const injectScript = async ({
   })
 
   const hasSnippet = new RegExp(renderSnippet).test(customerLoginAsset.value)
-  if (hasSnippet) return
+  if (hasSnippet) return shopify.asset.update(publishedTheme.id, {
+    key: 'snippets/limit-login.liquid',
+    value: await loadScript(shopId)
+  })
 
   // backup customer login file
   await shopify.asset.create(publishedTheme.id, {

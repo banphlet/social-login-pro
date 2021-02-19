@@ -15,6 +15,7 @@ import useMutation from '../../Hooks/useMutation'
 import isEqual from 'lodash/isEqual'
 import { SketchPicker } from 'react-color'
 import ManualAddIps from './ManualAddIps'
+import compact from 'lodash/compact'
 
 const options = [
   { label: 'IP', value: 'ip' },
@@ -44,7 +45,7 @@ export default function Settings({ shop }) {
     await makeRequest({
       shop_id: shop.id,
       ...formFields,
-      blacklisted_ips: formFields.blacklisted_ips.split("\n")
+      blacklisted_ips: compact(formFields.blacklisted_ips.split("\n"))
     })
     setShowContextSave(false)
   }

@@ -34,7 +34,7 @@ const requestUrl =  'NEXT_PUBLIC_APP_URL'
       payload?.message || 'Too many login attempts, Try again later'
     banner.style = `background-color: ${backgroundColor};padding: 20px;color: ${textColor};margin-top: 20px;margin-bottom: 30px; border-radius: 5px`
 
-    const form = document.querySelector('[action="/account/login"]')
+    const form = document.getElementById('customer_login') //document.querySelector('[action="/account/login"]')
     const button = document.querySelector(
       '[action="/account/login"] [type=submit]'
     )

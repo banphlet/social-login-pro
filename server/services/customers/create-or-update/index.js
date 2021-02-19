@@ -10,13 +10,12 @@ const schema = joi
     ip: joi.string().ip(),
     email: joi
       .string()
-      .email()
       .allow(null),
     geo_location: joi.object().required()
   })
   .or('ip', 'email')
 
-export default async function createOrUpdate (payload) {
+export default async function createOrUpdate(payload) {
   const validated = validate(schema, payload)
   const shop = await shops().getById(validated.shop_id)
   const customer = await customers().createOrUpdate({
