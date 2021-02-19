@@ -73,6 +73,10 @@ import axios from 'axios'
       preventFormSubmission(isRestricted)
     }
 
+    function socialLogins() {
+
+    }
+
 
     loadScript()
     window.onload = function () {

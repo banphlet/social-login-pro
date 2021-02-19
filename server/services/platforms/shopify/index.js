@@ -8,8 +8,6 @@ import fs from 'fs'
 import util from 'util'
 import request from '../../../lib/request'
 
-const readFilePromise = util.promisify(fs.readFile)
-
 const renderSnippet = "{% render 'limit-login.liquid', form: form %}"
 
 const API_VERSION = '2020-04'
@@ -34,7 +32,7 @@ const shopifyToken = new ShopifyToken({
     'NEXT_PUBLIC_APP_URL'
   )}/api/permission-accepted/shopify`,
   apiKey: config.get('NEXT_PUBLIC_SHOPIFY_CLIENT_ID'),
-  scopes: ['read_themes', 'write_themes']
+  scopes: ['read_themes', 'write_themes', 'write_customers', 'read_customers']
 })
 
 const getPermissionUrl = ({ shop = required('shop') }) =>

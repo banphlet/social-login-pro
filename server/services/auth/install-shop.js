@@ -18,7 +18,7 @@ const schema = joi.object({
 const getTokens = ({ platform, ...rest }) =>
   platforms(platform).getOauthAccessTokens(rest)
 
-export default async function installShop (payload) {
+export default async function installShop(payload) {
   const validated = validate(schema, payload)
 
   const tokens = await getTokens(validated)

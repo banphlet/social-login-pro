@@ -39,6 +39,18 @@ const config = convict({
     default: process.env.SHOPIFY_CLIENT_SECRET,
     format: '*',
     env: 'SHOPIFY_CLIENT_SECRET'
+  },
+  NEXT_PUBLIC_GOOGLE_CLIENT_ID: {
+    doc: 'NEXT_PUBLIC_GOOGLE_CLIENT_ID',
+    default: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
+    format: '*',
+    env: 'NEXT_PUBLIC_GOOGLE_CLIENT_ID'
+  },
+  GOOGLE_CLIENT_SECRET: {
+    doc: 'GOOGLE_CLIENT_SECRET',
+    default: process.env.GOOGLE_CLIENT_SECRET,
+    format: '*',
+    env: 'GOOGLE_CLIENT_SECRET'
   }
 })
 

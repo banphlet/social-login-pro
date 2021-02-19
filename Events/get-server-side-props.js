@@ -12,7 +12,7 @@ const getShop = shopId =>
       console.log(err?.response)
     })
 
-export async function getServerSideProps (context) {
+export async function getServerSideProps(context) {
   const shop = await getShop(context.query?.shop_id)
   if (!shop)
     return {
