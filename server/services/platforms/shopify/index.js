@@ -83,7 +83,7 @@ const loadScript = async shopId => {
     }
   ).then(response => response.body)
   return script
-    .replace('SHOP_ID', shopId)
+    .replace(/SHOP_ID/g, shopId)
     .replace('NEXT_PUBLIC_APP_URL', config.get('NEXT_PUBLIC_APP_URL'))
 }
 
