@@ -36,8 +36,8 @@ const requestUrl =  'NEXT_PUBLIC_APP_URL'
 
     const form = document.getElementById('customer_login') //document.querySelector('[action="/account/login"]')
     const button = document.querySelector(
-      '[action="/account/login"] [type=submit]'
-    )
+      '#customer_login button'
+    ) || //document.querySelector('[action="/account/login"] [type=submit]')
     form.prepend(banner)
     button.disabled = true
     form.onsubmit = function () {
