@@ -35,9 +35,7 @@ const requestUrl =  'NEXT_PUBLIC_APP_URL'
     banner.style = `background-color: ${backgroundColor};padding: 20px;color: ${textColor};margin-top: 20px;margin-bottom: 30px; border-radius: 5px`
 
     const form = document.getElementById('customer_login') //document.querySelector('[action="/account/login"]')
-    const button = document.querySelector(
-      '#customer_login button'
-    ) || //document.querySelector('[action="/account/login"] [type=submit]')
+    const button = document.querySelector('[action="/account/login"] [type=submit]')
     form.prepend(banner)
     button.disabled = true
     form.onsubmit = function () {
