@@ -9,18 +9,13 @@ import pino from 'pino'
 export default async function callback(req, res) {
   const {
     provider,
-    adapter,
     baseUrl,
-    basePath,
-    callbackUrl,
-    pages,
-    events,
     callbacks
   } = req.options
 
   if (provider.type === 'oauth') {
     const oauthPayload = await oAuthCallback(req)
-    console.log(oauthPayload.profile);
     await callbacks.signIn(oauthPayload)
+    res.redirect(baseUrl)
   }
 }

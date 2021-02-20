@@ -1,6 +1,6 @@
 'use strict'
-import NextAuthHandler from '../../../server/lib/social-auth/auth'
-import Providers from '../../../server/lib/social-auth/providers'
+import NextAuthHandler from '../../../server/services/social-auth/auth'
+import Providers from '../../../server/services/social-auth/providers'
 import config from "../../../server/config";
 import customServerHandler from '../../../server/request-handler'
 import Cors from 'cors'

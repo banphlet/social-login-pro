@@ -109,7 +109,7 @@ async function getProfile({ profileData, tokens, provider, user, state }) {
     const profile = await provider.profile(profileData)
     // Return profile, raw profile and auth provider details
     return {
-      state,
+      shopId: state,
       profile: {
         ...profile,
         email: profile.email?.toLowerCase() ?? null

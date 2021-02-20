@@ -8,6 +8,7 @@ import config from '../../../config'
 import * as defaultEvents from './default-events'
 import * as defaultCallbacks from './default-callback'
 import * as routes from './routes'
+import shopService from '../../shops'
 
 const logger = pino()
 
@@ -37,8 +38,6 @@ async function NextAuthHandler(userOptions, req, res) {
             providerId = nextauth[1],
             error = nextauth[1]
         } = req.query
-
-        // console.log(req.body);
 
         const providers = parseProviders({ providers: userOptions.providers, baseUrl })
         const provider = providers.find(({ id }) => id === providerId)
