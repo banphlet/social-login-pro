@@ -6,7 +6,7 @@ export default (options) => {
     version: '2.0',
     scope: 'email',
     accessTokenUrl: 'https://graph.facebook.com/oauth/access_token',
-    authorizationUrl: 'https://www.facebook.com/v7.0/dialog/oauth?response_type=code',
+    authorizationUrl: 'https://www.facebook.com/v9.0/dialog/oauth?response_type=code',
     profileUrl: 'https://graph.facebook.com/me?fields=email,name,picture',
     profile: (profile) => {
       return {

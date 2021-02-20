@@ -51,7 +51,19 @@ const config = convict({
     default: process.env.GOOGLE_CLIENT_SECRET,
     format: '*',
     env: 'GOOGLE_CLIENT_SECRET'
-  }
+  },
+  FACEBOOK_CLIENT_ID: {
+    doc: 'FACEBOOK_CLIENT_ID',
+    default: process.env.FACEBOOK_CLIENT_ID,
+    format: '*',
+    env: 'FACEBOOK_CLIENT_ID'
+  },
+  FACEBOOK_CLIENT_SECRET: {
+    doc: 'FACEBOOK_CLIENT_SECRET',
+    default: process.env.FACEBOOK_CLIENT_SECRET,
+    format: '*',
+    env: 'FACEBOOK_CLIENT_SECRET'
+  },
 })
 
 config.validate({ allowed: 'strict' })

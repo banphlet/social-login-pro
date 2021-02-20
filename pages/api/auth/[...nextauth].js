@@ -11,6 +11,10 @@ export default customServerHandler({
             Providers.Google({
                 clientId: config.get('NEXT_PUBLIC_GOOGLE_CLIENT_ID'),
                 clientSecret: config.get('GOOGLE_CLIENT_SECRET')
+            }),
+            Providers.Facebook({
+                clientId: config.get('FACEBOOK_CLIENT_ID'),
+                clientSecret: config.get('FACEBOOK_CLIENT_SECRET')
             })
         ],
         secret: config.get('APP_KEY')

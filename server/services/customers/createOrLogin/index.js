@@ -27,8 +27,8 @@ export default async function createOrLogin({ profile, shopId }) {
     const password = createMd5Hash(profile.email)
     const customerToCreate = {
         ...profile,
-        first_name: profile?.name?.split('')[0],
-        last_name: profile?.name?.split('')[1],
+        first_name: profile?.name?.split(' ')[0],
+        last_name: profile?.name?.split(' ')[1],
         password: password,
         password_confirmation: password,
         send_email_welcome: false,
