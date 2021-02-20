@@ -19,6 +19,7 @@ export default async function callback(req, res) {
       res.redirect(`https://${payload.domain}/account/login?lla_token=${token}`)
     }
   } catch (error) {
+    console.log(error);
     res.redirect(`${baseUrl}/status?error=${error.message}`)
   }
 }

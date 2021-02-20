@@ -15,6 +15,10 @@ export default customServerHandler({
             Providers.Facebook({
                 clientId: config.get('FACEBOOK_CLIENT_ID'),
                 clientSecret: config.get('FACEBOOK_CLIENT_SECRET')
+            }),
+            Providers.Twitter({
+                clientId: config.get('TWITTER_CLIENT_ID'),
+                clientSecret: config.get('TWITTER_CLIENT_SECRET')
             })
         ],
         secret: config.get('APP_KEY')

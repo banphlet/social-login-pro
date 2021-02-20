@@ -42,7 +42,7 @@ export default async function getAuthorizationUrl(req) {
     logger.debug('GET_AUTHORIZATION_URL', url)
     return url
   } catch (error) {
-    logger.error('GET_AUTHORIZATION_URL_ERROR', error)
+    console.error('GET_AUTHORIZATION_URL_ERROR', error)
     throw error
   }
 }
