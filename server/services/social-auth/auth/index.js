@@ -5,8 +5,6 @@ import pino from 'pino'
 import extendRes from './extend-req'
 import parseProviders from './parse-providers'
 import config from '../../../config'
-import * as defaultEvents from './default-events'
-import * as defaultCallbacks from './default-callback'
 import * as routes from './routes'
 
 const logger = pino()
@@ -57,16 +55,6 @@ async function NextAuthHandler(userOptions, req, res) {
             action,
             provider,
             providers,
-            // Event messages
-            events: {
-                ...defaultEvents,
-                ...userOptions.events
-            },
-            // Callback functions
-            callbacks: {
-                ...defaultCallbacks,
-                ...userOptions.callbacks
-            },
             logger
         }
 
