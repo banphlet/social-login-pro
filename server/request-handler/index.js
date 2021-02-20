@@ -4,16 +4,18 @@ import errors from '../lib/errors'
 import errorMap, { httpStatusCodes } from './error-handler'
 import middlewareCreator from './middlewares'
 
-const requestHandler = ({ handler, method = 'GET', middleware }) => async (
+const requestHandler = ({ handler, method = 'GET', middleware, allowAllMethods = false }) => async (
   req,
   res
 ) => {
   try {
-    if (method !== req.method && req.method !== 'OPTIONS') {
-      throw errors.throwError({
-        name: errors.RequestNotFound,
-        message: 'not found'
-      })
+    if (!allowAllMethods) {
+      if (method !== req.method && req.method !== 'OPTIONS') {
+        throw errors.throwError({
+          name: errors.RequestNotFound,
+          message: 'not found'
+        })
+      }
     }
     await middlewareCreator(middleware)(req, res)
     if (req.method === 'OPTIONS') return
@@ -32,13 +34,13 @@ const requestHandler = ({ handler, method = 'GET', middleware }) => async (
       statusCode === 500
         ? { error: { message: 'An error occurred', code: 500 } }
         : {
-            error: {
-              code,
-              details,
-              message,
-              name
-            }
+          error: {
+            code,
+            details,
+            message,
+            name
           }
+        }
     )
   }
 }
