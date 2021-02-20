@@ -9,6 +9,7 @@
     "webpack": "webpack build"
   },
   "dependencies": {
+    "@banphlet/next-auth": "git+https://github.com/banphlet/next-auth.git",
     "@shopify/app-bridge-react": "1.29.0",
     "@shopify/polaris": "6.0.1",
     "axios": "0.21.1",
@@ -28,9 +29,9 @@
     "mongoose": "5.11.15",
     "mongoose-aggregate-paginate-v2": "1.0.42",
     "next": "10.0.6",
-    "next-auth": "3.4.2",
     "next-i18next": "7.0.1",
     "node-schedule": "2.0.0",
+    "oauth": "0.9.15",
     "react": "17.0.1",
     "react-color": "2.19.3",
     "react-dom": "17.0.1",

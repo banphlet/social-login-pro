@@ -4,6 +4,7 @@ const request = axios.create({
   baseURL: `${SERVER_URL}/api`
 })
 
+
 function getParams(a) {
   var b = document.getElementsByTagName('script')
   for (var i = 0; i < b.length; i++) {
@@ -22,13 +23,17 @@ function getParams(a) {
   }
   return {}
 }
+
+const scriptParam = getParams('js/lla')
+
+
 const addEmailToSectionStorage = email =>
   sessionStorage.setItem('email', email)
 
-const isAccessRestricted = shopId =>
+const isAccessRestricted = () =>
   request
     .post('/customers/is-access-restricted', {
-      shop_id: shopId
+      shop_id: scriptParam.shop_id
     })
     .then(response => response.data.data)
 
@@ -65,20 +70,29 @@ const preventFormSubmission = payload => {
 }
 
 async function loadScript() {
-  const scriptParam = getParams('js/lla')
-  const isRestricted = await isAccessRestricted(scriptParam.shop_id)
+  const isRestricted = await isAccessRestricted()
   if (!isRestricted.is_restricted) return
   preventFormSubmission(isRestricted)
 }
 
 function monitorOnClickSocialClick() {
-  const item = document.querySelector('.btn-social')
-  console.log(item);
+  const items = document.querySelectorAll('.btn-social')
+  items.forEach(item => {
+    item.addEventListener('click', async (e) => {
+      const platform = item.getAttribute('value')
+      console.log(platform);
+      const { data: { authorizationUrl } } = await request.post(`/auth/signin/${platform}`, {
+        shop_id: scriptParam.shop_id,
+        domain: window.location.href
+      })
+
+      window.open(authorizationUrl, '_blank')
+    })
+  })
 }
 
 
-async function socialLogins() {
-  const { data: { csrfToken } } = await request.get('/auth/csrf')
+function socialLogins() {
   const selectedSocialBanners = ['facebook', 'google', 'twitter']
   const includesText = true
   const submitButton = document.querySelector(
@@ -86,17 +100,12 @@ async function socialLogins() {
   )
 
   const socialContent = selectedSocialBanners.map(platform => {
-    const button = `<button form='${platform}' type="submit" class="btn btn-social ${includesText ? "btn-block" : "btn-social-icon"} btn-${platform}" style="margin: 2px">
+    const button = `<a value='${platform}' type="submit" class="btn btn-social ${includesText ? "btn-block" : "btn-social-icon"} btn-${platform}" style="margin: 2px">
 <span class="fa fa-${platform}"></span>${includesText ? `Sign in with ${platform}` : ""}
-</button>`
+</a>`
 
-    return `<form id='${platform}' method='POST' action='${SERVER_URL}/api/auth/signin/${platform}'>
-    <input type="hidden" name="csrfToken" value="${csrfToken}" />
-    ${button}
-    </form>`
+    return button
   })
-
-  console.log(socialContent);
 
   const socialHtml = `<div>
       <h3 style='margin-top: 20px'> Login With Social Accounts </h3>
@@ -113,4 +122,5 @@ loadScript()
 window.onload = function () {
   trackEmailField()
   socialLogins()
+  monitorOnClickSocialClick()
 }
