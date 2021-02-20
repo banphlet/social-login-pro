@@ -141,11 +141,26 @@ const installWebhooks = ({
 
 const verifyHmac = shopifyToken.verifyHmac
 
+const createCustomer = ({ accessToken = required('accessToken'), platformDomain = required('platformDomain'), customer }) => shopifyClient({ shop: platformDomain, accessToken }).customer.create(customer)
+
+const updateCustomerPassword = async ({ accessToken = required('accessToken'), platformDomain = required('platformDomain'), email = required('email'), password = required('password') }) => {
+  const shopify = shopifyClient({ shop: platformDomain, accessToken })
+  const [customer] = await shopify.customer.search({
+    query: `email:${email}`
+  })
+  return shopify.customer.update(customer.id, {
+    "password": password,
+    "password_confirmation": password
+  })
+}
+
 export {
+  createCustomer,
   getPermissionUrl,
   getOauthAccessTokens,
   getSiteDetails,
   injectScript,
   installWebhooks,
-  verifyHmac
+  verifyHmac,
+  updateCustomerPassword
 }

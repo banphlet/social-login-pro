@@ -34,6 +34,8 @@ export const createHmac = ({
     .update(Buffer.from(data), 'utf8')
     .digest(digest)
 
+export const createMd5Hash = (data = '') => crypto.createHash('md5').update(Buffer.from(data)).digest("hex");
+
 export const validate = curry((schema, data) => {
   const { error, value } = schema.validate(data, { stripUnknown: true })
   if (error) {
@@ -49,7 +51,7 @@ export const validate = curry((schema, data) => {
   return value
 })
 
-async function ensureAsync (predicate, errorFunc, value) {
+async function ensureAsync(predicate, errorFunc, value) {
   if (await predicate(value)) return value
   else throw errorFunc(value)
 }
@@ -111,8 +113,8 @@ export const getCookie = req => {
   return cookies
 }
 
-export function asyncPipe (...fns) {
-  return function innerAsyncPipe (params) {
+export function asyncPipe(...fns) {
+  return function innerAsyncPipe(params) {
     return fns.reduce(async function (result, next) {
       return next(await result)
     }, params)

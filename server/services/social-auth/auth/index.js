@@ -8,7 +8,6 @@ import config from '../../../config'
 import * as defaultEvents from './default-events'
 import * as defaultCallbacks from './default-callback'
 import * as routes from './routes'
-import shopService from '../../shops'
 
 const logger = pino()
 

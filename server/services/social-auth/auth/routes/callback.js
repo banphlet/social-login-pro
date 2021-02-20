@@ -1,6 +1,5 @@
 import oAuthCallback from '../oauth/callback'
-import pino from 'pino'
-
+import customers from '../../../customers'
 /**
  * Handle callbacks from login services
  * @param {import("..").NextAuthRequest} req
@@ -10,12 +9,16 @@ export default async function callback(req, res) {
   const {
     provider,
     baseUrl,
-    callbacks
   } = req.options
 
-  if (provider.type === 'oauth') {
-    const oauthPayload = await oAuthCallback(req)
-    await callbacks.signIn(oauthPayload)
-    res.redirect(baseUrl)
+  try {
+    if (provider.type === 'oauth') {
+      const oauthPayload = await oAuthCallback(req)
+      const payload = await customers().createOrLogin(oauthPayload)
+      const token = Buffer.from(JSON.stringify(payload)).toString('base64')
+      res.redirect(`https://${payload.domain}/account/login?lla_token=${token}`)
+    }
+  } catch (error) {
+    res.redirect(`${baseUrl}/status?error=${error.message}`)
   }
 }

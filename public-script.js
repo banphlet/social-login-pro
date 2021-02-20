@@ -80,13 +80,12 @@ function monitorOnClickSocialClick() {
   items.forEach(item => {
     item.addEventListener('click', async (e) => {
       const platform = item.getAttribute('value')
-      console.log(platform);
       const { data: { authorizationUrl } } = await request.post(`/auth/signin/${platform}`, {
         shop_id: scriptParam.shop_id,
         domain: window.location.href
       })
 
-      window.open(authorizationUrl, '_blank')
+      window.location.href = authorizationUrl
     })
   })
 }
@@ -117,7 +116,22 @@ function socialLogins() {
   submitButton.insertAdjacentHTML('afterend', socialHtml)
 }
 
+const loginCustomerIn = async () => {
+  const search = new URLSearchParams(window.location.search)
+  const token = search.get('lla_token')
+  if (!token) return
+  const data = JSON.parse(atob(token))
+  var bodyFormData = new FormData();
+  bodyFormData.append('form_type', 'customer_login');
+  bodyFormData.append('customer[email]', data.email)
+  bodyFormData.append('customer[password]', data.password)
+  await axios.post('/account/login', bodyFormData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  })
+  window.location.href = '/account'
+}
 
+loginCustomerIn()
 loadScript()
 window.onload = function () {
   trackEmailField()

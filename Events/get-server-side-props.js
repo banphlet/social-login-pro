@@ -9,7 +9,7 @@ const getShop = shopId =>
     })
     .then(response => response.data)
     .catch(err => {
-      console.log(err?.response)
+      // console.log(err?.response?.data)
     })
 
 export async function getServerSideProps(context) {
