@@ -23,6 +23,14 @@ export default customServerHandler({
             Providers.Discord({
                 clientId: config.get('DISCORD_CLIENT_ID'),
                 clientSecret: config.get('DISCORD_CLIENT_SECRET')
+            }),
+            Providers.LinkedIn({
+                clientId: config.get('LINKEDIN_CLIENT_ID'),
+                clientSecret: config.get('LINKEDIN_CLIENT_SECRET')
+            }),
+            Providers.Yandex({
+                clientId: config.get('YANDEX_CLIENT_ID'),
+                clientSecret: config.get('YANDEX_CLIENT_SECRET')
             })
         ],
         secret: config.get('APP_KEY')

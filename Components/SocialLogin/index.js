@@ -110,7 +110,7 @@ export default function SocialLogin({ data, shop, makeRequest }) {
                         />
                         <div style={{ marginTop: 20 }} />
 
-                        <div style={{ display: 'flex' }}>
+                        <div style={{ display: 'flex', flexWrap: 'wrap' }}>
                             {providerList.map(provider => {
                                 const hasProvider = formFields.social_platforms?.includes(provider)
                                 return (

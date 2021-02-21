@@ -88,6 +88,30 @@ const config = convict({
     format: '*',
     env: 'DISCORD_CLIENT_SECRET'
   },
+  LINKEDIN_CLIENT_ID: {
+    doc: 'LINKEDIN_CLIENT_ID',
+    default: process.env.LINKEDIN_CLIENT_ID,
+    format: '*',
+    env: 'LINKEDIN_CLIENT_ID'
+  },
+  LINKEDIN_CLIENT_SECRET: {
+    doc: 'LINKEDIN_CLIENT_SECRET',
+    default: process.env.LINKEDIN_CLIENT_SECRET,
+    format: '*',
+    env: 'LINKEDIN_CLIENT_SECRET'
+  },
+  YANDEX_CLIENT_ID: {
+    doc: 'YANDEX_CLIENT_ID',
+    default: process.env.YANDEX_CLIENT_ID,
+    format: '*',
+    env: 'YANDEX_CLIENT_ID'
+  },
+  YANDEX_CLIENT_SECRET: {
+    doc: 'YANDEX_CLIENT_SECRET',
+    default: process.env.YANDEX_CLIENT_SECRET,
+    format: '*',
+    env: 'YANDEX_CLIENT_SECRET'
+  },
 })
 
 config.validate({ allowed: 'strict' })
