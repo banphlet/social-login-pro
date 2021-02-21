@@ -95,7 +95,6 @@ function monitorOnClickSocialClick() {
 async function socialLogins() {
   const { data: { data: shop } = {} } = await request.get('/customers/shop', { params: { shop_id: scriptParam.shop_id } })
   const isActive = shop.social_platform_status === 'A'
-  console.log(shop);
   if (!isActive) return
   const selectedSocialBanners = shop.social_platforms
   const includesText = shop.social_login_with_text
@@ -103,7 +102,7 @@ async function socialLogins() {
   const form = document.getElementById('customer_login')
 
   const socialContent = selectedSocialBanners.map(platform => {
-    return `<a href='#' value="${platform}" class="lla-button ${isRound ? 'round' : ''} ${includesText ? 'col-6' : ''} social-${includesText ? 'with' : 'no'}-text fa fa-${platform}">${includesText ? ` <span>Sign with ${platform} </span>` : ''}</a>`
+    return `<a href='#' value="${platform}" class="lla-button ${isRound ? 'round' : ''} ${includesText ? 'col-6' : ''} social-${includesText ? 'with' : 'no'}-text fab fa-${platform}">${includesText ? ` <span>Sign with ${platform} </span>` : ''}</a>`
   })
 
   const socialHtml = `<div style='margin: 10px'>
@@ -113,6 +112,7 @@ async function socialLogins() {
       
     </div>`
   form.insertAdjacentHTML('beforebegin', socialHtml)
+  monitorOnClickSocialClick()
 }
 
 const loginCustomerIn = async () => {
@@ -135,5 +135,4 @@ loadScript()
 window.onload = function () {
   trackEmailField()
   socialLogins()
-  monitorOnClickSocialClick()
 }

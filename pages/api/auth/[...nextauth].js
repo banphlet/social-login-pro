@@ -19,6 +19,10 @@ export default customServerHandler({
             Providers.Twitter({
                 clientId: config.get('TWITTER_CLIENT_ID'),
                 clientSecret: config.get('TWITTER_CLIENT_SECRET')
+            }),
+            Providers.Discord({
+                clientId: config.get('DISCORD_CLIENT_ID'),
+                clientSecret: config.get('DISCORD_CLIENT_SECRET')
             })
         ],
         secret: config.get('APP_KEY')

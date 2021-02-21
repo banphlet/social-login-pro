@@ -76,6 +76,18 @@ const config = convict({
     format: '*',
     env: 'TWITTER_CLIENT_SECRET'
   },
+  DISCORD_CLIENT_ID: {
+    doc: 'DISCORD_CLIENT_ID',
+    default: process.env.DISCORD_CLIENT_ID,
+    format: '*',
+    env: 'DISCORD_CLIENT_ID'
+  },
+  DISCORD_CLIENT_SECRET: {
+    doc: 'DISCORD_CLIENT_SECRET',
+    default: process.env.DISCORD_CLIENT_SECRET,
+    format: '*',
+    env: 'DISCORD_CLIENT_SECRET'
+  },
 })
 
 config.validate({ allowed: 'strict' })

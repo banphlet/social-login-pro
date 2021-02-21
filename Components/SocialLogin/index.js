@@ -125,7 +125,7 @@ export default function SocialLogin({ data, shop, makeRequest }) {
                                         }}
                                     >
                                         <a
-                                            className={`fa social-no-text fa-${provider}`}
+                                            className={`fab social-no-text fa-${provider}`}
                                             style={{ width: '100%' }}
                                         ></a>
                                         <Checkbox
