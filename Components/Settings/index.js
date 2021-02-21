@@ -22,12 +22,7 @@ const options = [
   { label: 'EMAIL', value: 'email' }
 ]
 
-export default function Settings({ shop }) {
-  const { makeRequest, loading, data: { data } = {} } = useMutation({
-    path: 'shops/me',
-    method: 'put'
-  })
-
+export default function Settings({ shop, loading, data, makeRequest }) {
   const initialFormFields = {
     limit_by: data?.limit_by || shop.limit_by,
     attempts: String(data?.attempts || shop.attempts),

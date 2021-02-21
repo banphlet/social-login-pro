@@ -13,7 +13,11 @@ const schema = joi.object({
   text_color: joi.string(),
   background_color: joi.string(),
   status: joi.string().valid(...Object.values(StoreStatusTypes)),
-  blacklisted_ips: joi.array().items(joi.string())
+  blacklisted_ips: joi.array().items(joi.string()),
+  social_button_round: joi.boolean(),
+  social_platform_status: joi.string().valid(...Object.values(StoreStatusTypes)),
+  social_platforms: joi.array().items(joi.string().valid('google', 'facebook', 'twitter')),
+  social_login_with_text: joi.boolean()
 })
 
 export const updateShopById = async payload => {

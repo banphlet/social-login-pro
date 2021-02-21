@@ -4,8 +4,6 @@ import Shopify from 'shopify-api-node'
 import config from '../../../config'
 import { asyncPipe, required } from '../../../lib/utils'
 import { Platforms } from '../../../models/shops/schema'
-import fs from 'fs'
-import util from 'util'
 import request from '../../../lib/request'
 
 const renderSnippet = "{% render 'limit-login.liquid', form: form %}"
@@ -82,7 +80,7 @@ const loadScript = async shopId => {
   ).then(response => response.body)
   return script
     .replace(/SHOP_ID/g, shopId)
-    .replace('NEXT_PUBLIC_APP_URL', config.get('NEXT_PUBLIC_APP_URL'))
+    .replace(/NEXT_PUBLIC_APP_URL/g, config.get('NEXT_PUBLIC_APP_URL'))
 }
 
 const injectScript = async ({

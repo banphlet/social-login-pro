@@ -102,6 +102,23 @@ const schema = new mongoose.Schema(
     blacklisted_ips: {
       type: [String],
       default: []
+    },
+    social_login_with_text: {
+      type: Boolean,
+      default: true
+    },
+    social_platforms: {
+      type: [String],
+      default: ['google', 'facebook', 'twitter']
+    },
+    social_platform_status: {
+      type: String,
+      enum: Object.values(StoreStatusTypes),
+      default: StoreStatusTypes.ACTIVE
+    },
+    social_button_round: {
+      type: Boolean,
+      default: false
     }
   },
   {

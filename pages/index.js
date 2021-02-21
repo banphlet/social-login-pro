@@ -5,6 +5,8 @@ import Settings from '../Components/Settings'
 import { AppProvider, Frame } from '@shopify/polaris'
 import enTranslations from '@shopify/polaris/locales/en.json'
 import { Provider } from '@shopify/app-bridge-react'
+import SocialLogin from '../Components/SocialLogin'
+import useMutation from '../Hooks/useMutation'
 
 
 const tabs = [
@@ -16,18 +18,29 @@ const tabs = [
   },
   {
     id: 'Settings',
-    content: 'Settings',
+    content: 'Limit Login Settings',
     panelID: 'Settings'
+  },
+  {
+    id: 'Social Login',
+    content: 'Social Login Settings',
+    panelID: 'Social Login'
   }
 ]
 
 export default function Home({ shop }) {
   const [selected, setSelected] = React.useState(0)
+  const { makeRequest, loading, data: { data } = {} } = useMutation({
+    path: 'shops/me',
+    method: 'put'
+  })
 
   const handleTabChange = React.useCallback(
     selectedTabIndex => setSelected(selectedTabIndex),
     []
   )
+
+  console.log(selected);
 
   return (
     <AppProvider i18n={enTranslations}>
@@ -48,7 +61,8 @@ export default function Home({ shop }) {
                 disclosureText='More views'
               >
                 {selected === 0 && <Analytics shop={shop} />}
-                {selected === 1 && <Settings shop={shop} />}
+                {selected === 1 && <Settings makeRequest={makeRequest} loading={loading} data={data} shop={shop} />}
+                {selected === 2 && <SocialLogin makeRequest={makeRequest} loading={loading} data={data} shop={shop} />}
               </Tabs>
             </Card>
           </div>
