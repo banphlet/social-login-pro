@@ -10,7 +10,7 @@ const logger = pino()
  * would be easier to maintain if all the code was native to next-auth.
  * @param {import("../..").Provider} provider
  */
-export default function oAuthClient(provider) {
+export default function oAuthClient(provider, state) {
   if (provider.version?.startsWith('2.')) {
     // Handle OAuth v2.x
     const authorizationUrl = new URL(provider.authorizationUrl)
@@ -36,7 +36,7 @@ export default function oAuthClient(provider) {
     provider.clientId,
     provider.clientSecret,
     provider.version || '1.0',
-    provider.callbackUrl,
+    `${provider.callbackUrl}?shop_id=${state}`,
     provider.encoding || 'HMAC-SHA1'
   )
 

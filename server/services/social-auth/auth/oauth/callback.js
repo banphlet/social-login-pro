@@ -9,10 +9,11 @@ export default async function oAuthCallback(req) {
   const { provider } = req.options
   const client = oAuthClient(provider)
 
+  const { state, shop_id } = req.query
   if (provider.version?.startsWith('2.')) {
     // The "user" object is specific to the Apple provider and is provided on first sign in
     // e.g. {"name":{"firstName":"Johnny","lastName":"Appleseed"},"email":"johnny.appleseed@nextauth.com"}
-    let { code, user, state } = req.query // eslint-disable-line camelcase
+    let { code, user } = req.query // eslint-disable-line camelcase
 
     if (req.method === 'POST') {
       try {
@@ -60,7 +61,7 @@ export default async function oAuthCallback(req) {
   try {
     // Handle OAuth v1.x
     const {
-      oauth_token: oauthToken, oauth_verifier: oauthVerifier
+      oauth_token: oauthToken, oauth_verifier: oauthVerifier,
     } = req.query
     const tokens = await client.getOAuthAccessToken(oauthToken, null, oauthVerifier)
     const profileData = await client.get(
@@ -69,7 +70,7 @@ export default async function oAuthCallback(req) {
       tokens.refreshToken
     )
 
-    return getProfile({ profileData, tokens, provider, state })
+    return getProfile({ profileData, tokens, provider, state: state || shop_id })
   } catch (error) {
     logger.error('OAUTH_V1_GET_ACCESS_TOKEN_ERROR', error)
     throw error

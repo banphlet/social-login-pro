@@ -8,8 +8,7 @@ const logger = pino()
 export default async function signin(req, res) {
   const {
     provider,
-    baseUrl,
-    basePath,
+    baseUrl
   } = req.options
 
   if (!provider.type) {
@@ -22,8 +21,8 @@ export default async function signin(req, res) {
       return res.json({ authorizationUrl })
     } catch (error) {
       logger.error('SIGNIN_OAUTH_ERROR', error)
-      return res.redirect(`${baseUrl}${basePath}/error?error=OAuthSignin`)
+      return res.redirect(`${baseUrl}/status/error?error=OAuthSignin`)
     }
   }
-  return res.redirect(`${baseUrl}${basePath}/signin`)
+  return res.redirect(`${baseUrl}/status/error?error=OAuthSignin`)
 }

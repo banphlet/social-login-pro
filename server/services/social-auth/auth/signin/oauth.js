@@ -7,7 +7,8 @@ const logger = pino()
 export default async function getAuthorizationUrl(req) {
   const { provider } = req.options
 
-  const client = oAuthClient(provider)
+  const state = req.body?.shop_id || req.query?.shop_id_id
+  const client = oAuthClient(provider, state)
   if (provider.version?.startsWith('2.')) {
     delete req.query?.nextauth
     // Handle OAuth v2.x
@@ -16,7 +17,7 @@ export default async function getAuthorizationUrl(req) {
       ...req.query,
       redirect_uri: provider.callbackUrl,
       scope: provider.scope,
-      state: req.body?.shop_id || req.query?.shop_id_id
+      state
     })
 
     // If the authorizationUrl specified in the config has query parameters on it
@@ -37,7 +38,9 @@ export default async function getAuthorizationUrl(req) {
   }
 
   try {
-    const oAuthToken = await client.getOAuthRequestToken()
+    const oAuthToken = await client.getOAuthRequestToken({
+      state
+    })
     const url = `${provider.authorizationUrl}?oauth_token=${oAuthToken}`
     logger.debug('GET_AUTHORIZATION_URL', url)
     return url
