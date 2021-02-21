@@ -2,34 +2,36 @@ import {
     Card,
     Checkbox,
     Layout,
-    OptionList,
     Select,
     SettingToggle,
-    TextStyle
+    TextStyle,
+    ContextualSaveBar
 } from '@shopify/polaris'
 import React from 'react'
 import useQuery from '../../Hooks/useQuery'
 import SkeletonLoader from '../SkeletonLoader'
+import isEqual from 'lodash/isEqual'
 
-export default function SocialLogin({ data, shop }) {
+
+export default function SocialLogin({ data, shop, makeRequest }) {
+    const iframeRef = React.useRef()
+    const [showContextSave, setShowContextSave] = React.useState(false)
     const { loading, data: providers = {} } = useQuery({
         path: '/auth/providers'
     })
 
-    const { data: dd } = useQuery({
-        path: 'https://smartbot-wis.myshopify.com/account/login',
-        useAxiosInstance: false
-    })
-
-    console.log(dd);
-
     const initialFormFields = {
-        status: data?.status || shop?.status,
-        social_login_with_text: data?.status || shop?.social_login_with_text,
+        social_platform_status: data?.social_platform_status || shop?.social_platform_status,
+        social_login_with_text: data?.social_login_with_text || shop?.social_login_with_text,
         social_button_round: data?.social_button_round || shop?.social_button_round,
         social_platforms: data?.social_platforms || shop?.social_platforms
     }
     const [formFields, setFormFields] = React.useState(initialFormFields)
+
+    React.useEffect(() => {
+        const hasChanges = !isEqual(initialFormFields, formFields)
+        setShowContextSave(hasChanges)
+    }, [formFields])
 
     const updateField = (field, value) =>
         setFormFields({ ...formFields, [field]: value })
@@ -38,8 +40,34 @@ export default function SocialLogin({ data, shop }) {
 
     if (loading) return <SkeletonLoader />
 
+    console.log(initialFormFields);
+
+    const onSave = async () => {
+        await makeRequest({
+            shop_id: shop.id,
+            ...formFields
+        })
+        iframeRef.current.contentWindow.location.reload();
+        setShowContextSave(false)
+    }
+
+
     return (
         <Card.Section>
+            {showContextSave ? (
+                <ContextualSaveBar
+                    fullWidth
+                    message='Unsaved changes'
+                    saveAction={{
+                        onAction: onSave,
+                        loading,
+                        disabled: loading || !formFields.social_platform_status
+                    }}
+                    discardAction={{
+                        onAction: () => setFormFields(initialFormFields)
+                    }}
+                />
+            ) : null}
             <Layout>
                 <Layout.Section>
                     <Layout.AnnotatedSection
@@ -48,15 +76,15 @@ export default function SocialLogin({ data, shop }) {
                     >
                         <SettingToggle
                             action={{
-                                content: formFields.status === 'A' ? 'Disable' : 'Enable',
+                                content: formFields.social_platform_status === 'A' ? 'Disable' : 'Enable',
                                 onAction: () =>
-                                    updateField('status', formFields?.status === 'A' ? 'D' : 'A')
+                                    updateField('social_platform_status', formFields?.social_platform_status === 'A' ? 'D' : 'A')
                             }}
-                            enabled={formFields.status === 'A'}
+                            enabled={formFields.social_platform_status === 'A'}
                         >
                             This setting is{' '}
                             <TextStyle variation='strong'>
-                                {formFields.status === 'A' ? 'Enabled' : 'Disabled'}
+                                {formFields.social_platform_status === 'A' ? 'Enabled' : 'Disabled'}
                             </TextStyle>
               .
             </SettingToggle>
@@ -114,8 +142,11 @@ export default function SocialLogin({ data, shop }) {
                 <div style={{ marginTop: 20 }} />
 
                 <Layout.Section>
-                    <Card title='Preview' sectioned>
-                        <iframe src='https://smartbot-wis.myshopify.com/account/login' ></iframe>
+                    <Card title='Site Preview' >
+                        <div style={{ height: '700px' }}>
+                            <iframe ref={iframeRef} width='100%' height='100%' align='center' src={`/api/shops/site?url=${`https://${shop?.platform_domain}/account/login#customer_login`}`} />
+                        </div>
+
                     </Card>
                 </Layout.Section>
             </Layout>

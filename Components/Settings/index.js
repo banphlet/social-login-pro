@@ -11,7 +11,6 @@ import {
   SettingToggle,
   TextStyle
 } from '@shopify/polaris'
-import useMutation from '../../Hooks/useMutation'
 import isEqual from 'lodash/isEqual'
 import { SketchPicker } from 'react-color'
 import ManualAddIps from './ManualAddIps'
