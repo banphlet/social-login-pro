@@ -117,7 +117,7 @@ export default function SocialLogin({ data, shop, makeRequest }) {
                                 { value: 'true', label: 'Round Shape' }
                             ]}
                             onChange={e => updateField('social_button_round', e)}
-                            value={String(formFields.social_login_with_text)}
+                            value={String(formFields.social_button_round)}
                         />
                         <div style={{ marginTop: 20 }} />
 

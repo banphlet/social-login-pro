@@ -20,13 +20,17 @@ export default customServerHandler({
                 clientId: config.get('NEXT_PUBLIC_GOOGLE_CLIENT_ID'),
                 clientSecret: config.get('GOOGLE_CLIENT_SECRET')
             }),
-            Providers.Discord({
-                clientId: config.get('DISCORD_CLIENT_ID'),
-                clientSecret: config.get('DISCORD_CLIENT_SECRET')
-            }),
             Providers.LinkedIn({
                 clientId: config.get('LINKEDIN_CLIENT_ID'),
                 clientSecret: config.get('LINKEDIN_CLIENT_SECRET')
+            }),
+            Providers.Twitch({
+                clientId: config.get('TWITCH_CLIENT_ID'),
+                clientSecret: config.get('TWITCH_CLIENT_SECRET')
+            }),
+            Providers.Discord({
+                clientId: config.get('DISCORD_CLIENT_ID'),
+                clientSecret: config.get('DISCORD_CLIENT_SECRET')
             }),
             Providers.Yandex({
                 clientId: config.get('YANDEX_CLIENT_ID'),
