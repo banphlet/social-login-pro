@@ -137,6 +137,25 @@ const installWebhooks = ({
     })
 }
 
+const createCharge = ({
+  accessToken = required('accessToken'),
+  platformDomain = required('platformDomain'),
+  shopId = required('shopId')
+}) => shopifyClient({ shop: platformDomain, accessToken })
+  .recurringApplicationCharge.create({
+    name: 'Pro Plan',
+    price: '2.99',
+    return_url: `${config.get('NEXT_PUBLIC_APP_URL')}/api/plans/callback?shop_id=${shopId}`,
+    test: config.get('IS_TEST_CHARGE')
+  }).then(response => response.confirmation_url)
+
+const confirmCharge = ({
+  accessToken = required('accessToken'),
+  platformDomain = required('platformDomain'),
+  chargeId = required('chargeId')
+}) => shopifyClient({ shop: platformDomain, accessToken })
+  .recurringApplicationCharge.activate(chargeId)
+
 const verifyHmac = shopifyToken.verifyHmac
 
 const createCustomer = ({ accessToken = required('accessToken'), platformDomain = required('platformDomain'), customer }) => shopifyClient({ shop: platformDomain, accessToken }).customer.create(customer)
@@ -160,5 +179,7 @@ export {
   injectScript,
   installWebhooks,
   verifyHmac,
-  updateCustomerPassword
+  updateCustomerPassword,
+  createCharge,
+  confirmCharge
 }

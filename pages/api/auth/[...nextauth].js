@@ -8,10 +8,6 @@ import Cors from 'cors'
 export default customServerHandler({
     handler: NextAuthHandler({
         providers: [
-            Providers.Google({
-                clientId: config.get('NEXT_PUBLIC_GOOGLE_CLIENT_ID'),
-                clientSecret: config.get('GOOGLE_CLIENT_SECRET')
-            }),
             Providers.Facebook({
                 clientId: config.get('FACEBOOK_CLIENT_ID'),
                 clientSecret: config.get('FACEBOOK_CLIENT_SECRET')
@@ -19,6 +15,10 @@ export default customServerHandler({
             Providers.Twitter({
                 clientId: config.get('TWITTER_CLIENT_ID'),
                 clientSecret: config.get('TWITTER_CLIENT_SECRET')
+            }),
+            Providers.Google({
+                clientId: config.get('NEXT_PUBLIC_GOOGLE_CLIENT_ID'),
+                clientSecret: config.get('GOOGLE_CLIENT_SECRET')
             }),
             Providers.Discord({
                 clientId: config.get('DISCORD_CLIENT_ID'),

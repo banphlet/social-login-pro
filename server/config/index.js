@@ -1,5 +1,6 @@
 import convict from 'convict'
 
+import isNil from "lodash/isNil";
 convict.addFormat(require('convict-format-with-validator').email)
 
 const config = convict({
@@ -8,6 +9,12 @@ const config = convict({
     format: ['production', 'development', 'test'],
     default: 'development',
     env: 'NODE_ENV'
+  },
+  IS_TEST_CHARGE: {
+    doc: 'Is paryment test charge',
+    format: Boolean,
+    env: 'IS_TEST_CHARGE',
+    default: isNil(process.env.IS_TEST_CHARGE) ? false : !!process.env.IS_TEST_CHARGE
   },
   DB_URL: {
     doc: 'Database url',

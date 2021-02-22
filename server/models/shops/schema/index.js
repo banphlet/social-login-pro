@@ -20,6 +20,32 @@ export const LimitBy = {
   EMAIL: 'email'
 }
 
+export const SupportedSocialLoginPlatforms = {
+  GOOGLE: 'google',
+  FACEBOOK: 'facebook',
+  TWITTER: 'twitter',
+  DISCORD: 'discord',
+  LINKEDIN: 'linkedin',
+  YANDEX: 'yandex'
+}
+
+const planSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      default: 'free'
+    },
+    platforms: {
+      type: [String],
+      default: ['facebook', 'twitter']
+    },
+    external_id: String
+  },
+  {
+    _id: false
+  }
+)
+
 const schema = new mongoose.Schema(
   {
     status: {
@@ -109,7 +135,7 @@ const schema = new mongoose.Schema(
     },
     social_platforms: {
       type: [String],
-      default: ['google', 'facebook', 'twitter']
+      default: ['facebook', 'twitter']
     },
     social_platform_status: {
       type: String,
@@ -119,6 +145,17 @@ const schema = new mongoose.Schema(
     social_button_round: {
       type: Boolean,
       default: false
+    },
+    plan: {
+      name: {
+        type: String,
+        default: 'free'
+      },
+      platforms: {
+        type: [String],
+        default: ['facebook', 'twitter']
+      },
+      external_id: String
     }
   },
   {

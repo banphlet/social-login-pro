@@ -5,10 +5,13 @@ import {
     Select,
     SettingToggle,
     TextStyle,
-    ContextualSaveBar
+    ContextualSaveBar,
+    Button
 } from '@shopify/polaris'
 import React from 'react'
 import useQuery from '../../Hooks/useQuery'
+import useMutation from '../../Hooks/useMutation'
+
 import SkeletonLoader from '../SkeletonLoader'
 import isEqual from 'lodash/isEqual'
 
@@ -18,6 +21,9 @@ export default function SocialLogin({ data, shop, makeRequest }) {
     const [showContextSave, setShowContextSave] = React.useState(false)
     const { loading, data: providers = {} } = useQuery({
         path: '/auth/providers'
+    })
+    const { makeRequest: createNewCharge } = useMutation({
+        path: '/plans/charge'
     })
 
     const initialFormFields = {
@@ -40,7 +46,7 @@ export default function SocialLogin({ data, shop, makeRequest }) {
 
     if (loading) return <SkeletonLoader />
 
-    console.log(initialFormFields);
+    console.log(shop);
 
     const onSave = async () => {
         await makeRequest({
@@ -49,6 +55,13 @@ export default function SocialLogin({ data, shop, makeRequest }) {
         })
         iframeRef.current.contentWindow.location.reload();
         setShowContextSave(false)
+    }
+
+    const createCharge = async () => {
+        const response = await createNewCharge({
+            shop_id: shop.id
+        })
+        window.parent.location.href = response.data
     }
 
 
@@ -113,6 +126,7 @@ export default function SocialLogin({ data, shop, makeRequest }) {
                         <div style={{ display: 'flex', flexWrap: 'wrap' }}>
                             {providerList.map(provider => {
                                 const hasProvider = formFields.social_platforms?.includes(provider)
+                                const canUpdateSettings = shop.plan.platforms.includes(provider)
                                 return (
                                     <div
                                         key={provider}
@@ -128,11 +142,11 @@ export default function SocialLogin({ data, shop, makeRequest }) {
                                             className={`fab social-no-text fa-${provider}`}
                                             style={{ width: '100%' }}
                                         ></a>
-                                        <Checkbox
+                                        {canUpdateSettings ? <Checkbox
                                             label={hasProvider ? 'Showing' : 'Hidden'}
                                             checked={hasProvider}
                                             onChange={state => updateField('social_platforms', state ? [...formFields?.social_platforms, provider] : formFields.social_platforms?.filter(p => p !== provider))}
-                                        />
+                                        /> : <Button onClick={createCharge} destructive>Upgrade</Button>}
                                     </div>
                                 )
                             })}
