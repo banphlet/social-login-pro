@@ -17,7 +17,7 @@ export default (options) => {
       return {
         id: profile.id,
         name: profile.localizedFirstName + ' ' + profile.localizedLastName,
-        email: null,
+        email: `${profile.id}@linkedin.com`,
         image: null
       }
     },
