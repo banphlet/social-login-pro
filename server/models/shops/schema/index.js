@@ -135,7 +135,7 @@ const schema = new mongoose.Schema(
     },
     social_login_with_text: {
       type: Boolean,
-      default: true
+      default: false
     },
     social_platforms: {
       type: [String],
@@ -148,7 +148,7 @@ const schema = new mongoose.Schema(
     },
     social_button_round: {
       type: Boolean,
-      default: false
+      default: true
     },
     plan: {
       price: {
