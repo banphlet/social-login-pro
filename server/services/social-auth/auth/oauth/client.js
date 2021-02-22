@@ -207,6 +207,12 @@ async function getOAuth2(provider, accessToken, results) {
       url = safeAccessTokenURL.href
     }
 
+    if (['foursquare'].includes(provider.id)) {
+      const safeAccessTokenURL = new URL(url)
+      safeAccessTokenURL.searchParams.append('oauth_token', accessToken)
+      url = safeAccessTokenURL.href
+    }
+
     // This line is required for Twitch
     if (provider.id === 'twitch') {
       headers['Client-ID'] = provider.clientId

@@ -9,7 +9,8 @@ export default ({ apiVersion, ...options }) => {
     authorizationUrl:
       'https://foursquare.com/oauth2/authenticate?response_type=code',
     profileUrl: `https://api.foursquare.com/v2/users/self?v=${apiVersion}`,
-    profile: (profile) => {
+    profile: (data) => {
+      const profile = data.response.user
       return {
         id: profile.id,
         name: `${profile.firstName} ${profile.lastName}`,

@@ -32,6 +32,11 @@ export default customServerHandler({
                 clientId: config.get('DISCORD_CLIENT_ID'),
                 clientSecret: config.get('DISCORD_CLIENT_SECRET')
             }),
+            Providers.Foursquare({
+                clientId: config.get('FOUR_SQUARE_CLIENT_ID'),
+                clientSecret: config.get('FOUR_SQUARE_CLIENT_SECRET'),
+                apiVersion: '20210119'
+            }),
             Providers.VK({
                 clientId: config.get('VK_CLIENT_ID'),
                 clientSecret: config.get('VK_CLIENT_SECRET')
