@@ -33,8 +33,10 @@ import Twitch from './twitch'
 import Twitter from './twitter'
 import VK from './vk'
 import Yandex from './yandex'
+import Tumblr from './tumblr'
 
 export default {
+  Tumblr,
   Apple,
   Atlassian,
   Auth0,

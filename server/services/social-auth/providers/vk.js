@@ -17,11 +17,10 @@ export default (options) => {
     profileUrl: `https://api.vk.com/method/users.get?fields=photo_100&v=${apiVersion}`,
     profile: (result) => {
       const profile = result.response?.[0] ?? {}
-
       return {
         id: profile.id,
         name: [profile.first_name, profile.last_name].filter(Boolean).join(' '),
-        email: profile.email,
+        email: profile.email || `${profile.id}@vk.com`,
         image: profile.photo_100
       }
     },

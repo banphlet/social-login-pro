@@ -2,6 +2,7 @@ import { decode as jwtDecode } from 'jsonwebtoken'
 import oAuthClient from './client'
 import { OAuthCallbackError } from '../errors'
 import pino from 'pino'
+import config from '../../../../config'
 const logger = pino()
 
 /** @param {import("../..").NextAuthRequest} req */
@@ -37,6 +38,7 @@ export default async function oAuthCallback(req) {
     } else {
       client.useAuthorizationHeaderforGET(true)
     }
+
     try {
       const tokens = await client.getOAuthAccessToken(code, provider)
       let profileData
@@ -72,6 +74,7 @@ export default async function oAuthCallback(req) {
 
     return getProfile({ profileData, tokens, provider, state: state || shop_id })
   } catch (error) {
+    console.log(error, req.query, config.get('TUMBLR_CLIENT_ID'), config.get('TUMBLR_CLIENT_SECRET'));
     logger.error('OAUTH_V1_GET_ACCESS_TOKEN_ERROR', error)
     throw error
   }

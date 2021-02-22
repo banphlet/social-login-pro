@@ -32,10 +32,18 @@ export default customServerHandler({
                 clientId: config.get('DISCORD_CLIENT_ID'),
                 clientSecret: config.get('DISCORD_CLIENT_SECRET')
             }),
+            Providers.VK({
+                clientId: config.get('VK_CLIENT_ID'),
+                clientSecret: config.get('VK_CLIENT_SECRET')
+            }),
             Providers.Yandex({
                 clientId: config.get('YANDEX_CLIENT_ID'),
                 clientSecret: config.get('YANDEX_CLIENT_SECRET')
-            })
+            }),
+            // Providers.Tumblr({
+            //     clientId: config.get('TUMBLR_CLIENT_ID'),
+            //     clientSecret: config.get('TUMBLR_CLIENT_SECRET')
+            // })
         ],
         secret: config.get('APP_KEY')
     }),

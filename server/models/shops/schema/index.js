@@ -27,7 +27,9 @@ export const SupportedSocialLoginPlatforms = {
   DISCORD: 'discord',
   LINKEDIN: 'linkedin',
   YANDEX: 'yandex',
-  TWITCH: 'twitch'
+  TWITCH: 'twitch',
+  TUMBLR: 'tumblr',
+  VK: 'vk'
 }
 
 const planSchema = new mongoose.Schema(

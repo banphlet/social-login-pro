@@ -131,6 +131,30 @@ const config = convict({
     format: '*',
     env: 'TWITCH_CLIENT_SECRET'
   },
+  TUMBLR_CLIENT_ID: {
+    doc: 'TUMBLR_CLIENT_ID',
+    default: process.env.TUMBLR_CLIENT_ID,
+    format: '*',
+    env: 'TUMBLR_CLIENT_ID'
+  },
+  TUMBLR_CLIENT_SECRET: {
+    doc: 'TUMBLR_CLIENT_SECRET',
+    default: process.env.TUMBLR_CLIENT_SECRET,
+    format: '*',
+    env: 'TUMBLR_CLIENT_SECRET'
+  },
+  VK_CLIENT_SECRET: {
+    doc: 'VK_CLIENT_SECRET',
+    default: process.env.VK_CLIENT_SECRET,
+    format: '*',
+    env: 'VK_CLIENT_SECRET'
+  },
+  VK_CLIENT_ID: {
+    doc: 'VK_CLIENT_ID',
+    default: process.env.VK_CLIENT_ID,
+    format: '*',
+    env: 'VK_CLIENT_ID'
+  },
 })
 
 config.validate({ allowed: 'strict' })
