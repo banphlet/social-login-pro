@@ -46,8 +46,6 @@ export default function SocialLogin({ data, shop, makeRequest }) {
 
     if (loading) return <SkeletonLoader />
 
-    console.log(shop);
-
     const onSave = async () => {
         await makeRequest({
             shop_id: shop.id,

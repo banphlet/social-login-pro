@@ -147,9 +147,13 @@ const schema = new mongoose.Schema(
       default: false
     },
     plan: {
+      price: {
+        type: Number,
+        default: 0
+      },
       name: {
         type: String,
-        default: 'free'
+        default: 'Free Plan'
       },
       platforms: {
         type: [String],

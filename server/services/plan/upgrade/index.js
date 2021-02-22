@@ -21,7 +21,8 @@ export default async function upgrade(payload) {
         plan: {
             name: confirmCharge.name,
             external_id: confirmCharge.id,
-            platforms: Object.values(SupportedSocialLoginPlatforms)
+            platforms: Object.values(SupportedSocialLoginPlatforms),
+            price: confirmCharge.price
         }
     })
     return {
