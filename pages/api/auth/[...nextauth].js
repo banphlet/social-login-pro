@@ -32,6 +32,10 @@ export default customServerHandler({
         clientId: config.get('GITHUB_CLIENT_ID'),
         clientSecret: config.get('GITHUB_CLIENT_SECRET')
       }),
+      Providers.Reddit({
+        clientId: config.get('REDDIT_CLIENT_ID'),
+        clientSecret: config.get('REDDIT_CLIENT_SECRET')
+      }),
       Providers.Twitch({
         clientId: config.get('TWITCH_CLIENT_ID'),
         clientSecret: config.get('TWITCH_CLIENT_SECRET')

@@ -204,6 +204,18 @@ const config = convict({
     default: process.env.GITHUB_CLIENT_ID,
     format: '*',
     env: 'GITHUB_CLIENT_ID'
+  },
+  REDDIT_CLIENT_SECRET: {
+    doc: 'REDDIT_CLIENT_SECRET',
+    default: process.env.REDDIT_CLIENT_SECRET,
+    format: '*',
+    env: 'REDDIT_CLIENT_SECRET'
+  },
+  REDDIT_CLIENT_ID: {
+    doc: 'REDDIT_CLIENT_ID',
+    default: process.env.REDDIT_CLIENT_ID,
+    format: '*',
+    env: 'REDDIT_CLIENT_ID'
   }
 })
 

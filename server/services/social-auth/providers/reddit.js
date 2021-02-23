@@ -1,4 +1,4 @@
-export default (options) => {
+export default options => {
   return {
     id: 'reddit',
     name: 'Reddit',
@@ -10,12 +10,12 @@ export default (options) => {
     authorizationUrl:
       'https://www.reddit.com/api/v1/authorize?response_type=code',
     profileUrl: 'https://oauth.reddit.com/api/v1/me',
-    profile: (profile) => {
+    profile: profile => {
       return {
         id: profile.id,
         name: profile.name,
         image: null,
-        email: null
+        email: profile.email || `${profile.id}@reddit.com`
       }
     },
     ...options

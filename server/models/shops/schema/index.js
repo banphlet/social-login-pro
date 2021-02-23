@@ -33,7 +33,8 @@ export const SupportedSocialLoginPlatforms = {
   FOUR_SQUARE: 'foursquare',
   SLACK: 'slack',
   LINE: 'line',
-  GITHUB: 'github'
+  GITHUB: 'github',
+  REDDIT: 'reddit'
 }
 
 const planSchema = new mongoose.Schema(
