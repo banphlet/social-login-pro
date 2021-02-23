@@ -28,6 +28,10 @@ export default customServerHandler({
         clientId: config.get('SLACK_CLIENT_ID'),
         clientSecret: config.get('SLACK_CLIENT_SECRET')
       }),
+      Providers.GitHub({
+        clientId: config.get('GITHUB_CLIENT_ID'),
+        clientSecret: config.get('GITHUB_CLIENT_SECRET')
+      }),
       Providers.Twitch({
         clientId: config.get('TWITCH_CLIENT_ID'),
         clientSecret: config.get('TWITCH_CLIENT_SECRET')

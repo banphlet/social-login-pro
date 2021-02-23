@@ -192,6 +192,18 @@ const config = convict({
     default: process.env.LINE_CLIENT_ID,
     format: '*',
     env: 'LINE_CLIENT_ID'
+  },
+  GITHUB_CLIENT_SECRET: {
+    doc: 'GITHUB_CLIENT_SECRET',
+    default: process.env.GITHUB_CLIENT_SECRET,
+    format: '*',
+    env: 'GITHUB_CLIENT_SECRET'
+  },
+  GITHUB_CLIENT_ID: {
+    doc: 'GITHUB_CLIENT_ID',
+    default: process.env.GITHUB_CLIENT_ID,
+    format: '*',
+    env: 'GITHUB_CLIENT_ID'
   }
 })
 
