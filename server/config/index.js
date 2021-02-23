@@ -180,6 +180,18 @@ const config = convict({
     default: process.env.SLACK_CLIENT_ID,
     format: '*',
     env: 'SLACK_CLIENT_ID'
+  },
+  LINK_CLIENT_SECRET: {
+    doc: 'LINK_CLIENT_SECRET',
+    default: process.env.LINK_CLIENT_SECRET,
+    format: '*',
+    env: 'LINK_CLIENT_SECRET'
+  },
+  LINE_CLIENT_ID: {
+    doc: 'LINE_CLIENT_ID',
+    default: process.env.LINE_CLIENT_ID,
+    format: '*',
+    env: 'LINE_CLIENT_ID'
   }
 })
 

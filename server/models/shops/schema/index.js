@@ -31,7 +31,8 @@ export const SupportedSocialLoginPlatforms = {
   TUMBLR: 'tumblr',
   VK: 'vk',
   FOUR_SQUARE: 'foursquare',
-  SLACK: 'slack'
+  SLACK: 'slack',
+  LINE: 'line'
 }
 
 const planSchema = new mongoose.Schema(

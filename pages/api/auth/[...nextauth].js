@@ -36,6 +36,10 @@ export default customServerHandler({
         clientId: config.get('DISCORD_CLIENT_ID'),
         clientSecret: config.get('DISCORD_CLIENT_SECRET')
       }),
+      Providers.LINE({
+        clientId: config.get('LINE_CLIENT_ID'),
+        clientSecret: config.get('LINK_CLIENT_SECRET')
+      }),
       Providers.Foursquare({
         clientId: config.get('FOUR_SQUARE_CLIENT_ID'),
         clientSecret: config.get('FOUR_SQUARE_CLIENT_SECRET'),

@@ -1,4 +1,4 @@
-export default (options) => {
+export default options => {
   return {
     id: 'line',
     name: 'LINE',
@@ -7,13 +7,14 @@ export default (options) => {
     scope: 'profile openid',
     params: { grant_type: 'authorization_code' },
     accessTokenUrl: 'https://api.line.me/oauth2/v2.1/token',
-    authorizationUrl: 'https://access.line.me/oauth2/v2.1/authorize?response_type=code',
+    authorizationUrl:
+      'https://access.line.me/oauth2/v2.1/authorize?response_type=code',
     profileUrl: 'https://api.line.me/v2/profile',
-    profile: (profile) => {
+    profile: profile => {
       return {
         id: profile.userId,
         name: profile.displayName,
-        email: null,
+        email: profile.email ?? `${profile.userId}@line.com`,
         image: profile.pictureUrl
       }
     },
