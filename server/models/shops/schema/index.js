@@ -30,7 +30,8 @@ export const SupportedSocialLoginPlatforms = {
   TWITCH: 'twitch',
   TUMBLR: 'tumblr',
   VK: 'vk',
-  FOUR_SQUARE: 'foursquare'
+  FOUR_SQUARE: 'foursquare',
+  SLACK: 'slack'
 }
 
 const planSchema = new mongoose.Schema(

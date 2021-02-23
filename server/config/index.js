@@ -1,6 +1,6 @@
 import convict from 'convict'
 
-import isNil from "lodash/isNil";
+import isNil from 'lodash/isNil'
 convict.addFormat(require('convict-format-with-validator').email)
 
 const config = convict({
@@ -14,7 +14,9 @@ const config = convict({
     doc: 'Is paryment test charge',
     format: Boolean,
     env: 'IS_TEST_CHARGE',
-    default: isNil(process.env.IS_TEST_CHARGE) ? false : !!process.env.IS_TEST_CHARGE
+    default: isNil(process.env.IS_TEST_CHARGE)
+      ? false
+      : !!process.env.IS_TEST_CHARGE
   },
   DB_URL: {
     doc: 'Database url',
@@ -167,6 +169,18 @@ const config = convict({
     format: '*',
     env: 'FOUR_SQUARE_CLIENT_SECRET'
   },
+  SLACK_CLIENT_SECRET: {
+    doc: 'SLACK_CLIENT_SECRET',
+    default: process.env.SLACK_CLIENT_SECRET,
+    format: '*',
+    env: 'SLACK_CLIENT_SECRET'
+  },
+  SLACK_CLIENT_ID: {
+    doc: 'SLACK_CLIENT_ID',
+    default: process.env.SLACK_CLIENT_ID,
+    format: '*',
+    env: 'SLACK_CLIENT_ID'
+  }
 })
 
 config.validate({ allowed: 'strict' })
