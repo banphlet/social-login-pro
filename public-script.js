@@ -5,8 +5,7 @@ const request = axios.create({
   baseURL: `${SERVER_URL}/api`
 })
 
-
-function getParams(a) {
+function getParams (a) {
   var b = document.getElementsByTagName('script')
   for (var i = 0; i < b.length; i++) {
     if (b[i].src.indexOf('/' + a) > -1) {
@@ -27,9 +26,7 @@ function getParams(a) {
 
 const scriptParam = getParams('js/lla')
 
-
-const addEmailToSectionStorage = email =>
-  sessionStorage.setItem('email', email)
+const addEmailToSectionStorage = email => sessionStorage.setItem('email', email)
 
 const isAccessRestricted = () =>
   request
@@ -70,18 +67,20 @@ const preventFormSubmission = payload => {
   }
 }
 
-async function loadScript() {
+async function loadScript () {
   const isRestricted = await isAccessRestricted()
   if (!isRestricted.is_restricted) return
   preventFormSubmission(isRestricted)
 }
 
-function monitorOnClickSocialClick() {
+function monitorOnClickSocialClick () {
   const items = document.querySelectorAll('.lla-button')
   items.forEach(item => {
-    item.addEventListener('click', async (e) => {
+    item.addEventListener('click', async e => {
       const platform = item.getAttribute('value')
-      const { data: { authorizationUrl } } = await request.post(`/auth/signin/${platform}`, {
+      const {
+        data: { authorizationUrl }
+      } = await request.post(`/auth/signin/${platform}`, {
         shop_id: scriptParam.shop_id,
         domain: window.location.href
       })
@@ -91,9 +90,10 @@ function monitorOnClickSocialClick() {
   })
 }
 
-
-async function socialLogins() {
-  const { data: { data: shop } = {} } = await request.get('/customers/shop', { params: { shop_id: scriptParam.shop_id } })
+async function socialLogins () {
+  const { data: { data: shop } = {} } = await request.get('/customers/shop', {
+    params: { shop_id: scriptParam.shop_id }
+  })
   const isActive = shop.social_platform_status === 'A'
   if (!isActive) return
   const selectedSocialBanners = shop.social_platforms
@@ -102,10 +102,16 @@ async function socialLogins() {
   const form = document.getElementById('customer_login')
 
   const socialContent = selectedSocialBanners.map(platform => {
-    return `<a href='#' value="${platform}" class="lla-button ${isRound ? 'round' : ''} ${includesText ? 'col-6' : ''} social-${includesText ? 'with' : 'no'}-text fab fa-${platform}">${includesText ? ` <span>Sign with ${platform} </span>` : ''}</a>`
+    return `<a href='#' value="${platform}" class="lla-button ${
+      isRound ? 'round' : ''
+    } ${includesText ? 'col-6' : ''} social-${
+      includesText ? 'with' : 'no'
+    }-text fab fa-${platform}">${
+      includesText ? ` <span>Sign with ${platform} </span>` : ''
+    }</a>`
   })
 
-  const socialHtml = `<div style='margin: 10px'>
+  const socialHtml = `<div style='margin-top: 10px; margin-bottom: 10px'>
       <div style='display: flex; margin-top: 30px; flex-wrap: wrap;justify-content:center'>
         ${socialContent.join('')}
     </div>
@@ -115,22 +121,38 @@ async function socialLogins() {
   monitorOnClickSocialClick()
 }
 
-const loginCustomerIn = async () => {
+const createInputWithName = ({ value, type }) => {
+  const input = document.createElement('input')
+  input.type = type
+  input.name = `customer[${type}]`
+  input.setAttribute('value', value)
+  return input
+}
+
+const formBasedLogin = () => {
   const search = new URLSearchParams(window.location.search)
   const token = search.get('lla_token')
   if (!token) return
   const data = JSON.parse(atob(token))
-  var bodyFormData = new FormData();
-  bodyFormData.append('form_type', 'customer_login');
-  bodyFormData.append('customer[email]', data.email)
-  bodyFormData.append('customer[password]', data.password)
-  await axios.post('/account/login', bodyFormData, {
-    headers: { 'Content-Type': 'multipart/form-data' }
+  const emailInput = createInputWithName({
+    type: 'email',
+    value: data.email
   })
-  window.location.href = '/account'
+  const passwordInput = createInputWithName({
+    type: 'password',
+    value: data.password
+  })
+  const form = document.createElement('form')
+  form.method = 'post'
+  form.action = '/account/login'
+  form.appendChild(emailInput)
+  form.appendChild(passwordInput)
+  document.head.appendChild(form)
+
+  form.submit()
 }
 
-loginCustomerIn()
+formBasedLogin()
 loadScript()
 window.onload = function () {
   trackEmailField()
