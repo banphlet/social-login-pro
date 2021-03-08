@@ -11,10 +11,9 @@ import useMutation from '../Hooks/useMutation'
 
 const tabs = [
   {
-    id: 'Analytics',
-    content: 'Analytics',
-    accessibilityLabel: 'Analytics',
-    panelID: 'Analytics'
+    id: 'Social Login',
+    content: 'Social Login Settings',
+    panelID: 'Social Login'
   },
   {
     id: 'Settings',
@@ -22,9 +21,10 @@ const tabs = [
     panelID: 'Settings'
   },
   {
-    id: 'Social Login',
-    content: 'Social Login Settings',
-    panelID: 'Social Login'
+    id: 'Analytics',
+    content: 'Limit Login Analytics',
+    accessibilityLabel: 'Analytics',
+    panelID: 'Analytics'
   }
 ]
 
@@ -66,7 +66,7 @@ const Main = ({ shop }) => {
             onSelect={handleTabChange}
             disclosureText='More views'
           >
-            {selected === 0 && <Analytics shop={shop} />}
+            {selected === 2 && <Analytics shop={shop} />}
             {selected === 1 && (
               <Settings
                 makeRequest={makeRequest}
@@ -75,7 +75,7 @@ const Main = ({ shop }) => {
                 shop={shop}
               />
             )}
-            {selected === 2 && (
+            {selected === 0 && (
               <SocialLogin
                 makeRequest={makeRequest}
                 loading={loading}
