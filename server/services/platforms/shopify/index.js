@@ -99,10 +99,11 @@ const injectScript = async ({
   })
 
   const hasSnippet = new RegExp(renderSnippet).test(customerLoginAsset.value)
-  if (hasSnippet) return shopify.asset.update(publishedTheme.id, {
-    key: 'snippets/limit-login.liquid',
-    value: await loadScript(shopId)
-  })
+  if (hasSnippet)
+    return shopify.asset.update(publishedTheme.id, {
+      key: 'snippets/limit-login.liquid',
+      value: await loadScript(shopId)
+    })
 
   // backup customer login file
   await shopify.asset.create(publishedTheme.id, {
@@ -128,8 +129,7 @@ const installWebhooks = ({
   return shopifyClient({ shop: platformDomain, accessToken })
     .webhook.create({
       topic: 'app/uninstalled',
-      address: `${'https://71279c09c393.ngrok.io' ||
-        config.get('NEXT_PUBLIC_APP_URL')}/api/uninstall`,
+      address: `${config.get('NEXT_PUBLIC_APP_URL')}/api/uninstall`,
       format: 'json'
     })
     .catch(err => {
@@ -141,33 +141,50 @@ const createCharge = ({
   accessToken = required('accessToken'),
   platformDomain = required('platformDomain'),
   shopId = required('shopId')
-}) => shopifyClient({ shop: platformDomain, accessToken })
-  .recurringApplicationCharge.create({
-    name: 'Pro Plan',
-    price: '2.99',
-    return_url: `${config.get('NEXT_PUBLIC_APP_URL')}/api/plans/callback?shop_id=${shopId}`,
-    test: config.get('IS_TEST_CHARGE')
-  }).then(response => response.confirmation_url)
+}) =>
+  shopifyClient({ shop: platformDomain, accessToken })
+    .recurringApplicationCharge.create({
+      name: 'Pro Plan',
+      price: '2.99',
+      return_url: `${config.get(
+        'NEXT_PUBLIC_APP_URL'
+      )}/api/plans/callback?shop_id=${shopId}`,
+      test: config.get('IS_TEST_CHARGE')
+    })
+    .then(response => response.confirmation_url)
 
 const confirmCharge = ({
   accessToken = required('accessToken'),
   platformDomain = required('platformDomain'),
   chargeId = required('chargeId')
-}) => shopifyClient({ shop: platformDomain, accessToken })
-  .recurringApplicationCharge.activate(chargeId)
+}) =>
+  shopifyClient({
+    shop: platformDomain,
+    accessToken
+  }).recurringApplicationCharge.activate(chargeId)
 
 const verifyHmac = shopifyToken.verifyHmac
 
-const createCustomer = ({ accessToken = required('accessToken'), platformDomain = required('platformDomain'), customer }) => shopifyClient({ shop: platformDomain, accessToken }).customer.create(customer)
+const createCustomer = ({
+  accessToken = required('accessToken'),
+  platformDomain = required('platformDomain'),
+  customer
+}) =>
+  shopifyClient({ shop: platformDomain, accessToken }).customer.create(customer)
 
-const updateCustomerPassword = async ({ accessToken = required('accessToken'), platformDomain = required('platformDomain'), email = required('email'), password = required('password') }) => {
+const updateCustomerPassword = async ({
+  accessToken = required('accessToken'),
+  platformDomain = required('platformDomain'),
+  email = required('email'),
+  password = required('password')
+}) => {
   const shopify = shopifyClient({ shop: platformDomain, accessToken })
   const [customer] = await shopify.customer.search({
     query: `email:${email}`
   })
   return shopify.customer.update(customer.id, {
-    "password": password,
-    "password_confirmation": password
+    password: password,
+    password_confirmation: password
   })
 }
 
