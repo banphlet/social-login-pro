@@ -111,7 +111,7 @@ async function socialLogins () {
     }</a>`
   })
 
-  const socialHtml = `<div style='margin-top: 10px; margin-bottom: 10px' class='lla-social'>
+  const socialHtml = `<div style='margin-top: 10px; margin-bottom: 10px' class='lla'>
       <div style='display: flex; margin-top: 30px; flex-wrap: wrap;justify-content:center'>
         ${socialContent.join('')}
     </div>
