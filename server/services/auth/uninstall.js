@@ -9,7 +9,13 @@ export default async function uninstall (payload) {
       externalId: payload.id
     },
     {
-      status: StoreStatusTypes.DEACTIVATED
+      status: StoreStatusTypes.DEACTIVATED,
+      plan: {
+        name: 'Free Plan',
+        platforms: ['facebook', 'twitter'],
+        price: 0,
+        external_id: ''
+      }
     }
   )
 }
