@@ -117,7 +117,9 @@ async function socialLogins () {
     </div>
       
     </div>`
-  form.insertAdjacentHTML('beforebegin', socialHtml)
+
+  const node = document.createRange().createContextualFragment(socialHtml)
+  form.prepend(node)
   monitorOnClickSocialClick()
 }
 
