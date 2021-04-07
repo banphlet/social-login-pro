@@ -96,20 +96,35 @@ async function socialLogins () {
   })
   const isActive = shop.social_platform_status === 'A'
   if (!isActive) return
-  const selectedSocialBanners = shop.social_platforms
+  const selectedSocialBanners = await Promise.all(
+    shop.social_platforms.map(async platform => {
+      const {
+        data: { authorizationUrl }
+      } = await request.post(`/auth/signin/${platform}`, {
+        shop_id: scriptParam.shop_id,
+        domain: window.location.href
+      })
+      return {
+        platform,
+        authorizationUrl
+      }
+    })
+  )
   const includesText = shop.social_login_with_text
   const isRound = !shop.social_login_with_text && shop.social_button_round
   const form = document.getElementById('customer_login')
 
-  const socialContent = selectedSocialBanners.map(platform => {
-    return `<a href='#' value="${platform}" class="lla-button ${
-      isRound ? 'round' : ''
-    } ${includesText ? 'col-6' : ''} social-${
-      includesText ? 'with' : 'no'
-    }-text fab fa-${platform}">${
-      includesText ? ` <span>Sign with ${platform} </span>` : ''
-    }</a>`
-  })
+  const socialContent = selectedSocialBanners.map(
+    ({ platform, authorizationUrl }) => {
+      return `<a href='${authorizationUrl}' value="${platform}" class="lla-button ${
+        isRound ? 'round' : ''
+      } ${includesText ? 'col-6' : ''} social-${
+        includesText ? 'with' : 'no'
+      }-text fab fa-${platform}">${
+        includesText ? ` <span>Sign with ${platform} </span>` : ''
+      }</a>`
+    }
+  )
 
   const socialHtml = `<div style='margin-top: 10px; margin-bottom: 10px' class='lla-social'>
       <div style='display: flex; margin-top: 30px; flex-wrap: wrap;justify-content:center'>
@@ -120,7 +135,7 @@ async function socialLogins () {
 
   const node = document.createRange().createContextualFragment(socialHtml)
   form.prepend(node)
-  monitorOnClickSocialClick()
+  // monitorOnClickSocialClick()
 }
 
 const createInputWithName = ({ value, type }) => {
