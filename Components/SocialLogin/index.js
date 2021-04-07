@@ -7,7 +7,8 @@ import {
   TextStyle,
   ContextualSaveBar,
   Button,
-  Tooltip
+  Tooltip,
+  Banner
 } from '@shopify/polaris'
 import React from 'react'
 import useQuery from '../../Hooks/useQuery'
@@ -87,6 +88,20 @@ export default function SocialLogin ({ data, shop, makeRequest }) {
             title='Login Limit Settings'
             description='Customize Social Login'
           >
+            {formFields.social_platform_status === 'A' && (
+              <Banner
+                status='info'
+                action={{
+                  content: 'Enable Customer Account',
+                  url: `https://${shop.platform_domain}/admin/settings/checkout`
+                }}
+              >
+                <p>
+                  To allow customers to login to your site, kindly enable
+                  Customer Accounts
+                </p>
+              </Banner>
+            )}
             <SettingToggle
               action={{
                 content:
