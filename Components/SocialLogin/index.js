@@ -93,7 +93,8 @@ export default function SocialLogin ({ data, shop, makeRequest }) {
                 status='info'
                 action={{
                   content: 'Enable Customer Account',
-                  url: `https://${shop.platform_domain}/admin/settings/checkout`
+                  url: `https://${shop.platform_domain}/admin/settings/checkout`,
+                  external: true
                 }}
               >
                 <p>
