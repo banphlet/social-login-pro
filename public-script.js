@@ -96,13 +96,11 @@ async function socialLogins () {
   })
   const isActive = shop.social_platform_status === 'A'
   if (!isActive) return
-  const selectedSocialBanners = shop.social_platforms
-
   const includesText = shop.social_login_with_text
   const isRound = !shop.social_login_with_text && shop.social_button_round
   const form = document.getElementById('customer_login')
 
-  const socialContent = selectedSocialBanners.map(
+  const socialContent = shop.social_platforms.map(
     ({ platform, authorization_url }) => {
       return `<a href='${authorization_url}' value="${platform}" class="lla-button ${
         isRound ? 'round' : ''
