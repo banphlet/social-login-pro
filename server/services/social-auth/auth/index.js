@@ -3,9 +3,9 @@
 import curry from 'lodash/fp/curry'
 import pino from 'pino'
 import extendRes from './extend-req'
-import parseProviders from './parse-providers'
 import config from '../../../config'
 import * as routes from './routes'
+import { providersList } from '../providers'
 
 const logger = pino()
 
@@ -36,10 +36,7 @@ async function NextAuthHandler (userOptions, req, res) {
       error = nextauth[1]
     } = req.query
 
-    const providers = parseProviders({
-      providers: userOptions.providers,
-      baseUrl
-    })
+    const providers = providersList
     const provider = providers.find(({ id }) => id === providerId)
 
     if (

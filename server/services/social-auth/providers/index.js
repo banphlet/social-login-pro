@@ -34,8 +34,9 @@ import Twitter from './twitter'
 import VK from './vk'
 import Yandex from './yandex'
 import Tumblr from './tumblr'
+import config from '../../../config'
 
-export default {
+const providerMap = {
   Tumblr,
   Apple,
   Atlassian,
@@ -73,3 +74,22 @@ export default {
   VK,
   Yandex
 }
+
+function parseProviders ({ providers = [], baseUrl }) {
+  return providers.map(provider => ({
+    ...provider,
+    signinUrl: `${baseUrl}/api/auth/signin/${provider.id}`,
+    callbackUrl: `${baseUrl}/api/auth/callback/${provider.id}`
+  }))
+}
+
+const allowedProvidersArr = Object.values(providerMap).filter(
+  provider => typeof provider !== 'function'
+)
+
+const providersList = parseProviders({
+  providers: allowedProvidersArr,
+  baseUrl: config.get('NEXT_PUBLIC_APP_URL')
+})
+
+export { providerMap, providersList }

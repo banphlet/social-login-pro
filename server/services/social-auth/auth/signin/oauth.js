@@ -2,12 +2,11 @@ import oAuthClient from '../oauth/client'
 import pino from 'pino'
 const logger = pino()
 
-
 /** @param {import("../..").NextAuthRequest} req */
-export default async function getAuthorizationUrl(req) {
+export default async function getAuthorizationUrl (req) {
   const { provider } = req.options
 
-  const state = req.body?.shop_id || req.query?.shop_id_id
+  const state = req.body?.shop_id || req.query?.shop_id
   const client = oAuthClient(provider, state)
   if (provider.version?.startsWith('2.')) {
     delete req.query?.nextauth

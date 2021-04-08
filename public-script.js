@@ -96,27 +96,15 @@ async function socialLogins () {
   })
   const isActive = shop.social_platform_status === 'A'
   if (!isActive) return
-  const selectedSocialBanners = await Promise.all(
-    shop.social_platforms.map(async platform => {
-      const {
-        data: { authorizationUrl }
-      } = await request.post(`/auth/signin/${platform}`, {
-        shop_id: scriptParam.shop_id,
-        domain: window.location.href
-      })
-      return {
-        platform,
-        authorizationUrl
-      }
-    })
-  )
+  const selectedSocialBanners = shop.social_platforms
+
   const includesText = shop.social_login_with_text
   const isRound = !shop.social_login_with_text && shop.social_button_round
   const form = document.getElementById('customer_login')
 
   const socialContent = selectedSocialBanners.map(
-    ({ platform, authorizationUrl }) => {
-      return `<a href='${authorizationUrl}' value="${platform}" class="lla-button ${
+    ({ platform, authorization_url }) => {
+      return `<a href='${authorization_url}' value="${platform}" class="lla-button ${
         isRound ? 'round' : ''
       } ${includesText ? 'col-6' : ''} social-${
         includesText ? 'with' : 'no'
@@ -135,7 +123,6 @@ async function socialLogins () {
 
   const node = document.createRange().createContextualFragment(socialHtml)
   form.prepend(node)
-  // monitorOnClickSocialClick()
 }
 
 const createInputWithName = ({ value, type }) => {
@@ -165,7 +152,6 @@ const formBasedLogin = () => {
   form.appendChild(emailInput)
   form.appendChild(passwordInput)
   document.head.appendChild(form)
-
   form.submit()
 }
 
