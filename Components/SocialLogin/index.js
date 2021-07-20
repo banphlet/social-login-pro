@@ -8,7 +8,9 @@ import {
   ContextualSaveBar,
   Button,
   Tooltip,
-  Banner
+  Banner,
+  TextContainer,
+  Link
 } from '@shopify/polaris'
 import React from 'react'
 import useQuery from '../../Hooks/useQuery'
@@ -17,9 +19,17 @@ import useMutation from '../../Hooks/useMutation'
 import SkeletonLoader from '../SkeletonLoader'
 import isEqual from 'lodash/isEqual'
 import SingleProvider from './SingleProvider'
+import SyntaxHighlighter from 'react-syntax-highlighter'
+import { foundation } from 'react-syntax-highlighter/dist/cjs/styles/hljs'
+import { CopyToClipboard } from 'react-copy-to-clipboard'
+import { useAppBridge } from '@shopify/app-bridge-react'
+import { Toast } from '@shopify/app-bridge/actions'
+
+const loginCode = '<div id="slm_social_login_widget"></div>'
 
 export default function SocialLogin ({ data, shop, makeRequest }) {
   const iframeRef = React.useRef()
+  const shopifyApp = useAppBridge()
   const [showContextSave, setShowContextSave] = React.useState(false)
   const { loading, data: providers = {} } = useQuery({
     path: '/auth/providers'
@@ -66,6 +76,15 @@ export default function SocialLogin ({ data, shop, makeRequest }) {
     window.parent.location.href = response.data
   }
 
+  const onCopy = () => {
+    const toastOptions = {
+      message: 'Code copied to clipboard',
+      duration: 5000
+    }
+    const toastNotice = Toast.create(shopifyApp, toastOptions)
+    toastNotice.dispatch(Toast.Action.SHOW)
+  }
+
   return (
     <Card.Section>
       {showContextSave ? (
@@ -103,6 +122,7 @@ export default function SocialLogin ({ data, shop, makeRequest }) {
                 </p>
               </Banner>
             )}
+
             <SettingToggle
               action={{
                 content:
@@ -125,6 +145,35 @@ export default function SocialLogin ({ data, shop, makeRequest }) {
               </TextStyle>
               .
             </SettingToggle>
+            <div style={{ marginTop: 20 }} />
+
+            <Card title='Widget Location' sectioned>
+              <TextContainer>
+                <Banner>
+                  <p>
+                    Copy and paste the code below to change the location of the
+                    login widget. <Link url=''>Learn more here</Link>
+                  </p>
+                </Banner>
+                <p>
+                  <CopyToClipboard text={loginCode} onCopy={onCopy}>
+                    <span>
+                      <Tooltip
+                        content='Click to copy to clipboard'
+                        dismissOnMouseOut
+                      >
+                        <SyntaxHighlighter
+                          language='handlebars'
+                          style={foundation}
+                        >
+                          {loginCode}
+                        </SyntaxHighlighter>
+                      </Tooltip>
+                    </span>
+                  </CopyToClipboard>
+                </p>
+              </TextContainer>
+            </Card>
             <div style={{ marginTop: 20 }} />
             <Select
               label='Button Type'

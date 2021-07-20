@@ -90,6 +90,14 @@ function monitorOnClickSocialClick () {
   })
 }
 
+const getTargetDiv = () => {
+  // slm_social_login_widget is custom div to override location of social buttons
+  return (
+    document.getElementById('slm_social_login_widget') ||
+    document.getElementById('customer_login')
+  )
+}
+
 async function socialLogins () {
   const { data: { data: shop } = {} } = await request.get('/customers/shop', {
     params: { shop_id: scriptParam.shop_id }
@@ -98,7 +106,7 @@ async function socialLogins () {
   if (!isActive) return
   const includesText = shop.social_login_with_text
   const isRound = !shop.social_login_with_text && shop.social_button_round
-  const form = document.getElementById('customer_login')
+  const form = getTargetDiv()
 
   const socialContent = shop.social_platforms.map(
     ({ platform, authorization_url }) => {
