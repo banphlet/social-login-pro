@@ -1,12 +1,10 @@
 import {
   Card,
-  Checkbox,
   Layout,
   Select,
   SettingToggle,
   TextStyle,
   ContextualSaveBar,
-  Button,
   Tooltip,
   Banner,
   TextContainer,
@@ -24,10 +22,12 @@ import { foundation } from 'react-syntax-highlighter/dist/cjs/styles/hljs'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
 import { useAppBridge } from '@shopify/app-bridge-react'
 import { Toast } from '@shopify/app-bridge/actions'
+import { useTranslation } from 'next-i18next'
 
 const loginCode = '<div id="slm_social_login_widget"></div>'
 
 export default function SocialLogin ({ data, shop, makeRequest }) {
+  const { t } = useTranslation()
   const iframeRef = React.useRef()
   const shopifyApp = useAppBridge()
   const [showContextSave, setShowContextSave] = React.useState(false)
@@ -94,24 +94,26 @@ export default function SocialLogin ({ data, shop, makeRequest }) {
           saveAction={{
             onAction: onSave,
             loading,
-            disabled: loading || !formFields.social_platform_status
+            disabled: loading || !formFields.social_platform_status,
+            content: t('social_settings_contextual_save')
           }}
           discardAction={{
-            onAction: () => setFormFields(initialFormFields)
+            onAction: () => setFormFields(initialFormFields),
+            content: t('social_settings_contextual_discard')
           }}
         />
       ) : null}
       <Layout>
         <Layout.Section>
           <Layout.AnnotatedSection
-            title='Login Limit Settings'
-            description='Customize Social Login'
+            title={t('limit_login_settings_header')}
+            description={t('limit_login_settings_subheader')}
           >
             {formFields.social_platform_status === 'A' && (
               <Banner
                 status='info'
                 action={{
-                  content: 'Enable Customer Accounts',
+                  content: t('enable_customer_accounts_banner_button_text'),
                   url: `https://${shop.platform_domain}/admin/settings/checkout`,
                   external: true
                 }}
@@ -127,8 +129,8 @@ export default function SocialLogin ({ data, shop, makeRequest }) {
               action={{
                 content:
                   formFields.social_platform_status === 'A'
-                    ? 'Disable'
-                    : 'Enable',
+                    ? t('social_settings_status_button_disable_text')
+                    : t('social_settings_status_button_enable_text'),
                 onAction: () =>
                   updateField(
                     'social_platform_status',
@@ -137,29 +139,33 @@ export default function SocialLogin ({ data, shop, makeRequest }) {
               }}
               enabled={formFields.social_platform_status === 'A'}
             >
-              This setting is{' '}
+              {t('social_settings_status_text')}{' '}
               <TextStyle variation='strong'>
                 {formFields.social_platform_status === 'A'
-                  ? 'Enabled'
-                  : 'Disabled'}
+                  ? t('social_settings_status_button_enable_text')
+                  : t('social_settings_status_button_disable_text')}
               </TextStyle>
               .
             </SettingToggle>
             <div style={{ marginTop: 20 }} />
 
-            <Card title='Widget Location' sectioned>
+            <Card title={t('social_settings_widget_location_text')} sectioned>
               <TextContainer>
                 <Banner>
                   <p>
-                    Copy and paste the code below to change the location of the
-                    login widget. <Link url=''>Learn more here</Link>
+                    {t('social_settings_widget_location_copy_text')}{' '}
+                    <Link url=''>
+                      {t('social_settings_widget_location_copy_link_text')}
+                    </Link>
                   </p>
                 </Banner>
                 <p>
                   <CopyToClipboard text={loginCode} onCopy={onCopy}>
                     <span>
                       <Tooltip
-                        content='Click to copy to clipboard'
+                        content={t(
+                          'social_settings_widget_location_copy_toolpit_text'
+                        )}
                         dismissOnMouseOut
                       >
                         <SyntaxHighlighter
@@ -178,8 +184,18 @@ export default function SocialLogin ({ data, shop, makeRequest }) {
             <Select
               label='Button Type'
               options={[
-                { value: 'false', label: 'Only Icons' },
-                { value: 'true', label: 'Show with Text' }
+                {
+                  value: 'false',
+                  label: t(
+                    'social_settings_button_type_with_icon_dropdown_text'
+                  )
+                },
+                {
+                  value: 'true',
+                  label: t(
+                    'social_settings_button_type_with_text_dropdown_text'
+                  )
+                }
               ]}
               onChange={e => updateField('social_login_with_text', e)}
               value={String(formFields.social_login_with_text)}
@@ -188,8 +204,14 @@ export default function SocialLogin ({ data, shop, makeRequest }) {
             <Select
               label='Button Shape'
               options={[
-                { value: 'false', label: 'Square Shape' },
-                { value: 'true', label: 'Round Shape' }
+                {
+                  value: 'false',
+                  label: t('social_settings_button_shape_square_dropdown_text')
+                },
+                {
+                  value: 'true',
+                  label: t('social_settings_button_shape_round_dropdown_text')
+                }
               ]}
               onChange={e => updateField('social_button_round', e)}
               value={String(formFields.social_button_round)}
@@ -213,7 +235,7 @@ export default function SocialLogin ({ data, shop, makeRequest }) {
         <div style={{ marginTop: 20 }} />
 
         <Layout.Section>
-          <Card title='Site Preview'>
+          <Card title={t('site_preview_text')}>
             <div style={{ height: '700px' }}>
               <iframe
                 ref={iframeRef}

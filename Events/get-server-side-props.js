@@ -1,4 +1,5 @@
 import request from '../Lib/requests'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 
 const getShop = shopId =>
   request
@@ -12,7 +13,7 @@ const getShop = shopId =>
       // console.log(err?.response?.data)
     })
 
-export async function getServerSideProps(context) {
+export async function getServerSideProps (context) {
   const shop = await getShop(context.query?.shop_id)
   if (!shop)
     return {
@@ -20,7 +21,8 @@ export async function getServerSideProps(context) {
     }
   return {
     props: {
-      shop
+      shop,
+      ...(await serverSideTranslations(context.locale, ['common']))
     }
   }
 }

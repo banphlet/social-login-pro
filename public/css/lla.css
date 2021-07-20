@@ -13,9 +13,6 @@
 .col-5 {
   width: 41.66%;
 }
-.col-6 {
-  width: 50%;
-}
 .col-7 {
   width: 58.33%;
 }
@@ -41,7 +38,7 @@
 }
 .social-with-text {
   padding: 10px;
-  width: 49%;
+  /* width: 49%; */
   text-align: left;
   text-decoration: none;
   margin: 5px 2px;

@@ -1,40 +1,44 @@
 import { Card, Tabs } from '@shopify/polaris'
-import React from 'react'
+import React, { useMemo } from 'react'
 import Analytics from '../Components/Analytics'
 import Settings from '../Components/Settings'
 import { AppProvider, Frame } from '@shopify/polaris'
-import enTranslations from '@shopify/polaris/locales/en.json'
 import { Provider, useAppBridge } from '@shopify/app-bridge-react'
 import { TitleBar, Button } from '@shopify/app-bridge/actions'
 import SocialLogin from '../Components/SocialLogin'
 import useMutation from '../Hooks/useMutation'
-
-const tabs = [
-  {
-    id: 'Social Login',
-    content: 'Social Login Settings',
-    panelID: 'Social Login'
-  },
-  {
-    id: 'Settings',
-    content: 'Limit Login Settings',
-    panelID: 'Settings'
-  },
-  {
-    id: 'Analytics',
-    content: 'Limit Login Analytics',
-    accessibilityLabel: 'Analytics',
-    panelID: 'Analytics'
-  }
-]
+import { useTranslation } from 'next-i18next'
 
 const Main = ({ shop }) => {
+  const { t } = useTranslation()
   const [selected, setSelected] = React.useState(0)
   const { makeRequest, loading, data: { data } = {} } = useMutation({
     path: 'shops/me',
     method: 'put'
   })
   const app = useAppBridge()
+
+  const tabs = useMemo(
+    () => [
+      {
+        id: 'Social Login',
+        content: t('social_login_settings_tab_name'),
+        panelID: 'Social Login'
+      },
+      {
+        id: 'Settings',
+        content: t('login_limit_settings_tab_name'),
+        panelID: 'Settings'
+      },
+      {
+        id: 'Analytics',
+        content: t('login_limit_analytics_tab_name'),
+        accessibilityLabel: 'Analytics',
+        panelID: 'Analytics'
+      }
+    ],
+    []
+  )
 
   React.useEffect(() => {
     showPlan()
@@ -92,12 +96,12 @@ const Main = ({ shop }) => {
 
 export default function Home ({ shop }) {
   return (
-    <AppProvider i18n={enTranslations}>
+    <AppProvider>
       <Provider
         config={{
           shopOrigin: shop?.platform_domain,
           apiKey: process.env.NEXT_PUBLIC_SHOPIFY_CLIENT_ID,
-          forceRedirect: true //process.env.NODE_ENV === 'production'
+          forceRedirect: process.env.NODE_ENV === 'production'
         }}
       >
         <Main shop={shop} />

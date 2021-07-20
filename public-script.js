@@ -113,9 +113,7 @@ async function socialLogins () {
     ({ platform, authorization_url }) => {
       return `<a href='${authorization_url}' value="${platform}" class="lla-button ${
         isRound ? 'round' : ''
-      } ${includesText ? 'col-6' : ''} social-${
-        includesText ? 'with' : 'no'
-      }-text fab fa-${platform}">${
+      } social-${includesText ? 'with' : 'no'}-text fab fa-${platform}">${
         includesText ? ` <span>Sign with ${platform} </span>` : ''
       }</a>`
     }
