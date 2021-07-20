@@ -94,7 +94,8 @@ const getTargetDiv = () => {
   // slm_social_login_widget is custom div to override location of social buttons
   return (
     document.getElementById('slm_social_login_widget') ||
-    document.getElementById('customer_login')
+    document.getElementById('customer_login') ||
+    document.getElementById('create_customer')
   )
 }
 
@@ -106,7 +107,7 @@ async function socialLogins () {
   if (!isActive) return
   const includesText = shop.social_login_with_text
   const isRound = !shop.social_login_with_text && shop.social_button_round
-  const form = getTargetDiv()
+  const targetElement = getTargetDiv()
 
   const socialContent = shop.social_platforms.map(
     ({ platform, authorization_url }) => {
@@ -128,7 +129,7 @@ async function socialLogins () {
     </div>`
 
   const node = document.createRange().createContextualFragment(socialHtml)
-  form.prepend(node)
+  targetElement.prepend(node)
 }
 
 const createInputWithName = ({ value, type }) => {

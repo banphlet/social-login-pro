@@ -8,7 +8,7 @@ import request from '../../../lib/request'
 
 const renderSnippet = "{% render 'limit-login.liquid', form: form %}"
 
-const API_VERSION = '2020-04'
+const API_VERSION = '2021-07'
 
 const shopifyClient = ({
   shop = required('shop'),
@@ -61,9 +61,11 @@ const getSiteDetails = ({
       externalId: shopDetails.id
     }))
 
-const insertSnippetIntoCurrentLiquid = (value = '') => {
+const insertSnippetIntoCurrentLiquid = (value = '', isLoginPage = true) => {
   const snippet = "{% render 'limit-login.liquid', form: form %}"
-  const match = value.match(/customer_login.*}/)
+  const match = isLoginPage
+    ? value.match(/customer_login.*}/)
+    : value.match(/create_customer.*}/)
   if (!match) return value
   const indexAfterFormTag = match.index + match[0].length
   return (
@@ -83,43 +85,67 @@ const loadScript = async shopId => {
     .replace(/NEXT_PUBLIC_APP_URL/g, config.get('NEXT_PUBLIC_APP_URL'))
 }
 
-const injectScript = async ({
-  accessToken = required('accessToken'),
-  platformDomain = required('platformDomain'),
-  shopId = required('shopId')
+const injectScriptInLogin = async ({
+  themeId,
+  shopifyLibInstance,
+  templateBasePath,
+  shopId,
+  isLoginPage
 }) => {
-  const loginTemplateBasePath = 'templates/customers/login'
-  const shopify = shopifyClient({ shop: platformDomain, accessToken })
-  const publishedTheme = (await shopify.theme.list()).find(
-    theme => theme.role === 'main'
-  )
-
-  const customerLoginAsset = await shopify.asset.get(publishedTheme.id, {
-    'asset[key]': `${loginTemplateBasePath}.liquid`
+  const pageAsset = await shopifyLibInstance.asset.get(themeId, {
+    'asset[key]': `${templateBasePath}.liquid`
   })
 
-  const hasSnippet = new RegExp(renderSnippet).test(customerLoginAsset.value)
+  const hasSnippet = new RegExp(renderSnippet).test(pageAsset.value)
+
   if (hasSnippet)
-    return shopify.asset.update(publishedTheme.id, {
+    return shopifyLibInstance.asset.update(themeId, {
       key: 'snippets/limit-login.liquid',
       value: await loadScript(shopId)
     })
 
   // backup customer login file
-  await shopify.asset.create(publishedTheme.id, {
-    key: `${loginTemplateBasePath}-backup.liquid`,
-    value: customerLoginAsset.value
+  await shopifyLibInstance.asset.create(themeId, {
+    key: `${templateBasePath}-backup.liquid`,
+    value: pageAsset.value
   })
 
-  await shopify.asset.create(publishedTheme.id, {
+  await shopifyLibInstance.asset.create(themeId, {
     key: 'snippets/limit-login.liquid',
     value: await loadScript(shopId)
   })
 
-  await shopify.asset.update(publishedTheme.id, {
-    key: `${loginTemplateBasePath}.liquid`,
-    value: insertSnippetIntoCurrentLiquid(customerLoginAsset.value)
+  await shopifyLibInstance.asset.update(themeId, {
+    key: `${templateBasePath}.liquid`,
+    value: insertSnippetIntoCurrentLiquid(pageAsset.value, isLoginPage)
   })
+}
+
+const injectScript = async ({
+  accessToken = required('accessToken'),
+  platformDomain = required('platformDomain'),
+  shopId = required('shopId')
+}) => {
+  const shopify = shopifyClient({ shop: platformDomain, accessToken })
+  const publishedTheme = (await shopify.theme.list()).find(
+    theme => theme.role === 'main'
+  )
+  await Promise.all([
+    injectScriptInLogin({
+      themeId: publishedTheme.id,
+      templateBasePath: 'templates/customers/login',
+      shopifyLibInstance: shopify,
+      shopId,
+      isLoginPage: true
+    }),
+    injectScriptInLogin({
+      themeId: publishedTheme.id,
+      templateBasePath: 'templates/customers/register',
+      shopifyLibInstance: shopify,
+      shopId,
+      isLoginPage: false
+    })
+  ])
 }
 
 const installWebhooks = ({

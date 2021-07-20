@@ -97,7 +97,7 @@ export default function Home ({ shop }) {
         config={{
           shopOrigin: shop?.platform_domain,
           apiKey: process.env.NEXT_PUBLIC_SHOPIFY_CLIENT_ID,
-          forceRedirect: process.env.NODE_ENV === 'production'
+          forceRedirect: true //process.env.NODE_ENV === 'production'
         }}
       >
         <Main shop={shop} />
