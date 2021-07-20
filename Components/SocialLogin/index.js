@@ -154,9 +154,9 @@ export default function SocialLogin ({ data, shop, makeRequest }) {
                 <Banner>
                   <p>
                     {t('social_settings_widget_location_copy_text')}{' '}
-                    <Link url=''>
+                    {/* <Link url='' external>
                       {t('social_settings_widget_location_copy_link_text')}
-                    </Link>
+                    </Link> */}
                   </p>
                 </Banner>
                 <p>

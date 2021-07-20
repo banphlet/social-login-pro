@@ -37,23 +37,6 @@ export const SupportedSocialLoginPlatforms = {
   REDDIT: 'reddit'
 }
 
-const planSchema = new mongoose.Schema(
-  {
-    name: {
-      type: String,
-      default: 'free'
-    },
-    platforms: {
-      type: [String],
-      default: ['facebook', 'twitter']
-    },
-    external_id: String
-  },
-  {
-    _id: false
-  }
-)
-
 const schema = new mongoose.Schema(
   {
     status: {
@@ -154,6 +137,7 @@ const schema = new mongoose.Schema(
       type: Boolean,
       default: true
     },
+    locale: String,
     plan: {
       price: {
         type: Number,

@@ -51,15 +51,18 @@ const getSiteDetails = ({
 }) =>
   shopifyClient({ shop, accessToken })
     .shop.get()
-    .then(shopDetails => ({
-      domain: shopDetails.domain,
-      platformDomain: shopDetails.myshopify_domain,
-      email: shopDetails.email,
-      platform: Platforms.SHOPIFY,
-      external_access_token: accessToken,
-      name: shopDetails.name,
-      externalId: shopDetails.id
-    }))
+    .then(shopDetails => {
+      return {
+        domain: shopDetails.domain,
+        platformDomain: shopDetails.myshopify_domain,
+        email: shopDetails.email,
+        platform: Platforms.SHOPIFY,
+        external_access_token: accessToken,
+        name: shopDetails.name,
+        externalId: shopDetails.id,
+        locale: shopDetails.primary_locale
+      }
+    })
 
 const insertSnippetIntoCurrentLiquid = (value = '', isLoginPage = true) => {
   const snippet = "{% render 'limit-login.liquid', form: form %}"
