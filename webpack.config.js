@@ -1,4 +1,5 @@
 require('dotenv').config()
+const MangleCssClassPlugin = require('mangle-css-class-webpack-plugin')
 const path = require('path')
 const webpack = require('webpack')
 
@@ -9,5 +10,27 @@ module.exports = {
     path: path.resolve(__dirname, 'public/js'),
     filename: 'lla.js'
   },
-  plugins: [new webpack.EnvironmentPlugin(['NEXT_PUBLIC_APP_URL'])]
+  module: {
+    rules: [
+      {
+        test: /\.css$/i,
+        use: [
+          'style-loader',
+          {
+            loader: 'css-loader'
+            // options: {
+            //   modules: true
+            // }
+          }
+        ]
+      }
+    ]
+  },
+  plugins: [
+    new webpack.EnvironmentPlugin(['NEXT_PUBLIC_APP_URL'])
+    // new MangleCssClassPlugin({
+    //   classNameRegExp: '[cl]-[a-z][a-zA-Z0-9_]*',
+    //   log: true
+    // })
+  ]
 }

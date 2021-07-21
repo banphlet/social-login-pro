@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@banphlet/next-auth": "git+https://github.com/banphlet/next-auth.git",
+    "@fortawesome/fontawesome-free": "5.15.3",
     "@shopify/app-bridge-react": "1.29.0",
     "@shopify/polaris": "6.0.1",
     "@shopify/react-i18n": "6.1.0",
@@ -46,7 +47,10 @@
     "striptags": "3.1.1"
   },
   "devDependencies": {
+    "css-loader": "6.2.0",
     "dotenv": "8.2.0",
+    "mangle-css-class-webpack-plugin": "4.0.12",
+    "style-loader": "3.2.1",
     "webpack": "5.21.2",
     "webpack-cli": "4.5.0"
   }

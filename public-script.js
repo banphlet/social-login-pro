@@ -1,5 +1,8 @@
 import axios from 'axios'
 
+import css from './public/css/lla.css'
+import '@fortawesome/fontawesome-free/css/all.min.css'
+
 const SERVER_URL = process.env.NEXT_PUBLIC_APP_URL
 const request = axios.create({
   baseURL: `${SERVER_URL}/api`
@@ -73,23 +76,6 @@ async function loadScript () {
   preventFormSubmission(isRestricted)
 }
 
-function monitorOnClickSocialClick () {
-  const items = document.querySelectorAll('.lla-button')
-  items.forEach(item => {
-    item.addEventListener('click', async e => {
-      const platform = item.getAttribute('value')
-      const {
-        data: { authorizationUrl }
-      } = await request.post(`/auth/signin/${platform}`, {
-        shop_id: scriptParam.shop_id,
-        domain: window.location.href
-      })
-
-      window.location.href = authorizationUrl
-    })
-  })
-}
-
 const getTargetDiv = () => {
   // slm_social_login_widget is custom div to override location of social buttons
   return (
@@ -119,7 +105,7 @@ async function socialLogins () {
     }
   )
 
-  const socialHtml = `<div style='margin-top: 10px; margin-bottom: 10px' class='lla-social'>
+  const socialHtml = `<div style='margin-top: 10px; margin-bottom: 10px'>
       <div style='display: flex; margin-top: 30px; flex-wrap: wrap;justify-content:center'>
         ${socialContent.join('')}
     </div>
