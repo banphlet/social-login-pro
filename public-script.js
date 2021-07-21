@@ -1,7 +1,9 @@
 import axios from 'axios'
 
 import css from './public/css/lla.css'
-import '@fortawesome/fontawesome-free/css/all.min.css'
+import fontAwesome from '@fortawesome/fontawesome-free/css/all.min.css'
+
+console.log(fontAwesome)
 
 const SERVER_URL = process.env.NEXT_PUBLIC_APP_URL
 const request = axios.create({
@@ -94,12 +96,16 @@ async function socialLogins () {
   const includesText = shop.social_login_with_text
   const isRound = !shop.social_login_with_text && shop.social_button_round
   const targetElement = getTargetDiv()
-
+  const socialButtonWithOrWithoutTextClassName =
+    css[`social-${includesText ? 'with' : 'no'}-text`]
+  const roundButtonClassName = isRound ? css['round'] : ''
   const socialContent = shop.social_platforms.map(
     ({ platform, authorization_url }) => {
-      return `<a href='${authorization_url}' value="${platform}" class="lla-button ${
-        isRound ? 'round' : ''
-      } social-${includesText ? 'with' : 'no'}-text fab fa-${platform}">${
+      const fontAwesomePlatformFab = fontAwesome[`fa-${platform}`]
+      const platformFabStyle = css[`fa-${platform}`]
+      return `<a href='${authorization_url}' value="${platform}" class="${roundButtonClassName} ${socialButtonWithOrWithoutTextClassName} ${
+        fontAwesome.fab
+      } ${fontAwesomePlatformFab} ${platformFabStyle}">${
         includesText ? ` <span>Sign with ${platform} </span>` : ''
       }</a>`
     }
