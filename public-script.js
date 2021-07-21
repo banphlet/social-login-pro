@@ -3,8 +3,6 @@ import axios from 'axios'
 import css from './public/css/lla.css'
 import fontAwesome from '@fortawesome/fontawesome-free/css/all.min.css'
 
-console.log(fontAwesome)
-
 const SERVER_URL = process.env.NEXT_PUBLIC_APP_URL
 const request = axios.create({
   baseURL: `${SERVER_URL}/api`
