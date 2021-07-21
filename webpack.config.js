@@ -1,5 +1,4 @@
 require('dotenv').config()
-const MangleCssClassPlugin = require('mangle-css-class-webpack-plugin')
 const path = require('path')
 const webpack = require('webpack')
 
