@@ -235,7 +235,7 @@ export default function SocialLogin ({ data, shop, makeRequest }) {
         <div style={{ marginTop: 20 }} />
 
         <Layout.Section>
-          <Card title={t('site_preview_text')}>
+          <Card title={t('social_settings_site_preview_text')}>
             <div style={{ height: '700px' }}>
               <iframe
                 ref={iframeRef}
