@@ -44,7 +44,14 @@
   margin: 5px 2px;
   font-size: 18px;
   text-transform: capitalize;
+  border-radius: 6px;
 }
+
+.social-with-text:hover {
+  color: white;
+  opacity: 0.7;
+}
+
 .social-with-text > span {
   margin-left: 10px;
 }
@@ -60,6 +67,11 @@
   text-align: center;
   text-decoration: none;
   margin: 5px 2px;
+  border-radius: 6px;
+}
+.social-no-text:hover {
+  color: white;
+  opacity: 0.7;
 }
 
 .fa:hover {
