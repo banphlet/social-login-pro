@@ -2,7 +2,7 @@ import React from 'react'
 
 export default function PrivacyPolicy () {
   return (
-    <div>
+     <div style={{ width: '90%', padding: 30, }}>
         <h1>Privacy Policy for Smart Login Manager Limited</h1>
         <p>At Smart Login Manager, accessible from http://limit-login.strellio.com, one of our main priorities is the privacy of our visitors. This Privacy Policy document contains types of information that is collected and recorded by Smart Login Manager and how we use it.</p>
         <p>If you have additional questions or require more information about our Privacy Policy, do not hesitate to contact us.</p>
