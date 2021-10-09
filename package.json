@@ -2,6 +2,10 @@
   "name": "limit-login-attempts",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": "14.17.5",
+    "npm": "6.14.14"
+  },
   "scripts": {
     "dev": "npm run webpack && next dev -p 8000",
     "build": "npm run webpack && next build ",
