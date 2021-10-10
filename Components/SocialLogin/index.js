@@ -58,15 +58,18 @@ export default function SocialLogin ({ data, shop, makeRequest }) {
     setFormFields({ ...formFields, [field]: value })
 
   const providerList = Object.keys(providers)
+  const isFreePlan = /free/gi.test(shop.plan.name)
 
   const { paidProviders, unPaidProviders } = useMemo(() => {
     return {
       paidProviders: providerList.filter(provider =>
         shop.social_platforms.includes(provider)
       ),
-      unPaidProviders: providerList.filter(
-        provider => !shop.social_platforms.includes(provider)
-      )
+      unPaidProviders: isFreePlan
+        ? providerList.filter(
+            provider => !shop.social_platforms.includes(provider)
+          )
+        : []
     }
   }, [providers])
 
