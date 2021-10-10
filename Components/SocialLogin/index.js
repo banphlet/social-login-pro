@@ -63,11 +63,7 @@ export default function SocialLogin ({ data, shop, makeRequest }) {
   const { paidProviders, unPaidProviders } = useMemo(() => {
     return {
       paidProviders: providerList,
-      unPaidProviders: isFreePlan
-        ? providerList.filter(
-            provider => !shop.social_platforms.includes(provider)
-          )
-        : []
+      unPaidProviders: isFreePlan ? shop.social_platforms : []
     }
   }, [providers])
 
