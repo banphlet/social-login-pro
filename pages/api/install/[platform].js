@@ -2,6 +2,7 @@
 import config from '../../../server/config'
 import customServerHandler from '../../../server/request-handler'
 import platforms from '../../../server/services/platforms'
+import Cors from 'cors'
 
 const acceptPermissionHandler = (req, res) => {
   const redirectUrl = platforms(req.query?.platform).getPermissionUrl({
