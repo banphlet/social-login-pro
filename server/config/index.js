@@ -241,6 +241,18 @@ const config = convict({
     format: '*',
     env: 'WORDPRESS_CLIENT_ID'
   }
+  // INSTAGRAM_CLIENT_SECRET: {
+  //   doc: 'INSTAGRAM_CLIENT_SECRET',
+  //   default: process.env.INSTAGRAM_CLIENT_SECRET,
+  //   format: '*',
+  //   env: 'INSTAGRAM_CLIENT_SECRET'
+  // },
+  // INSTAGRAM_CLIENT_ID: {
+  //   doc: 'WORDPRESS_CLIENT_ID',
+  //   default: process.env.WORDPRESS_CLIENT_ID,
+  //   format: '*',
+  //   env: 'WORDPRESS_CLIENT_ID'
+  // }
 })
 
 config.validate({ allowed: 'strict' })

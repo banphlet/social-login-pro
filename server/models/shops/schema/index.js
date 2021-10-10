@@ -30,7 +30,8 @@ export const SupportedSocialLoginPlatforms = {
   LINE: 'line',
   GITHUB: 'github',
   REDDIT: 'reddit',
-  WORDPRESS: 'wordpress'
+  WORDPRESS: 'wordpress',
+  INSTAGRAM: 'instagram'
   // SPOTIFY: 'spotify'
 }
 

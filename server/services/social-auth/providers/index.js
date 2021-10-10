@@ -36,8 +36,10 @@ import Yandex from './yandex'
 import Tumblr from './tumblr'
 import Wordpress from './wordpress'
 import config from '../../../config'
+import Instagram from './instagram'
 
 const providerMap = {
+  Instagram,
   Wordpress,
   Tumblr,
   Apple,
