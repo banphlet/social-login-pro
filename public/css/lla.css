@@ -36,6 +36,11 @@
     width: 100% !important;
   }
 }
+
+.cursor {
+  cursor: pointer !important;
+}
+
 .social-with-text {
   padding: 10px;
   /* width: 49%; */

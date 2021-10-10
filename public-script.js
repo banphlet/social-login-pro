@@ -60,11 +60,13 @@ async function socialLogins () {
     ({ platform, authorization_url }) => {
       const fontAwesomePlatformFab = fontAwesome[`fa-${platform}`]
       const platformFabStyle = css[`fa-${platform}`]
-      return `<a href='${authorization_url}' value="${platform}" class="${roundButtonClassName} ${socialButtonWithOrWithoutTextClassName} ${
+      return `<span onclick="location='${authorization_url}'" value="${platform}" class="${
+        css['cursor']
+      } ${roundButtonClassName} ${socialButtonWithOrWithoutTextClassName} ${
         fontAwesome.fab
       } ${fontAwesomePlatformFab} ${platformFabStyle}">${
         includesText ? ` <span>Sign with ${platform} </span>` : ''
-      }</a>`
+      }</span>`
     }
   )
 
