@@ -2,7 +2,7 @@
 import ShopifyToken from 'shopify-token'
 import Shopify from 'shopify-api-node'
 import config from '../../../config'
-import { asyncPipe, required } from '../../../lib/utils'
+import { required } from '../../../lib/utils'
 import { Platforms } from '../../../models/shops/schema'
 import request from '../../../lib/request'
 

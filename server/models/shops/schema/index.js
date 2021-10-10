@@ -15,11 +15,6 @@ export const Platforms = {
   SHOPIFY: 'shopify'
 }
 
-export const LimitBy = {
-  IP: 'ip',
-  EMAIL: 'email'
-}
-
 export const SupportedSocialLoginPlatforms = {
   GOOGLE: 'google',
   FACEBOOK: 'facebook',
@@ -90,43 +85,13 @@ const schema = new mongoose.Schema(
       type: String,
       default: 'en'
     },
-    limit_by: {
-      type: String,
-      enum: Object.values(LimitBy),
-      default: LimitBy.IP
-    },
-    attempts: {
-      type: Number,
-      default: 3
-    },
-    duration: {
-      type: Number,
-      default: 10
-    },
-    banner_message: {
-      type: String,
-      default:
-        'Too many login attempts. Login blocked temporarily. Try again later'
-    },
-    text_color: {
-      type: String,
-      default: 'white'
-    },
-    background_color: {
-      type: String,
-      default: '#B74949'
-    },
-    blacklisted_ips: {
-      type: [String],
-      default: []
-    },
     social_login_with_text: {
       type: Boolean,
       default: false
     },
     social_platforms: {
       type: [String],
-      default: ['facebook', 'twitter']
+      default: ['google', 'facebook']
     },
     social_platform_status: {
       type: String,
@@ -149,7 +114,7 @@ const schema = new mongoose.Schema(
       },
       platforms: {
         type: [String],
-        default: ['facebook', 'twitter']
+        default: ['google', 'facebook']
       },
       external_id: String
     }

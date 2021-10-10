@@ -29,52 +29,11 @@ function getParams (a) {
 
 const scriptParam = getParams('js/lla')
 
-const addEmailToSectionStorage = email => sessionStorage.setItem('email', email)
-
-const isAccessRestricted = () =>
-  request
-    .post('/customers/is-access-restricted', {
-      shop_id: scriptParam.shop_id
-    })
-    .then(response => response.data.data)
-
 window.createOrUpdateCustomer = shopId =>
   request.post('/customers', {
     shop_id: shopId,
     email: sessionStorage.getItem('email')
   })
-
-const trackEmailField = () => {
-  const element = document.querySelector('[type=email]')
-  element.addEventListener('input', e => {
-    addEmailToSectionStorage(e.target.value)
-  })
-}
-
-const preventFormSubmission = payload => {
-  const banner = document.createElement('div')
-  const textColor = payload.text_color || 'white'
-  const backgroundColor = payload.background_color || '#B74949'
-  banner.textContent =
-    payload?.message || 'Too many login attempts, Try again later'
-  banner.style = `background-color: ${backgroundColor};padding: 20px;color: ${textColor};margin-top: 20px;margin-bottom: 30px; border-radius: 5px`
-
-  const form = document.getElementById('customer_login') // document.querySelector('[action="/account/login"]')
-  const button = document.querySelector(
-    '[action="/account/login"] [type=submit]'
-  )
-  form.prepend(banner)
-  button.disabled = true
-  form.onsubmit = function () {
-    return false
-  }
-}
-
-async function loadScript () {
-  const isRestricted = await isAccessRestricted()
-  if (!isRestricted.is_restricted) return
-  preventFormSubmission(isRestricted)
-}
 
 const getTargetDiv = () => {
   // slm_social_login_widget is custom div to override location of social buttons
@@ -151,8 +110,6 @@ const formBasedLogin = () => {
 }
 
 formBasedLogin()
-loadScript()
 window.onload = function () {
-  trackEmailField()
   socialLogins()
 }

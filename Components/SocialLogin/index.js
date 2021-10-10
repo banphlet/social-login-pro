@@ -8,9 +8,10 @@ import {
   Tooltip,
   Banner,
   TextContainer,
-  Link
+  Link,
+  Button
 } from '@shopify/polaris'
-import React from 'react'
+import React, { useMemo } from 'react'
 import useQuery from '../../Hooks/useQuery'
 import useMutation from '../../Hooks/useMutation'
 
@@ -57,6 +58,17 @@ export default function SocialLogin ({ data, shop, makeRequest }) {
     setFormFields({ ...formFields, [field]: value })
 
   const providerList = Object.keys(providers)
+
+  const { paidProviders, unPaidProviders } = useMemo(() => {
+    return {
+      paidProviders: providerList.filter(provider =>
+        shop.social_platforms.includes(provider)
+      ),
+      unPaidProviders: providerList.filter(
+        provider => !shop.social_platforms.includes(provider)
+      )
+    }
+  }, [providers])
 
   if (loading) return <SkeletonLoader />
 
@@ -152,12 +164,7 @@ export default function SocialLogin ({ data, shop, makeRequest }) {
             <Card title={t('social_settings_widget_location_text')} sectioned>
               <TextContainer>
                 <Banner>
-                  <p>
-                    {t('social_settings_widget_location_copy_text')}{' '}
-                    {/* <Link url='' external>
-                      {t('social_settings_widget_location_copy_link_text')}
-                    </Link> */}
-                  </p>
+                  <p>{t('social_settings_widget_location_copy_text')} </p>
                 </Banner>
                 <p>
                   <CopyToClipboard text={loginCode} onCopy={onCopy}>
@@ -217,9 +224,28 @@ export default function SocialLogin ({ data, shop, makeRequest }) {
               value={String(formFields.social_button_round)}
             />
             <div style={{ marginTop: 20 }} />
-
             <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-              {providerList.map(provider => (
+              {paidProviders.map(provider => (
+                <SingleProvider
+                  key={provider}
+                  provider={provider}
+                  updateField={updateField}
+                  formFields={formFields}
+                  createCharge={createCharge}
+                  shop={shop}
+                />
+              ))}
+            </div>
+            {unPaidProviders.length ? (
+              <div style={{ marginTop: 20 }} onClick={createCharge}>
+                <Button primary>Upgrade to unlock more</Button>
+              </div>
+            ) : null}
+            <div
+              className='premium-feature '
+              style={{ display: 'flex', flexWrap: 'wrap' }}
+            >
+              {unPaidProviders.map(provider => (
                 <SingleProvider
                   key={provider}
                   provider={provider}

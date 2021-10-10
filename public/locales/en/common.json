@@ -1,9 +1,7 @@
 {
   "social_login_settings_tab_name": "Social Login Settings",
-  "login_limit_settings_tab_name": "Limit Login Settings",
-  "login_limit_analytics_tab_name": "Limit Login Analytics",
-  "limit_login_settings_header": "Login Limit Settings",
-  "limit_login_settings_subheader": "Customize Social Login",
+  "limit_login_settings_header": "Customize your social buttons",
+  "limit_login_settings_subheader": "Change the settings to meet your preference",
   "enable_customer_accounts_banner_header": "To allow customers to login to your site, kindly enable Customer Accounts",
   "enable_customer_accounts_banner_button_text": "Enable customer accounts",
   "social_settings_status_text": "This setting is",

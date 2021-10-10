@@ -1,18 +1,15 @@
 import { Button, Checkbox, Tooltip } from '@shopify/polaris'
 import React from 'react'
 
-const FREE_PROVIDERS = ['twitter', 'facebook']
-
 export default function SingleProvider ({
   provider,
   formFields,
   shop,
-  updateField,
-  createCharge
+  updateField
 }) {
   const hasProvider = formFields?.social_platforms?.includes(provider)
   const canUpdateSettings = !(
-    /free/gi.test(shop.plan.name) && !FREE_PROVIDERS.includes(provider)
+    /free/gi.test(shop.plan.name) && !shop.social_platforms.includes(provider)
   )
   return (
     <div
@@ -45,11 +42,7 @@ export default function SingleProvider ({
             )
           }
         />
-      ) : (
-        <Button onClick={createCharge} destructive>
-          Upgrade
-        </Button>
-      )}
+      ) : null}
     </div>
   )
 }

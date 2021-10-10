@@ -2,21 +2,22 @@
 import joi, { objectId } from '../../../lib/joi'
 import { validate } from '../../../lib/utils'
 import { shops as shopModel } from '../../../models'
-import { LimitBy, StoreStatusTypes, SupportedSocialLoginPlatforms } from '../../../models/shops/schema'
+import {
+  StoreStatusTypes,
+  SupportedSocialLoginPlatforms
+} from '../../../models/shops/schema'
 
 const schema = joi.object({
   shop_id: objectId().required(),
-  limit_by: joi.string().valid(...Object.values(LimitBy)),
-  attempts: joi.number(),
-  banner_message: joi.string(),
-  duration: joi.number(),
   text_color: joi.string(),
-  background_color: joi.string(),
   status: joi.string().valid(...Object.values(StoreStatusTypes)),
-  blacklisted_ips: joi.array().items(joi.string()),
   social_button_round: joi.boolean(),
-  social_platform_status: joi.string().valid(...Object.values(StoreStatusTypes)),
-  social_platforms: joi.array().items(joi.string().valid(...Object.values(SupportedSocialLoginPlatforms))),
+  social_platform_status: joi
+    .string()
+    .valid(...Object.values(StoreStatusTypes)),
+  social_platforms: joi
+    .array()
+    .items(joi.string().valid(...Object.values(SupportedSocialLoginPlatforms))),
   social_login_with_text: joi.boolean()
 })
 
