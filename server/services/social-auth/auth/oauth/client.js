@@ -10,7 +10,7 @@ const logger = pino()
  * would be easier to maintain if all the code was native to next-auth.
  * @param {import("../..").Provider} provider
  */
-export default function oAuthClient(provider, state) {
+export default function oAuthClient (provider, state) {
   if (provider.version?.startsWith('2.')) {
     // Handle OAuth v2.x
     const authorizationUrl = new URL(provider.authorizationUrl)
@@ -52,19 +52,26 @@ export default function oAuthClient(provider, state) {
       })
     })
   }
-  const originalGetOAuth1AccessToken = oauth1Client.getOAuthAccessToken.bind(oauth1Client)
+  const originalGetOAuth1AccessToken = oauth1Client.getOAuthAccessToken.bind(
+    oauth1Client
+  )
   oauth1Client.getOAuthAccessToken = (...args) => {
     return new Promise((resolve, reject) => {
-      originalGetOAuth1AccessToken(...args, (error, accessToken, refreshToken, results) => {
-        if (error) {
-          return reject(error)
+      originalGetOAuth1AccessToken(
+        ...args,
+        (error, accessToken, refreshToken, results) => {
+          if (error) {
+            return reject(error)
+          }
+          resolve({ accessToken, refreshToken, results })
         }
-        resolve({ accessToken, refreshToken, results })
-      })
+      )
     })
   }
 
-  const originalGetOAuthRequestToken = oauth1Client.getOAuthRequestToken.bind(oauth1Client)
+  const originalGetOAuthRequestToken = oauth1Client.getOAuthRequestToken.bind(
+    oauth1Client
+  )
   oauth1Client.getOAuthRequestToken = (...args) => {
     return new Promise((resolve, reject) => {
       originalGetOAuthRequestToken(...args, (error, oauthToken) => {
@@ -92,27 +99,33 @@ export default function oAuthClient(provider, state) {
  * @param {import("../..").Provider} provider
  * @param {string | undefined} codeVerifier
  */
-async function getOAuth2AccessToken(code, provider, codeVerifier) {
+async function getOAuth2AccessToken (code, provider, codeVerifier) {
   const url = provider.accessTokenUrl
   const params = { ...provider.params }
   const headers = { ...provider.headers }
-  const codeParam = (params.grant_type === 'refresh_token') ? 'refresh_token' : 'code'
+  const codeParam =
+    params.grant_type === 'refresh_token' ? 'refresh_token' : 'code'
 
-  if (!params[codeParam]) { params[codeParam] = code }
+  if (!params[codeParam]) {
+    params[codeParam] = code
+  }
 
-  if (!params.client_id) { params.client_id = provider.clientId }
+  if (!params.client_id) {
+    params.client_id = provider.clientId
+  }
 
   // For Apple the client secret must be generated on-the-fly.
   // Using the properties in clientSecret to create a JWT.
   if (provider.id === 'apple' && typeof provider.clientSecret === 'object') {
     const { keyId, teamId, privateKey } = provider.clientSecret
-    const clientSecret = jwtSign({
-      iss: teamId,
-      iat: Math.floor(Date.now() / 1000),
-      exp: Math.floor(Date.now() / 1000) + (86400 * 180), // 6 months
-      aud: 'https://appleid.apple.com',
-      sub: provider.clientId
-    },
+    const clientSecret = jwtSign(
+      {
+        iss: teamId,
+        iat: Math.floor(Date.now() / 1000),
+        exp: Math.floor(Date.now() / 1000) + 86400 * 180, // 6 months
+        aud: 'https://appleid.apple.com',
+        sub: provider.clientId
+      },
       // Automatically convert \\n into \n if found in private key. If the key
       // is passed in an environment variable \n can get escaped as \\n
       privateKey.replace(/\\n/g, '\n'),
@@ -123,14 +136,24 @@ async function getOAuth2AccessToken(code, provider, codeVerifier) {
     params.client_secret = provider.clientSecret
   }
 
-  if (!params.redirect_uri) { params.redirect_uri = provider.callbackUrl }
+  if (!params.redirect_uri) {
+    params.redirect_uri = provider.callbackUrl
+  }
 
-  if (!headers['Content-Type']) { headers['Content-Type'] = 'application/x-www-form-urlencoded' }
+  if (!headers['Content-Type']) {
+    headers['Content-Type'] = 'application/x-www-form-urlencoded'
+  }
   // Added as a fix to accomodate change in Twitch OAuth API
-  if (!headers['Client-ID']) { headers['Client-ID'] = provider.clientId }
+  if (!headers['Client-ID']) {
+    headers['Client-ID'] = provider.clientId
+  }
   // Added as a fix for Reddit Authentication
   if (provider.id === 'reddit') {
-    headers.Authorization = 'Basic ' + Buffer.from((provider.clientId + ':' + provider.clientSecret)).toString('base64')
+    headers.Authorization =
+      'Basic ' +
+      Buffer.from(provider.clientId + ':' + provider.clientSecret).toString(
+        'base64'
+      )
   }
 
   if (provider.id === 'identity-server4' && !headers.Authorization) {
@@ -168,9 +191,10 @@ async function getOAuth2AccessToken(code, provider, codeVerifier) {
           raw = querystring.parse(data)
         }
 
-        const accessToken = provider.id === 'slack'
-          ? raw.authed_user.access_token
-          : raw.access_token
+        const accessToken =
+          provider.id === 'slack'
+            ? raw.authed_user.access_token
+            : raw.access_token
 
         resolve({
           accessToken,
@@ -193,7 +217,7 @@ async function getOAuth2AccessToken(code, provider, codeVerifier) {
  * @param {string} accessToken
  * @param {any} results
  */
-async function getOAuth2(provider, accessToken, results) {
+async function getOAuth2 (provider, accessToken, results) {
   let url = provider.profileUrl
   const headers = { ...provider.headers }
 
@@ -225,17 +249,24 @@ async function getOAuth2(provider, accessToken, results) {
   }
 
   return new Promise((resolve, reject) => {
-    this._request('GET', url, headers, null, accessToken, (error, profileData) => {
-      if (error) {
-        return reject(error)
+    this._request(
+      'GET',
+      url,
+      headers,
+      null,
+      accessToken,
+      (error, profileData) => {
+        if (error) {
+          return reject(error)
+        }
+        resolve(profileData)
       }
-      resolve(profileData)
-    })
+    )
   })
 }
 
 /** Bungie needs special handling */
-function prepareProfileUrl({ provider, url, results }) {
+function prepareProfileUrl ({ provider, url, results }) {
   if (!results.membership_id) {
     // internal error
     // @TODO: handle better
@@ -243,7 +274,9 @@ function prepareProfileUrl({ provider, url, results }) {
   }
 
   if (!provider.headers?.['X-API-Key']) {
-    throw new Error('The Bungie provider requires the X-API-Key option to be present in "headers".')
+    throw new Error(
+      'The Bungie provider requires the X-API-Key option to be present in "headers".'
+    )
   }
 
   return url.replace('{membershipId}', results.membership_id)

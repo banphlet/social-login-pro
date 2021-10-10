@@ -39,7 +39,6 @@ const getTargetDiv = () => {
 }
 
 async function socialLogins () {
-  console.log(scriptParam)
   const { data: { data: shop } = {} } = await request.get('/customers/shop', {
     params: { shop_id: scriptParam.shop_id }
   })

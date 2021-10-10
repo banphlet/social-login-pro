@@ -26,7 +26,7 @@ export default async function upgrade (payload) {
       external_id: confirmCharge.id,
       price: confirmCharge.price
     },
-    platforms: Object.values(SupportedSocialLoginPlatforms)
+    social_platforms: Object.values(SupportedSocialLoginPlatforms)
   })
   return {
     url: `https://${shop.platform_domain}/admin/apps/${config.get(

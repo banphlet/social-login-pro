@@ -83,6 +83,7 @@ function parseProviders ({ providers = [], baseUrl }) {
   }))
 }
 
+// only providers that are object are allow. mostly because those are enabled
 const allowedProvidersArr = Object.values(providerMap).filter(
   provider => typeof provider !== 'function'
 )
