@@ -30,7 +30,13 @@ const shopifyToken = new ShopifyToken({
     'NEXT_PUBLIC_APP_URL'
   )}/api/permission-accepted/shopify`,
   apiKey: config.get('NEXT_PUBLIC_SHOPIFY_CLIENT_ID'),
-  scopes: ['read_themes', 'write_themes', 'write_customers', 'read_customers']
+  scopes: [
+    // 'read_themes',
+    // 'write_themes',
+    'write_customers',
+    'read_customers',
+    'write_script_tags'
+  ]
 })
 
 const getPermissionUrl = ({ shop = required('shop') }) =>
@@ -130,25 +136,33 @@ const injectScript = async ({
   shopId = required('shopId')
 }) => {
   const shopify = shopifyClient({ shop: platformDomain, accessToken })
-  const publishedTheme = (await shopify.theme.list()).find(
-    theme => theme.role === 'main'
-  )
-  await Promise.all([
-    injectScriptInLogin({
-      themeId: publishedTheme.id,
-      templateBasePath: 'templates/customers/login',
-      shopifyLibInstance: shopify,
-      shopId,
-      isLoginPage: true
-    }),
-    injectScriptInLogin({
-      themeId: publishedTheme.id,
-      templateBasePath: 'templates/customers/register',
-      shopifyLibInstance: shopify,
-      shopId,
-      isLoginPage: false
+  // const publishedTheme = (await shopify.theme.list()).find(
+  //   theme => theme.role === 'main'
+  // )
+  // await Promise.all([
+  //   injectScriptInLogin({
+  //     themeId: publishedTheme.id,
+  //     templateBasePath: 'templates/customers/login',
+  //     shopifyLibInstance: shopify,
+  //     shopId,
+  //     isLoginPage: true
+  //   }),
+  //   injectScriptInLogin({
+  //     themeId: publishedTheme.id,
+  //     templateBasePath: 'templates/customers/register',
+  //     shopifyLibInstance: shopify,
+  //     shopId,
+  //     isLoginPage: false
+  //   })
+  // ])
+  const hasInjectedScript = await shopify.scriptTag.count()
+  if (hasInjectedScript) return
+  return shopify.scriptTag
+    .create({
+      event: 'onload',
+      src: `${config.get('NEXT_PUBLIC_APP_URL')}/js/lla.js?shop_id=${shopId}`
     })
-  ])
+    .catch(err => console.error(err.response.body))
 }
 
 const installWebhooks = ({

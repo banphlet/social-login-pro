@@ -29,22 +29,17 @@ function getParams (a) {
 
 const scriptParam = getParams('js/lla')
 
-window.createOrUpdateCustomer = shopId =>
-  request.post('/customers', {
-    shop_id: shopId,
-    email: sessionStorage.getItem('email')
-  })
-
 const getTargetDiv = () => {
   // slm_social_login_widget is custom div to override location of social buttons
-  return (
+  const element =
     document.getElementById('slm_social_login_widget') ||
     document.getElementById('customer_login') ||
     document.getElementById('create_customer')
-  )
+  return element
 }
 
 async function socialLogins () {
+  console.log(scriptParam)
   const { data: { data: shop } = {} } = await request.get('/customers/shop', {
     params: { shop_id: scriptParam.shop_id }
   })
@@ -112,6 +107,4 @@ const formBasedLogin = () => {
 }
 
 formBasedLogin()
-window.onload = function () {
-  socialLogins()
-}
+socialLogins()

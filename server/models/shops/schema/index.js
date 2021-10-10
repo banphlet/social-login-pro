@@ -91,7 +91,10 @@ const schema = new mongoose.Schema(
     },
     social_platforms: {
       type: [String],
-      default: ['google', 'facebook']
+      default: [
+        SupportedSocialLoginPlatforms.TWITTER,
+        SupportedSocialLoginPlatforms.GOOGLE
+      ]
     },
     social_platform_status: {
       type: String,
@@ -111,10 +114,6 @@ const schema = new mongoose.Schema(
       name: {
         type: String,
         default: 'Free Plan'
-      },
-      platforms: {
-        type: [String],
-        default: ['google', 'facebook']
       },
       external_id: String
     }
