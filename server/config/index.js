@@ -216,6 +216,30 @@ const config = convict({
     default: process.env.REDDIT_CLIENT_ID,
     format: '*',
     env: 'REDDIT_CLIENT_ID'
+  },
+  SPOTIFY_CLIENT_SECRET: {
+    doc: 'SPOTIFY_CLIENT_SECRET',
+    default: process.env.SPOTIFY_CLIENT_SECRET,
+    format: '*',
+    env: 'SPOTIFY_CLIENT_SECRET'
+  },
+  SPOTIFY_CLIENT_ID: {
+    doc: 'SPOTIFY_CLIENT_ID',
+    default: process.env.SPOTIFY_CLIENT_ID,
+    format: '*',
+    env: 'SPOTIFY_CLIENT_ID'
+  },
+  WORDPRESS_CLIENT_SECRET: {
+    doc: 'WORDPRESS_CLIENT_SECRET',
+    default: process.env.WORDPRESS_CLIENT_SECRET,
+    format: '*',
+    env: 'WORDPRESS_CLIENT_SECRET'
+  },
+  WORDPRESS_CLIENT_ID: {
+    doc: 'WORDPRESS_CLIENT_ID',
+    default: process.env.WORDPRESS_CLIENT_ID,
+    format: '*',
+    env: 'WORDPRESS_CLIENT_ID'
   }
 })
 

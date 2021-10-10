@@ -29,7 +29,9 @@ export const SupportedSocialLoginPlatforms = {
   SLACK: 'slack',
   LINE: 'line',
   GITHUB: 'github',
-  REDDIT: 'reddit'
+  REDDIT: 'reddit',
+  WORDPRESS: 'wordpress'
+  // SPOTIFY: 'spotify'
 }
 
 const schema = new mongoose.Schema(

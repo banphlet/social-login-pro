@@ -34,9 +34,11 @@ import Twitter from './twitter'
 import VK from './vk'
 import Yandex from './yandex'
 import Tumblr from './tumblr'
+import Wordpress from './wordpress'
 import config from '../../../config'
 
 const providerMap = {
+  Wordpress,
   Tumblr,
   Apple,
   Atlassian,

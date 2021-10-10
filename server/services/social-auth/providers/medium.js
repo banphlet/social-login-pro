@@ -1,4 +1,4 @@
-export default (options) => {
+export default options => {
   return {
     id: 'medium',
     name: 'Medium',
@@ -9,11 +9,11 @@ export default (options) => {
     accessTokenUrl: 'https://api.medium.com/v1/tokens',
     authorizationUrl: 'https://medium.com/m/oauth/authorize?response_type=code',
     profileUrl: 'https://api.medium.com/v1/me',
-    profile: (profile) => {
+    profile: profile => {
       return {
         id: profile.data.id,
         name: profile.data.name,
-        email: null,
+        email: `${profile.data.name ?? profile.data.id}@medium.com`,
         image: profile.data.imageUrl
       }
     },
