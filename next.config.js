@@ -10,6 +10,10 @@ module.exports = {
           {
             key: 'X-Frame-Options',
             value: 'allow'
+          },
+          {
+            key: 'nana-k',
+            value: 'kwame-zoe'
           }
         ]
       }
