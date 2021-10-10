@@ -13,4 +13,7 @@ const acceptPermissionHandler = (req, res) => {
   res.redirect(redirectUrl)
 }
 
-export default customServerHandler({ handler: acceptPermissionHandler })
+export default customServerHandler({
+  handler: acceptPermissionHandler,
+  middleware: Cors()
+})
