@@ -5,7 +5,7 @@ module.exports = {
   async headers () {
     return [
       {
-        source: '/:all*',
+        source: '/api/:all*',
         headers: [
           {
             key: 'X-Frame-Options',
